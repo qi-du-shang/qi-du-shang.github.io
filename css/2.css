@@ -23,3 +23,18 @@
 	margin-top: 25%;
 	font-size: 40px;
 }
+.inner{
+	border: solid;
+	padding: 50px;
+	background: #536162;
+}
+.cover{
+
+	border: solid;
+	border-top-color: #8ab6d6;
+	border-left-color: #8ab6d6;
+	border-right-color: #2978b5;
+	border-bottom-color: #2978b5;
+	margin-top: 87px;
+	margin-bottom: 160px;
+}
