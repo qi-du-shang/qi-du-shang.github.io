@@ -22,7 +22,7 @@
     // of different video formats to add
     src: [
       {
-        src: 'img/vedio.mp4',
+        src: 'vedio.mp4',
         type: 'video/mp4'
       },
       {
