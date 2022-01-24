@@ -10,6 +10,7 @@
                     counter = 0;
                 document.getElementById("banner").src = banners[counter];
             }
+		window.onload = run();
 //获取当前日期时间
     function curentTime()
     {
