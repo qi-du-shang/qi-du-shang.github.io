@@ -1,0 +1,13 @@
+body{
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	background: url('../images/0.jpg') no-repeat center fixed;
+	background-size: cover;
+}
+img{
+	position: absolute;
+	top: 47%;
+	width: 342px;/* 171 */
+	height: 294px;/* 147 */
+}
