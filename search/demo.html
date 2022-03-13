@@ -1,0 +1,551 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>lemon's blog – 个人技术公众号「后端技术学堂」分享、记录、成长</title>
+
+      <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="个人技术公众号「后端技术学堂」分享、记录、成长">
+    <meta property="og:description" content="个人技术公众号「后端技术学堂」分享、记录、成长" />
+    
+    <meta name="author" content="lemon's blog" />
+
+    
+  <!-- Async font loading -->
+<script>
+  window.WebFontConfig = {
+      custom: {
+          families: ['Spoqa Han Sans:100,300,400,700'],
+          urls: ['https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css']
+      },
+      timeout: 60000
+  };
+  (function(d) {
+      var wf = d.createElement('script'), s = d.scripts[0];
+      wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js';
+      s.parentNode.insertBefore(wf, s);
+  })(document);
+</script>
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="/blog/style.css" />
+  <link rel="alternate" type="application/rss+xml" title="lemon's blog - 个人技术公众号「后端技术学堂」分享、记录、成长" href="/blog/feed.xml" />
+  <link rel="shortcut icon" href="https://github.com/lemonchann/lemonchann.github.io/raw/master/images/favicon.ico">
+ <!--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css"> -->
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script>
+    (function(d) {
+      var config = {
+        kitId: 'vbt3gjx',
+        scriptTimeout: 3000,
+        async: true
+      },
+      h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    })(document);
+  </script>  
+
+
+  <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+
+</head>
+  <body>
+    <div class="wrapper-sidebar">
+  <header class="sidebar clearfix">
+    <div class="site-info">
+      
+        <a href="/blog/" class="site-avatar"><img src="https://upload-images.jianshu.io/upload_images/7842464-15f939ec039690f6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" /></a>
+       
+      <h1 class="site-name"><a href="/blog/">lemon's blog</a></h1>
+      <p class="site-description">个人技术公众号「后端技术学堂」分享、记录、成长</p>
+    </div>
+  </header>
+
+  <div class="navlist">
+    <nav>
+      
+      
+      <a href="/blog/">首页</a>
+      
+      
+      
+      <a href="/blog/about">关于</a>
+      
+      
+      
+      <a href="/blog/archive">归档</a>
+      
+      
+      
+      <a href="/blog/tags">标签</a>
+      
+      
+    </nav>
+  </div>
+
+  <div class="wrapper-footer-desktop">
+    <footer class="footer">
+      <!-- Refer to https://codepen.io/ruandre/pen/howFi -->
+<ul class="svg-icon">
+
+  
+  
+  
+
+  
+
+  
+  <li><a href="mailto:lemonchann@foxmail.com" class="icon-8 email" title="Email"><svg viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg><!--[if lt IE 9]><em>Email</em><![endif]--></a></li>
+  
+
+  
+
+  
+
+  
+  <li><a href="https://zhihu.com/people/ning-meng-cheng-31-94" class="icon-2 zhihu" title="ZhiHu"><svg viewBox="0 0 600 600"><path d="M170.54 148.13v217.54l23.43.01 7.71 26.37 42.01-26.37h49.53V148.13H170.54zm97.75 193.93h-27.94l-27.9 17.51-5.08-17.47-11.9-.04V171.75h72.82v170.31zm-118.46-94.39H97.5c1.74-27.1 2.2-51.59 2.2-73.46h51.16s1.97-22.56-8.58-22.31h-88.5c3.49-13.12 7.87-26.66 13.12-40.67 0 0-24.07 0-32.27 21.57-3.39 8.9-13.21 43.14-30.7 78.12 5.89-.64 25.37-1.18 36.84-22.21 2.11-5.89 2.51-6.66 5.14-14.53h28.87c0 10.5-1.2 66.88-1.68 73.44H20.83c-11.74 0-15.56 23.62-15.56 23.62h65.58C66.45 321.1 42.83 363.12 0 396.34c20.49 5.85 40.91-.93 51-9.9 0 0 22.98-20.9 35.59-69.25l53.96 64.94s7.91-26.89-1.24-39.99c-7.58-8.92-28.06-33.06-36.79-41.81L87.9 311.95c4.36-13.98 6.99-27.55 7.87-40.67h61.65s-.09-23.62-7.59-23.62v.01zm412.02-1.6c20.83-25.64 44.98-58.57 44.98-58.57s-18.65-14.8-27.38-4.06c-6 8.15-36.83 48.2-36.83 48.2l19.23 14.43zm-150.09-59.09c-9.01-8.25-25.91 2.13-25.91 2.13s39.52 55.04 41.12 57.45l19.46-13.73s-25.67-37.61-34.66-45.86h-.01zM640 258.35c-19.78 0-130.91.93-131.06.93v-101c4.81 0 12.42-.4 22.85-1.2 40.88-2.41 70.13-4 87.77-4.81 0 0 12.22-27.19-.59-33.44-3.07-1.18-23.17 4.58-23.17 4.58s-165.22 16.49-232.36 18.05c1.6 8.82 7.62 17.08 15.78 19.55 13.31 3.48 22.69 1.7 49.15.89 24.83-1.6 43.68-2.43 56.51-2.43v99.81H351.41s2.82 22.31 25.51 22.85h107.94v70.92c0 13.97-11.19 21.99-24.48 21.12-14.08.11-26.08-1.15-41.69-1.81 1.99 3.97 6.33 14.39 19.31 21.84 9.88 4.81 16.17 6.57 26.02 6.57 29.56 0 45.67-17.28 44.89-45.31v-73.32h122.36c9.68 0 8.7-23.78 8.7-23.78l.03-.01z"/></svg><!--[if lt IE 9]><em>YouTube</em><![endif]--></a></li>
+  
+  
+  
+  <li><a href="https://github.com/lemonchann" class="icon-13 github" title="GitHub"><svg viewBox="0 0 512 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg><!--[if lt IE 9]><em>GitHub</em><![endif]--></a></li>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</ul>
+
+
+
+<p>Copyright (c) 2019 lemonchann</p>
+
+
+    </footer>
+  </div>
+</div>
+
+    
+
+    <div id="main" role="main" class="wrapper-content">
+      <div class="container">
+        <div class="search-container">
+  <input type="text" id="search-input" placeholder="search blog posts..." style="width: 90%;
+    height: 35px;
+    color: #333;
+    background-color: rgba(227,231,236,.2);
+    line-height: 35px;
+    padding:0px 16px;
+    border: 1px solid #c0c0c0;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 17px;
+    outline: none;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);">
+  <ul id="results-container"></ul>
+</div>
+
+<!--script src="https://unpkg.com/simple-jekyll-search/dest/simple-jekyll-search.min.js"></script-->
+<script src="js/simple-jekyll-search.min.js"></script>
+
+<script>
+	window.simpleJekyllSearch = new SimpleJekyllSearch({
+	searchInput: document.getElementById('search-input'),
+	resultsContainer: document.getElementById('results-container'),
+	json: 'search.json',
+	searchResultTemplate: '<li><a href="{url}?query={query}" title="{desc}">{title}</a></li>',
+	noResultsText: 'No results found',
+	limit: 10,
+	fuzzy: false,
+	exclude: ['Welcome']
+  })
+</script>
+ 
+
+
+<div class="posts">
+  
+  
+    <article class="post">
+      <h1>
+        <a href="/blog/redis_distributed_locks/">redis分布式锁3种实现方式对比分析总结</a>
+      </h1>
+
+      <div clsss="meta">
+        <span class="date">
+          2020-01-28
+        </span>
+
+        <ul class="tag">
+          
+          <li>
+            <a href="https://lemonchann.github.io/blog/tags#后台开发">
+              后台开发
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="entry">
+        <p>大家春节在家抢红包玩的不亦乐乎，抢红包服务看起来非常简单，实际上要做好这个服务，特别是money相关服务是不允许出错的，想想看每个红包的数字都是真金白银，要求服务的鲁棒性非常高，背后包含着很多后台服务技术细节。</p>
+
+
+      </div>
+
+      <a href="/blog/redis_distributed_locks/" class="read-more">Read More</a>
+    </article>
+  
+  
+  
+    <article class="post">
+      <h1>
+        <a href="/blog/job_analyzes/">我分析几个一线城市的近千份岗位招聘需求，得出应该这么准备找工作</a>
+      </h1>
+
+      <div clsss="meta">
+        <span class="date">
+          2020-01-27
+        </span>
+
+        <ul class="tag">
+          
+          <li>
+            <a href="https://lemonchann.github.io/blog/tags#后台开发">
+              后台开发
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="entry">
+        <p>每年的三四月份是招聘高峰，也常被大家称为金三银四黄金求职期，这时候上一年的总结做完了，奖金拿到了，职场人开始谋划着年初的找工作大戏。</p>
+
+<p>作为IT人要发挥自己的专业特长，如何让伯乐和千里马更快相遇？我利用大数据分析了北京、广州、深圳三个一线城市的C++招聘岗位信息，篇幅限制文中只拿出北京和深圳的数据展示，让我们来看看岗位的招聘现状，以及如何科学提高应聘成功率。</p>
+
+<...
+      </div>
+
+      <a href="/blog/job_analyzes/" class="read-more">Read More</a>
+    </article>
+  
+  
+  
+    <article class="post">
+      <h1>
+        <a href="/blog/sourcegraph/">推荐一款github代码在线浏览神器sourcegraph</a>
+      </h1>
+
+      <div clsss="meta">
+        <span class="date">
+          2020-01-27
+        </span>
+
+        <ul class="tag">
+          
+          <li>
+            <a href="https://lemonchann.github.io/blog/tags#后台开发">
+              后台开发
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="entry">
+        <p>程序员逛github已经是每日必须项目，看到感兴趣的项目都会点进去看一下，github全球最大的同性交友平台，这里有海量的开源代码库，作为开源代码管理平台github是非常专业的。</p>
+
+<p>但是，你要在上面看代码就不是那么舒服了，特别是点进去每个文件夹浏览文件非常的不方便，大工程文件之间的切换有时候网页加载特别慢非常不方便。</p>
+
+<p>推荐这款我用的这款Google浏览器...
+      </div>
+
+      <a href="/blog/sourcegraph/" class="read-more">Read More</a>
+    </article>
+  
+  
+  
+    <article class="post">
+      <h1>
+        <a href="/blog/linux_date/">多面手linux date命令</a>
+      </h1>
+
+      <div clsss="meta">
+        <span class="date">
+          2020-01-27
+        </span>
+
+        <ul class="tag">
+          
+          <li>
+            <a href="https://lemonchann.github.io/blog/tags#后台开发">
+              后台开发
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="entry">
+        <p>今天给项目写了个脚本需要获取前一天的时间，本来先获取今天的然后减一下，如果是1号的话还要考虑大小月份挺复杂的，于是去查了一下手册<code class="language-plaintext highlighter-rouge">date</code>命令原生支持，喜出望外，今天就详细说说这个看起来不起眼的<code class="language-plaintext highligh...
+      </div>
+
+      <a href="/blog/linux_date/" class="read-more">Read More</a>
+    </article>
+  
+  
+  
+    <article class="post">
+      <h1>
+        <a href="/blog/red_packet_thinking_lock/">后台服务高并发编程-抢红包</a>
+      </h1>
+
+      <div clsss="meta">
+        <span class="date">
+          2020-01-27
+        </span>
+
+        <ul class="tag">
+          
+          <li>
+            <a href="https://lemonchann.github.io/blog/tags#后台开发">
+              后台开发
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="entry">
+        <p>今年春节响应国家号召在家宅着抵抗疫情，拜年也改用微信红包，春节发了很多也抢了很多微信红包，也算支持了公司业务，想到WXG的小伙伴丰厚的年终奖我柠檬了，微信支付融入生活，抢红包已经是非常平常的事情。</p>
+
+<p>抢红包这一简单的动作，每一次都是对红包服务后台的一次请求，在春节期间海量的服务请求下，其实是一个很典型的高并发编程模型。后台开发程序员都有一个共识：<strong>实现一个功...
+      </div>
+
+      <a href="/blog/red_packet_thinking_lock/" class="read-more">Read More</a>
+    </article>
+  
+  
+  
+    <article class="post">
+      <h1>
+        <a href="/blog/learn_cpp/">Linux后台开发C++学习路线技能加点</a>
+      </h1>
+
+      <div clsss="meta">
+        <span class="date">
+          2020-01-01
+        </span>
+
+        <ul class="tag">
+          
+          <li>
+            <a href="https://lemonchann.github.io/blog/tags#c++">
+              c++
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="entry">
+        <p>最近在知乎经常被邀请回答类似如何学习C++和C++后台开发应该具体储备哪些基础技能的问题。</p>
+
+<p>本身我从事的的C++后台开发的工作，目前在腾讯负责社交产品相关后台开发，所以写这篇文章，分享自己的C++后台开发学习路径和点过的技能树，希望能给想从事后台开发的同学一点参考，若能帮你少走些弯路就更好。</p>
+
+<p>工欲善其事必先利其器，好的书籍能让学习事半功倍，所以每个技能点...
+      </div>
+
+      <a href="/blog/learn_cpp/" class="read-more">Read More</a>
+    </article>
+  
+  
+  
+    <article class="post">
+      <h1>
+        <a href="/blog/cpp_reference/">腾讯后台开发面试笔试C++知识点参考笔记</a>
+      </h1>
+
+      <div clsss="meta">
+        <span class="date">
+          2019-12-29
+        </span>
+
+        <ul class="tag">
+          
+          <li>
+            <a href="https://lemonchann.github.io/blog/tags#c++">
+              c++
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="entry">
+        <p><strong>文章是由我笔试面试腾讯笔记整理而来，主要是针对面试的C++后台开发岗位，涵盖了大部分C++后台开发相关的，可能会考察和被问到的技术点。</strong></p>
+
+<p><strong>自认为这篇笔记比较全面的涵盖了，后台开发C++笔试面试大部分知识点，不管你是已经工作准备参加社招，还是在校学生准备参加校招，笔记都可以作为技术面试准备阶段参考查阅，查缺补漏。</stro...
+      </div>
+
+      <a href="/blog/cpp_reference/" class="read-more">Read More</a>
+    </article>
+  
+  
+  
+    <article class="post">
+      <h1>
+        <a href="/blog/create_blog_with_github_pages/">可能是最全面的github pages搭建个人博客教程</a>
+      </h1>
+
+      <div clsss="meta">
+        <span class="date">
+          2019-11-22
+        </span>
+
+        <ul class="tag">
+          
+          <li>
+            <a href="https://lemonchann.github.io/blog/tags#geek">
+              geek
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="entry">
+        <p>作为一个程序员怎么能没有自己的个人博客呢，这里详细记录和分享我的博客搭建经验，让你轻轻松松拥有自己的博客网站。	傻瓜式一站式教你用github pages 来搭建博客，详细记录全过程。</p>
+
+
+      </div>
+
+      <a href="/blog/create_blog_with_github_pages/" class="read-more">Read More</a>
+    </article>
+  
+  
+</div>
+
+<div class="pagination">
+  
+  
+    <span class="next">
+      <a href="/blog/page2/" class="next">
+        下一页 →
+      </a>
+    </span>
+  
+</div>
+
+<!--不算子网站访客统计-->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+<!-- pv的方式，单个用户连续点击n篇文章，记录n次访问量 -->
+<div align="center">
+	<span id="busuanzi_container_site_pv" style="font-family:Consolas;color:Silver;font-size:12px;">
+		View:<span id="busuanzi_value_site_pv" style="font-family:Consolas;color:Silver;font-size:12px;"></span>
+	</span>
+	<!-- uv的方式，单个用户连续点击n篇文章，只记录1次访客数 -->
+	<span id="busuanzi_container_site_uv" style="font-family:Consolas;color:Silver;font-size:12px;">
+		User:<span id="busuanzi_value_site_uv" style="font-family:Consolas;color:Silver;font-size:12px;"></span>
+	</span>
+</div>
+      </div>
+    </div>
+
+    
+	<!-- Google Analytics -->
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-152888548-1', 'auto');
+		ga('send', 'pageview', {
+		  'page': '/blog/',
+		  'title': ''
+		});
+	</script>
+	<!-- End Google Analytics -->
+
+
+  </body>
+
+  
+
+  <div class="wrapper-footer-mobile">
+    <footer class="footer">
+      <!-- Refer to https://codepen.io/ruandre/pen/howFi -->
+<ul class="svg-icon">
+
+  
+  
+  
+
+  
+
+  
+  <li><a href="mailto:lemonchann@foxmail.com" class="icon-8 email" title="Email"><svg viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg><!--[if lt IE 9]><em>Email</em><![endif]--></a></li>
+  
+
+  
+
+  
+
+  
+  <li><a href="https://zhihu.com/people/ning-meng-cheng-31-94" class="icon-2 zhihu" title="ZhiHu"><svg viewBox="0 0 600 600"><path d="M170.54 148.13v217.54l23.43.01 7.71 26.37 42.01-26.37h49.53V148.13H170.54zm97.75 193.93h-27.94l-27.9 17.51-5.08-17.47-11.9-.04V171.75h72.82v170.31zm-118.46-94.39H97.5c1.74-27.1 2.2-51.59 2.2-73.46h51.16s1.97-22.56-8.58-22.31h-88.5c3.49-13.12 7.87-26.66 13.12-40.67 0 0-24.07 0-32.27 21.57-3.39 8.9-13.21 43.14-30.7 78.12 5.89-.64 25.37-1.18 36.84-22.21 2.11-5.89 2.51-6.66 5.14-14.53h28.87c0 10.5-1.2 66.88-1.68 73.44H20.83c-11.74 0-15.56 23.62-15.56 23.62h65.58C66.45 321.1 42.83 363.12 0 396.34c20.49 5.85 40.91-.93 51-9.9 0 0 22.98-20.9 35.59-69.25l53.96 64.94s7.91-26.89-1.24-39.99c-7.58-8.92-28.06-33.06-36.79-41.81L87.9 311.95c4.36-13.98 6.99-27.55 7.87-40.67h61.65s-.09-23.62-7.59-23.62v.01zm412.02-1.6c20.83-25.64 44.98-58.57 44.98-58.57s-18.65-14.8-27.38-4.06c-6 8.15-36.83 48.2-36.83 48.2l19.23 14.43zm-150.09-59.09c-9.01-8.25-25.91 2.13-25.91 2.13s39.52 55.04 41.12 57.45l19.46-13.73s-25.67-37.61-34.66-45.86h-.01zM640 258.35c-19.78 0-130.91.93-131.06.93v-101c4.81 0 12.42-.4 22.85-1.2 40.88-2.41 70.13-4 87.77-4.81 0 0 12.22-27.19-.59-33.44-3.07-1.18-23.17 4.58-23.17 4.58s-165.22 16.49-232.36 18.05c1.6 8.82 7.62 17.08 15.78 19.55 13.31 3.48 22.69 1.7 49.15.89 24.83-1.6 43.68-2.43 56.51-2.43v99.81H351.41s2.82 22.31 25.51 22.85h107.94v70.92c0 13.97-11.19 21.99-24.48 21.12-14.08.11-26.08-1.15-41.69-1.81 1.99 3.97 6.33 14.39 19.31 21.84 9.88 4.81 16.17 6.57 26.02 6.57 29.56 0 45.67-17.28 44.89-45.31v-73.32h122.36c9.68 0 8.7-23.78 8.7-23.78l.03-.01z"/></svg><!--[if lt IE 9]><em>YouTube</em><![endif]--></a></li>
+  
+  
+  
+  <li><a href="https://github.com/lemonchann" class="icon-13 github" title="GitHub"><svg viewBox="0 0 512 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg><!--[if lt IE 9]><em>GitHub</em><![endif]--></a></li>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</ul>
+
+
+
+<p>Copyright (c) 2019 lemonchann</p>
+
+
+    </footer>
+
+
+</html>
