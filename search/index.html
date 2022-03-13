@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+
+
+
+  <body>
+
+
+
+    <div id="search-demo-container">
+      <input type="search" id="search-input" placeholder="search...">
+      <ul id="results-container"></ul>
+    </div>
+
+    <div class="page-content">
+      <div class="wrapper">
+
+      </div>
+    </div>
+
+    <span>这是一段文字</span>
+    <span>hello world</span>
+    <a href="http://www.baidu.com">这是百度链接</a>
+
+
+    <script src="{{ site.baseurl }}/js/simple-jekyll-search.min.js"></script>
+
+    <script>
+      window.simpleJekyllSearch = new SimpleJekyllSearch({
+        searchInput: document.getElementById('search-input'),
+        resultsContainer: document.getElementById('results-container'),
+        json: '{{ site.baseurl }}/search.json',
+        searchResultTemplate: '<li><a href="{url}?query={query}" title="{desc}">{title}</a></li>',
+        noResultsText: 'No results found',
+        limit: 10,
+        fuzzy: false,
+        exclude: ['Welcome']
+      })
+    </script>
+
+  </body>
+
+</html>
