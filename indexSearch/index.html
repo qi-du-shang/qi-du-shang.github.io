@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="柒度殇的主页">
+	<meta name="keywords" content="柒度殇,个人主页">
+	<meta name="author" content="Qidushang">
+	<link rel="icon" href="images/logo.png">
+    <title>柒度殇的主页</title>
+	<link rel="stylesheet" type="text/css" href="css/index.css"/>
+	<script src="js/jquery-3.6.0.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body onload = "run();" class="miSans">
+	<div class="nav">
+		<ul>
+			<li>
+			<div class="item">
+				<div class="box">
+					<a href="https://tdesign.tencent.com" target="_blank">
+				    <div class="font"><img src="images/tdesign.svg" alt=""></div>
+				    <div class="back">Tdesgin</div>
+					</a>
+				</div>
+			</div>
+			</li>
+			
+			<li>	
+			<div class="item">
+				<div class="box">
+					<a href="https://github.com" target="_blank">
+					<div class="font"><img src="images/GitHub.png" alt=""></div>
+					<div class="back">Github</div>
+					</a>
+				</div>
+			</div>
+			</li>
+			
+			<li>
+			<div class="item">
+				<div class="box">
+					<a href="https://gitee.com" target="_blank">
+					<div class="font"><img src="images/gitee.png" alt=""></div>
+					<div class="back">Gitee</div>
+					</a>
+				</div>
+			</div>
+			</li>
+			
+			<li>
+			<div class="item">
+				<div class="box">
+					<a href="https://www.php.cn" target="_blank">
+					<div class="font"><img src="images/php.png" alt=""></div>
+					<div class="back">Php学习</div>
+					</a>
+				</div>
+			</div>
+			</li>
+			
+			<li>
+			<div class="item">
+				<div class="box">
+					<a href="https://vuejs.org" target="_blank">
+					<div class="font"><img src="images/vue.png" alt=""></div>
+					<div class="back">Vue</div>
+					</a>
+				</div>
+			</div>
+			</li>
+		</ul>
+	</div>
+    <div class="main">
+		<div class="centerArea">
+			<div id="petHome" class="fadeInStyle">
+				<button type="button" id="btnDel0"  class="btnDel"></button>
+				<img id="banner" alt="banner" src="images/02.png">
+			</div>
+			<div id="currentTime" class="fadeInStyle"></div>
+			<div id="ipAddress" class="fadeInStyle">
+				<button type="button" id="btnDel1"  class="btnDel"></button>
+				ip:<span id="cip"></span><br>
+				from:<span id="cname"></span>
+			</div>
+			<div id="oneSentence" class="fadeInStyle">
+				<button type="button" id="btnDel2"  class="btnDel"></button>
+				<span id="hitokoto">
+					:D 获取中...
+				</span>
+				<br>from:<span id="hitokotofrom"></span>
+				<br>author:<span id="hitokotofromwho"></span>
+			</div>
+			<div id="musicBar" class="fadeInStyle">
+				<button type="button" id="btnDel3" class="btnDel"></button>
+				<div id="container">
+					<div id="title"></div>
+					<div id="time"></div>
+					<input id="range" type="range" min="0" max="1" step="any" value="0" />
+					<a id="play" class="button" href="###"></a>
+					音量:<input id="volume" type="range" min="0" max="1" step="any" value="0.5" />
+				</div>
+			</div>
+			<div id="searchWrap">
+    <form role="search" action="http://www.baidu.com/s" method="get">
+      <div>
+        <input type="text" placeholder="搜一搜..." id="search" name="wd" formtarget="_blank" value="">
+		<button type="submit" id="searchBtn"></button>
+      </div>
+    </form>
+			</div>
+		</div>
+		<span id="footer">Desgin by Qidushang.</span>
+	</div>
+</body>
+<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.bootcss.com/bluebird/3.5.1/bluebird.core.min.js"></script><!-- 一言的api -->
+<script src="https://cdn.bootcss.com/fetch/2.0.3/fetch.min.js"></script><!-- 一言的api -->
+<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script><!-- ip的api -->
+</html>
