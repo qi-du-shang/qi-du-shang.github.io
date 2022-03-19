@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content="柒度殇的博客">
+		<meta name="keywords" content="无框架,自适应,简约,静态的博客">
+		<meta name="author" content="Qidushang">
+		<title>柒度殇的博客</title>
+		<link rel="icon" href="./qidushang'sBlog/images/logo.png">
+		<link rel="stylesheet" href="./qidushang'sBlog/css/theme.css">
+		<link rel="stylesheet" href="./qidushang'sBlog/css/web.css">
+		<link rel="stylesheet" href="./qidushang'sBlog/css/header.css">
+		<link rel="stylesheet" href="./qidushang'sBlog/css/banner.css">
+		<link rel="stylesheet" href="./qidushang'sBlog/css/content.css">
+		<link rel="stylesheet" href="./qidushang'sBlog/css/footer.css">
+		<script src="./qidushang'sBlog/js/jquery-3.6.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./qidushang'sBlog/js/web.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./qidushang'sBlog/js/hidden.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./qidushang'sBlog/js/pagetabs.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./qidushang'sBlog/js/theme.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body onLoad="goPage(1,5);" class="miSans">
+		<nav class="nav center">
+			<ul>
+				<li class="current"><a href="#">首页</a></li>
+				<li><a href="#">我的项目</a></li>
+				<li><a href="#">组件分享</a></li>
+				<li><a href="#">xterm.js</a></li>
+				<li><a href="#">归档</a></li>
+			</ul>
+		</nav>
+
+
+		<div class="backgroundDiv">
+
+			<div class="sidebarLeft">
+				标签
+				<div class="tab">
+					<span><a href="#">#</a></span>css
+				</div>
+				<div class="tab">
+					<span><a href="#">#</a></span>vue
+				</div>
+				<div class="tab">
+					<span><a href="#">#</a></span>html
+				</div>
+				<div class="tab">
+					<span><a href="#">#</a></span>bootstrap
+				</div>
+				<div class="tab">
+					<span><a href="#">#</a></span>javascript
+				</div>
+			</div>
+
+			<div class="sidebarLefts">
+				<div id="currentTime"></div>
+				<p id="getWeek"></p>
+			</div>
+
+			<div class="sideBarRight">
+				主题切换<br>
+				<div class="color-select">
+					<button onclick="toggleLightTheme()"></button>
+					<button onclick="toggleDarkTheme()"></button>
+				</div>
+			</div>
+
+			<div class="sideBarRightn">
+				<div class="item">
+					<div class="box">
+						<div class="font">
+							给我写信
+						</div>
+						<div class="back">
+							<a data-email="lightningispower@vip.qq.com" href="mailto:lightningispower@vip.qq.com"><img
+									src="http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_22.png" /></a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="sideBarRights">
+				<button onclick="getLocation()">获取当前位置经纬度</button>
+				<p id="location"></p>
+			</div>
+
+			<div class="indexWeb list">
+				<div class="banner">
+					<h1><span>Qidushang's Blog</span></h1>
+					<p><span id="first-words"></span></p>
+							<div class="title_box">
+								<div class="title_left"></div>
+								<input type="text" id="txtSearch" onChange="txtSearch()" placeholder="搜文章...(仅限中文)" onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')">
+								<div class="title_right"></div>
+							</div>
+				</div>
+				<div class="content">
+				<table id="idData">
+					<tr class="contentBlock">
+							<td>
+								<h3>博客序言</h3>
+								<p>
+									2022-3-19在无聊之际写了一个没有使用任何框架的自适应静态页面博客来分享自己学习前端的技术与学习过程。在此之前,
+									我曾写有10篇左右的博文分享在之前基于wordpress搭建的动态博客。奈何数据库出现了些许错误,造成了我的动态博客无法访问的问题,
+									在繁忙之际也就再没有修复及发表博文了。
+									因此,为了考虑博客的实用性和个性化,我亲自花了一周多的时间,硬是拖拉的写完当前这个静态博客网站。我为什么不使用框架来写一个博客呢?用框架
+									不是更快速,更省时间吗?事实确实如此,框架性能更优越,且开发时间短。
+								</p>
+								<a href="./qidushang'sBlog/blogPages/page1.html" target="_blank"><button>阅读全文</button></a>
+							</td>	
+					</tr>
+					
+				</table>
+				<table>
+				  <tr><td><div id="barcon" name="barcon"></div></td></tr>
+				</table>
+				</div>
+			</div>
+			
+			<div class="myProjectWeb list hidden">
+				<span>我的项目</span>
+				<div class="base">
+					<div>
+						个性化的百度首页<br>
+						点击图片访问
+						<a href="" target="_blank"><img src="./qidushang'sBlog/images/1.png" alt=""></a>
+					</div>
+<!-- 					<div>null</div>
+					<div>null</div>
+					<div>null</div>
+					<div>null</div>
+					<div>null</div> -->
+				</div>
+			</div>
+
+			<div class="modelShareWeb list hidden">
+				<span>组件分享</span>
+				<div class="base">
+					<div>弹性输入框
+						<iframe src="./qidushang'sBlog/iframe/0.html" width="100%" height="100%"></iframe>
+					</div>
+<!-- 					<div>null</div>
+					<div>null</div>
+					<div>null</div>
+					<div>null</div>
+					<div>null</div> -->
+				</div>
+			</div>
+
+			<div class="dailySentenceWeb list hidden">
+				<span>xterm.js</span>
+				<div class="likecmd">
+					xterm.js/浏览器的终端模拟<br>
+					copy from xterm.js's index
+				<iframe src="./likeCmd/xterm.html" width="100%" height="100%"></iframe>
+				</div>
+			</div>
+
+			<div class="timeLineWeb list hidden">
+				<span>归档</span>
+				<div class="base">
+					<div>2022-3-19</div>
+					<div><a href="./qidushang'sBlog/blogPages/page1.html" target="_blank">博客序言</a></div>
+					<div>NO.1</div>
+					<div>0000-00-00</div>
+					<div>title</div>
+					<div>NO.00</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="footer">
+			Qidushang's Blog <span>|</span> Design by Qidushang <span>|</span><a>本站已经运行<a id="days">0</a>天</a><br>
+			本站总访问量<span id="busuanzi_value_site_pv"></span>次
+			本站访客数<span id="busuanzi_value_site_uv"></span>人次
+		</div>
+	</body>
+	<script src="./qidushang'sBlog/js/location.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./qidushang'sBlog/js/footer.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./qidushang'sBlog/js/get-time.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./qidushang'sBlog/js/search.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./qidushang'sBlog/js/type.js" type="text/javascript" charset="utf-8"></script>
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><!-- 访客统计 -->
+</html>
