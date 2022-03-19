@@ -9,6 +9,16 @@
 	text-align: center;
 }
 
+.messages{
+	width: 80%;
+	height: auto;
+	border: solid black 2px;
+	border-radius: 5px;
+	margin: 0 auto;
+	margin-bottom: 8%;
+	text-align: center;
+}
+
 .contentBlock h3{
 	display: block;
 	padding-top: 5px;
