@@ -1,0 +1,31 @@
+.theme-light {
+   --accent-color: #ffffff;
+   --font-color: #222222;
+}
+
+.theme-dark {
+    --accent-color: #373737;
+    --font-color: #cecece;
+}
+
+*{
+    background: var(--accent-color);
+    color: var(--font-color);
+}
+
+.color-select button {
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 20px;
+    margin: 0 -0.2rem -0.2rem 0;
+    outline: 0;
+    width: 20px;
+}
+
+/* Style each swatch to match the corresponding theme */
+.color-select button:nth-child(1) { background: #ffffff; border-color: #222222; }
+.color-select button:nth-child(2) { background: #373737; border-color: #cecece; }
+

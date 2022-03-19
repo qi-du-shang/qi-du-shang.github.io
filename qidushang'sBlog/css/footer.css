@@ -1,0 +1,27 @@
+.footer{
+	width: 100%;
+	height: 4rem;
+	/* background: #b4e0c4; */
+	margin: 0 auto;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	text-align: center;
+	padding-top: 1rem;
+	transition: bottom .5s;
+}
+
+.hiddened{
+	top: -90px;
+}
+
+.showed{
+	top:0;
+	z-index: 999;
+}
+
+@media screen and (max-width: 600px) {
+	.footer{
+		font-size: 8px;
+	}
+}

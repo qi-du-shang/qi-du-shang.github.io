@@ -1,0 +1,78 @@
+.banner {
+	width: 80%;
+	height: 350px;
+	/* background: #ffffff; */
+	border: solid black 2px;
+	border-radius: 5px;
+	margin: 0 auto;
+	margin-bottom: 3%;
+	text-align: center;
+	padding-bottom: 5%;
+}
+
+.banner h1 {
+	display: block;
+	padding-top: 40px;
+	font-size: 70px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+
+.banner p {
+	margin-top: 30px;
+	font-size: 25px;
+}
+
+#first-words {
+    display: inline-block;
+    border-right: 0.08em solid #0052D9;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+/* 搜索框样式 */
+
+.title_box{
+	width: 100%;
+	overflow: hidden;
+	display: flex;
+}
+
+.title_left{
+	width: 100px;
+	height: 40px;
+	float: left;
+}
+
+.title_right{
+	width: 100px;
+	height: 40px;
+	float: right;
+}
+
+#txtSearch {
+	width: 370px;
+	height: 50px;
+	border: 3px solid #E9E9E9;
+	padding: 0 10px;
+	border-radius: 5px;
+	color: #0052D9;
+	transition: all 1s;
+	font-size: 20px;
+	margin: 4% auto;
+}
+
+#txtSearch:hover {
+	border: 3px solid #0052D9;
+}
+
+#txtSearch:focus {
+	width: 50%;
+	outline: none;
+}
+
+.changestyle {
+	color: red;
+	font-weight: 600;
+}
+

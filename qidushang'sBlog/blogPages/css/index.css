@@ -1,0 +1,82 @@
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	box-sizing: border-box;
+	cursor: url('../images/01.cur'), auto;
+}
+
+.theme-default {
+   --accent-color: #ffffff;
+   --font-color: #222222;
+}
+ 
+.theme-second {
+    --accent-color: #373737;
+    --font-color: #cecece;
+}
+ 
+body {
+    background-color: var(--accent-color);
+    color: var(--font-color);
+}
+
+.color-select button {
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid;
+    border-radius: 9999px;
+    cursor: pointer;
+    height: 20px;
+    margin: 0 0.8rem 0.8rem 0;
+    outline: 0;
+    width: 20px;
+}
+
+/* Style each swatch to match the corresponding theme */
+.color-select button:nth-child(1) { background: #ffffff; border-color: #222222; }
+.color-select button:nth-child(2) { background: #373737; border-color: #cecece; }
+
+::selection {
+	background: #DC143C;
+	color: #fff;
+}
+
+::-moz-selection {
+	background: #DC143C;
+	color: #fff;
+}
+
+html::-webkit-scrollbar {
+	width: 20px;
+	height: 30px;
+}
+
+html::-webkit-scrollbar-thumb {
+	background: #cecece;
+	border-radius: 30px;
+	box-shadow: inset 2px 2px 2px rgba(255, 255, 255, .25), inset -2px -2px 2px rgba(0, 0, 0, .25);
+}
+
+html::-webkit-scrollbar-track {
+	background: #e0edd3;
+}
+
+@font-face {
+	font-family: 'miSans';
+	src: url(../fonts/MiSans-Bold.ttf) format('truetype');
+}
+
+.miSans {
+	font-family: 'miSans';
+}
+
+h2{
+	text-align: center;
+}
+
+p{
+	line-height: 45px;
+	text-indent: 2em;
+	font-weight: 700;
+}
