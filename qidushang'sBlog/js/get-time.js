@@ -59,7 +59,7 @@ var show = document.getElementById("getWeek");
 show.innerHTML = getWeekDate();
 
 // 本站已经运行天数
-var s1 = '2022-03-24';//设置为你的建站时间
+var s1 = '2022-03-19';//设置为你的建站时间
 s1 = new Date(s1.replace(/-/g, "/"));
 s2 = new Date();
 var days = s2.getTime() - s1.getTime();
