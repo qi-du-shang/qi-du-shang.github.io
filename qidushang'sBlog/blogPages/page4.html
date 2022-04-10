@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html class="theme-default">
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css"/>
+		<script type="text/javascript" src="js/index.js"></script>
+	</head>
+	<body class="miSans">
+		<div class="color-select">
+		    <button onclick="toggleDefaultTheme()"></button>
+		    <button onclick="toggleSecondTheme()"></button>
+		</div>
+		
+		<h2>Vue的v-for,v-on及v-if指令</h2>
+		<p>列表展示(list)</p>
+		<p><code>&lt;li v-for="item in movies"&gt;{{item}}&lt;/li&gt;</code></p>
+		<p>data:{
+			movies:['内容','内容','内容']
+			}
+		</p>
+		<hr>
+		<p>计数器</p>
+		<p>v-on指令:监听事件</p>
+		<p><code>&lt;h2&gt;当前计数：{{counter}}&lt;/h2&gt;</code></p>
+		<p><code>&lt;button v-on:click="add"&gt;+&lt;/button&gt;</code></p>
+		<p>			
+		data:{
+				counter:0
+			},<br>
+			methods:{
+				add:function(){
+					console.log('add被执行');
+					this.counter++
+				},<br>
+				sub:function(){
+					console.log('sub被执行');
+					this.counter--
+				}
+			}
+		</p>
+		<hr>
+		<p>v-if指令:v-if="seen"</p>
+		<p>data:{
+			seen:true/false
+		}
+		</p>
+	</body>
+</html>
+
