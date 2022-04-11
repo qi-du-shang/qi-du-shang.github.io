@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <title>Banner Cycler</title>
+		<style type="text/css">
+		    html{
+			background: url(./161.png) no-repeat;
+			background-size: cover;
+			width: 100%;
+			height: 100%;
+		    }
+			div{
+			    position: absolute;
+				left: 57%;
+				top: 20%;
+			    cursor: pointer;
+				width: 200px;
+				height: 200px;
+			}
+		</style>
+        <script>
+            var banners = ["01.png","02.png","03.png"]; // 图片地址
+            var counter = 0;
+            function run(){
+                setInterval(cycle,270);  //重复运行cycle函数，周期100ms
+            }
+            function cycle(){
+                counter++;
+                if(counter == banners.length)    
+                    counter = 0;
+                document.getElementById("banner").src = banners[counter];
+            }
+        </script>
+    </head>
+    <body onload = "run();">
+        
+        <div>
+        	<img id="banner" alt="banner" src="01.png">
+        </div>
+        
+    </body>
+	<script type="text/javascript">
+		
+		    // 鼠标跟随
+		    // pageY和pageX的ie67ie兼容写法
+		    // 在页面的位置 = 看得见的 + 看不见的
+		    // pageY/pageX = event.clientY/clientX + scroll().top/scroll().left
+		    var obj = document.getElementsByTagName("div")[0];
+		    var timer = null;
+		    var targetX = 0,
+		        targetY = 0,
+		        leaderX = 0,
+		        leaderY = 0;
+		 
+		    // 给整个文档绑定点击事件获取鼠标位置
+		    document.onclick = function(event){
+		        // 兼容获取事件对象
+		        event = event || window.event;
+		        // 鼠标在页面的位置 = 被卷去的部分 + 可视区域部分
+		        var pageY = event.pageY || scroll().top + event.clientY;
+		        var pageX = event.pageX || scroll().left + event.clientX;
+		        targetY = pageY - obj.offsetHeight/2;
+		        targetX = pageX - obj.offsetWidth/2;
+		 
+		        // 清除定时器
+		        clearInterval(timer);
+		        timer = setInterval(function(){
+		            // X,先左右,后上下
+		            // 为盒子的位置获取值
+		            leaderX = obj.offsetLeft;
+		            // 获取步长
+		            var stepX = (targetX - leaderX)/10;
+		            // 二次处理步长
+		            stepX = stepX > 0 ? Math.ceil(stepX) : Math.floor(stepX);
+		            leaderX = leaderX + stepX;
+		            // 赋值
+		            obj.style.left = leaderX + "px";
+		            // Y
+		            leaderY = obj.offsetTop;
+		            var stepY = (targetY - leaderY)/10;
+		            stepY = stepY > 0 ? Math.ceil(stepY) : Math.floor(stepY);
+		            leaderY = leaderY + stepY;
+		            obj.style.top = leaderY + "px";
+		        }, 30);
+		    }
+
+	</script>
+</html>
+
