@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html class="theme-default">
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css"/>
+		<script type="text/javascript" src="js/index.js"></script>
+	</head>
+	<body class="miSans">
+		<div class="color-select">
+		    <button onclick="toggleDefaultTheme()"></button>
+		    <button onclick="toggleSecondTheme()"></button>
+		</div>
+		
+		<h2>Vue的v-once,v-pre,v-text,v-bind指令</h2>
+		<p><code>&lt;h2 v-once&gt;{{message}}&lt;/h2&gt;</code></p>
+		<p>当属性发生改变时,加v-once指令可以使原始展示属性不发生改变。</p>
+		<hr>
+		<p>v-pre指令</p>
+		<p>使{{message}}以当前状态展示,不进行编译。</p>
+		<hr>
+		<p>v-text指令</p>
+		<p>和正常编译类似,但标签中的内容会被v-text中属性的值覆盖。</p>
+		<p><code>&lt;h2 v-text="message"&gt;,你好!&lt;/h2&gt;</code></p>
+		<hr>
+		<p>v-bind指令</p>
+		<p>动态绑定标签的属性。</p>
+		<p><code>&lt;div id="app"&gt;&lt;a v-bind:href="aHref"&gt;百度一下&lt;/a&gt;&lt;/div&gt;</code></p>
+		<p>
+					const app = new Vue({
+						el :'#app',
+						data: {
+							message: '你好啊',
+							imgUrl: '1.png',
+							aHref: 'http://www.baidu.com'
+						}
+					})
+		</p>
+	</body>
+</html>
+

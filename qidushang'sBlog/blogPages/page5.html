@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html class="theme-default">
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css"/>
+		<script type="text/javascript" src="js/index.js"></script>
+	</head>
+	<body class="miSans">
+		<div class="color-select">
+		    <button onclick="toggleDefaultTheme()"></button>
+		    <button onclick="toggleSecondTheme()"></button>
+		</div>
+		
+		<h2>Vue的v-cloak,v-html指令</h2>
+		<p>运行时不会产生原始{{message}},未编译前的样子</p>
+		<p>[v-cloak]{
+				display: none;
+			}
+		</p>
+		<p><code>&lt;div  id="app" v-cloak&gt;{{message}}&lt;/div&gt;</code></p>
+		<hr>
+		<p>v-html指令</p>
+		<p><code>&lt;h2  v-html="url"&gt;&lt;/h2&gt;</code></p>
+		<p>
+					const app = new Vue({
+						el: '#app',
+						data: {
+							message: '你好啊',
+							url: '<code>&lt; href="http://www.baidu.com">百度一下&gt;&lt;/a&gt;'
+						}
+					})
+		</p>
+		<p>当data里的属性有html标签时,v-html可以将这些标签编译,以编译后的状态展示出来。</p>
+	</body>
+</html>
+
