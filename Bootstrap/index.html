@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Blog</title>
+		<link rel="icon" href="./images/logo.jpg">
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/styles.css">
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery-3.2.1.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body class="xingkai">
+		<!-- 定义容器，装载bootstrap起作用的内容 -->
+		<!-- 定义导航条 -->
+		<nav class="navbar navbar-inverse">
+			<!-- 导航条100%占满页面 -->
+			<div class="container-fluid">
+				<!-- 定义导航条的头 -->
+				<div class="navbar-header">
+					<div class="navbar-brand">Blog</div>
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+						data-target="#mynavbar">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</div>
+				<!-- 定义导航条的主体 -->
+				<div class="collapse navbar-collapse" id="mynavbar">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">首页</a></li>
+						<li><a href="page.html">文章页</a></li>
+						<li><a href="tags.html">标签</a></li>
+						<li><a href="timeLine.html">时间轴</a></li>
+						<li><a href="comment.html">说说</a></li>
+						<li><a href="connection.html">联系我</a></li>
+					</ul>
+					<!-- 定义搜索框 -->
+					<form class="navbar-form navbar-right">
+						<a href="javascript:void(0)" id="baidu" onclick="return false;">百度搜索</a>
+						<div class="form-group">
+							<input type="text" class="form-control" id="myInput" value="百度搜索">
+						</div>
+						<!-- <input type="button" value="搜索文章" id="mySearch"> -->
+						<button type="button" class="btn btn-warning" value="百度搜索" id="mySearch">
+							<span class="glyphicon glyphicon-search"></span>
+						</button>
+					</form>
+				</div>
+			</div>
+		</nav>
+
+
+		<div class="preloader"></div>
+		<div class="snow-container"></div>
+		<div class="BlogBackground" style="background-image: url(./images/2.jpg);">
+
+
+			<div class="container header">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-4"></div>
+					<div class="col-xs-12 col-sm-12 col-md-4 pageTip">首页</div>
+					<div class="col-xs-12 col-sm-12 col-md-4"></div>
+				</div>
+			</div>
+
+			<div class="container indexText">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-4"></div>
+					<div class="col-xs-12 col-sm-12 col-md-4 indexFlesh">
+						<h1>Blog</h1><br>
+						<div id="writeSomething"></div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-4"></div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-4"></div>
+					<div class="col-xs-12 col-sm-12 col-md-4">
+						<div class="col-xs-2 col-sm-2 col-md-2 indexTag">清新</div>
+						<div class="col-xs-2 col-sm-2 col-md-2 indexTag">简洁</div>
+						<div class="col-xs-2 col-sm-2 col-md-2 indexTag">酷黑</div>
+						<div class="col-xs-2 col-sm-2 col-md-2 indexTag">时尚</div>
+						<div class="col-xs-2 col-sm-2 col-md-2 indexTag">炫酷</div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-4"></div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-4"></div>
+					<div class="col-xs-12 col-sm-12 col-md-4 scrollBottom glyphicon glyphicon-chevron-down">
+
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-4"></div>
+				</div>
+			</div>
+
+			<div class="glyphicon glyphicon-chevron-up"></div>
+
+		</div>
+
+		<!-- 内容 -->
+		<div class="contentBox">
+
+			<div class="container indexContent">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-6 indexLeft">
+						<iframe src="calendar.html" frameborder="0" width="240" height="400"></iframe>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-6 indexRight">
+						<iframe src="clock.html" frameborder="0"></iframe>
+						<div id="currentTime">
+
+						</div>
+						<div id="getWeek"></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="backToBottom"></div><!-- 到底部动画的锚点 -->
+
+		<div class="container footer">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-4"></div>
+				<div class="col-xs-12 col-sm-12 col-md-4">Copyright &copy; 2022</div>
+				<div class="col-xs-12 col-sm-12 col-md-4"></div>
+			</div>
+		</div>
+
+	</body>
+	<script src="js/main.js"></script>
+	<script src="js/writeText.js"></script>
+	<script src="js/scrollBottom.js"></script>
+	<script src="js/background.js"></script>
+	<script src="js/getTime.js"></script>
+	<script src="js/search.js"></script>
+</html>
