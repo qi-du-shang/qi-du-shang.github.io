@@ -1,0 +1,420 @@
+* {
+	margin: 0;
+	padding: 0;
+	cursor: url('../images/alternate.cur'), auto;
+}
+
+a {
+	cursor: url('../images/link.cur'), auto;
+}
+
+::selection {
+	color: #5500ff;
+}
+
+::-moz-selection {
+	color: #5500ff;
+}
+
+@font-face {
+	font-family: 'xingkai';
+	src: url(../fonts/xingkai.ttf) format('truetype');
+}
+
+.snow-container {
+	position: fixed;
+	top: 0;
+	left: 35%;
+	width: 20%;
+	height: 100%;
+	/* z-index: 9999; */
+}
+
+.btn-warning {
+    color: rgba(0, 0, 0, .5);
+    background-color: #fff;
+	transition: all 2s; 
+	border-color: rgba(0, 0, 0, .5);
+}
+
+.btn-warning:hover{
+	color: #fff;
+	background-color: rgba(0, 0, 0, .5);
+	border-color: #fff;
+}
+
+.xingkai {
+	font-family: 'xingkai';
+}
+
+html,
+body {
+	width: 100%;
+	height: 100%;
+	/* 	background: url(../images/2.jpg) no-repeat;
+	background-size: cover; */
+}
+
+.BlogBackground {
+	width: 100%;
+	height: 100%;
+	background-size: cover;
+	background-attachment: fixed;
+	z-index: 1;
+	position: relative;
+	top: -20px;
+}
+
+#mynav {
+	position: fixed;
+}
+
+.centerList {
+	color: #fff;
+}
+
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+	width: 5px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background: rgba(117, 146, 168, 1);
+	-webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.5);
+}
+
+/* 内层滚动槽 */
+::-webkit-scrollbar-track-piece {
+	width: 2px;
+	background: rgba(255, 255, 255, 0.5);
+}
+
+.contentBox {
+	height: 100%;
+	width: 100%;
+	background: url(../images/4.jpg);
+	margin-top: -20px;
+	/* background: rgba(0,0,0,0.5); */
+}
+
+#barcon {
+	font-size: 20px;
+	text-align: center;
+}
+
+.otherBox {
+	height: 30%;
+	width: 100%;
+	margin-top: -20px;
+	background: url(../images/2.jpg);
+}
+
+.carousel-inner .item img {
+	height: 540px;
+}
+
+#mycarousel{
+	margin-top: 30px;
+}
+
+.carousel-caption {
+	position: absolute;
+	top: 210px;
+	font-size: 30px;
+}
+
+.header {
+	position: relative;
+	top: 20px;
+}
+
+.scrollBottom {
+	width: 30px;
+	height: 30px;
+	background: rgba(255, 255, 255, .7);
+	border-radius: 50%;
+	margin-left: 13.5%;
+	margin-top: 2%;
+	position: absolute;
+	left: 33.33333%;
+	animation: scrollBottomMove 3.5s infinite ease-in-out alternate;
+	/* transition: all .3s; */
+	padding-left: 7px;
+	padding-top: 8px;
+	border: solid 2px rgba(255, 255, 255, 1);
+}
+
+@keyframes scrollBottomMove {
+	0% {
+		top: 75%;
+		background: rgba(215, 80, 61, 1.0);
+	}
+
+	100% {
+		top: 73%;
+		background: rgba(108, 48, 36, 1.0);
+	}
+}
+
+.form-group {
+	display: inline-block;
+}
+
+.pageTip {
+	height: 42px;
+	font-size: 30px;
+	font-weight: 600;
+	background: rgba(0, 0, 0, .5);
+	margin-bottom: 20px;
+	text-align: center;
+	border-radius: 10px;
+	color: #fff;
+	margin-bottom: 5%;
+	white-space: nowrap;
+}
+
+.footer {
+	width: 100%;
+	height: 60px;
+	background-color: #080808;
+	position: fixed;
+	bottom: 0;
+	text-align: center;
+	padding-top: 20px;
+	color: white;
+	z-index: 999;
+}
+
+.indexFlesh {
+	text-align: center;
+	background: rgba(0, 0, 0, .5);
+	width: 100%;
+	padding: 17px;
+	letter-spacing: 0px;
+	border-radius: 10px;
+	box-sizing: initial;
+	white-space: nowrap;
+	margin-top: 60px;
+	color: #fff;
+	height: 300px;
+}
+
+#writeSomething {
+	font-size: 30px;
+	margin-top: 20px;
+}
+
+.indexFlesh h1 {
+	font-size: 80px;
+}
+
+.indexTag {
+	width: 60px;
+	height: 30px;
+	border-radius: 10px;
+	background: rgba(0, 0, 0, .5);
+	margin-left: 3px;
+	margin-top: 30px;
+	color: #fff;
+	transition: all 3s;
+	padding-top: 5px;
+}
+
+.indexTag:hover {
+	position: relative;
+	bottom: 5px;
+	background: #fff;
+	color: #000;
+	font-weight: 700;
+}
+
+.indexLeft {
+	height: 500px;
+	background: rgba(0, 0, 0, .3);
+	color: #fff;
+	border-radius: 10px;
+	margin-top: 80px;
+	padding-top: 150px;
+	padding-left: 15%;
+}
+
+.indexRight {
+	height: 500px;
+	background: rgba(0, 0, 0, .3);
+	color: #fff;
+	border-radius: 10px;
+	margin-right: 0;
+	margin-top: 80px;
+	padding-top: 100px;
+	padding-left: 15%;
+	font-size: 20px;
+}
+
+.pagination {
+	margin: 0;
+	/* margin-left: 33.33333%; */
+	margin-bottom: 80px;
+}
+
+.pagination li a {
+	background: rgba(0, 0, 0, .5);
+	color: #fff;
+}
+
+.pageBox {
+	background: rgba(0, 0, 0, .5);
+	margin-top: 15px;
+	border-radius: 10px;
+	color: #fff;
+	transition: all 1.5s;
+}
+
+.pageBox:hover {
+	background: #fff;
+	color: rgba(0, 0, 0, .5);
+}
+
+.pageBox h2 {
+	text-align: center;
+}
+
+.bootstrap-tagsinput {
+	width: 100%;
+	height: 500px;
+	overflow: auto;
+}
+
+.tagsContent{
+	margin-top: 30px;
+}
+
+.label {
+	font-size: 300%;
+	line-height: 2;
+}
+
+.connectionBox {
+	cursor: url('../images/link.cur'), auto;
+	border-radius: 10px;
+	transition: all 0.5s;
+	color: #fff;
+	height: 300px;
+	padding-left: 3.33333%;
+	padding-top: 50px;
+	background: #fff;
+	margin-top: 130px;
+	margin-bottom: 60px;
+}
+
+.connectionBox a {
+	display: block;
+	width: 300px;
+	height: 300px;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.glyphicon-envelope {
+	color: #FFBF2F;
+	margin-top: 50px;
+	margin-left: 50px;
+}
+
+.fa-github {
+	color: rgb(0, 0, 0);
+	margin-top: 50px;
+	margin-left: 50px;
+}
+
+.fa-qq {
+	color: #0052D9;
+	margin-top: 50px;
+	margin-left: 50px;
+}
+
+.fa-wechat {
+	color: #29CE42;
+}
+
+.connectionBox:nth-of-type(1) {
+	font-size: 150px;
+}
+
+.connectionBox:nth-of-type(1):hover {
+	background: #FFBF2F;
+}
+
+.connectionBox:nth-of-type(1):hover .glyphicon-envelope {
+	color: #fff;
+}
+
+.connectionBox:nth-of-type(2),
+.connectionBox:nth-of-type(3),
+.connectionBox:nth-of-type(4) {
+	font-size: 60px;
+}
+
+.connectionBox:nth-of-type(2):hover {
+	background: #000;
+}
+
+.connectionBox:nth-of-type(2):hover .fa-github {
+	color: #fff;
+}
+
+.connectionBox:nth-of-type(3):hover {
+	background: #0052D9;
+}
+
+.connectionBox:nth-of-type(3):hover .fa-qq {
+	color: #fff;
+}
+
+.connectionBox:nth-of-type(4):hover {
+	background: #29CE42;
+}
+
+.connectionBox:nth-of-type(4):hover .fa-wechat {
+	color: #fff;
+}
+
+.connectionBox:nth-of-type(4) img {
+	display: none;
+	transition: all .6s;
+	position: absolute;
+	top: -20px;
+	left: -20px;
+}
+
+.connectionBox:nth-of-type(4):hover img {
+	display: block;
+}
+
+.connectionBox:hover {
+	border: solid 2px rgba(0, 0, 0, .5);
+}
+
+.preloader {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	height: 100%;
+	width: 100%;
+	z-index: 99999;
+	background-color: #ffffff;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-image: url(../images/loading.gif);
+}
+
+.glyphicon-chevron-up {
+	position: fixed;
+	top: 80%;
+	left: 90%;
+	font-size: 70px;
+	color: #0052D9;
+	margin-right: 30px;
+}
