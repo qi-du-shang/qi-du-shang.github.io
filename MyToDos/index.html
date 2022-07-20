@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待办事项助手-MyToDos</title>
+    <link rel="stylesheet" href="index-4-2.css">
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+    <div class="container" id="vue42">
+        <h3 align="center">MyToDos</h3>
+        <fieldset>
+            <legend>待办事项管理助手</legend>
+            <input type="text" v-model.trim="newTodo" @keyup.enter="append" autofocus placeholder="请输入待办事项">
+            <button id="append" @click="appendItem" class="btn1">添加</button>
+            <ol>
+                <!-- for循环遍历待办事项数组中的数据 -->
+                <li v-for="(item,index) of itemArray" :key=item.id>
+                    <!-- 通过复选框区分待办事项是否完成 -->
+                    <input type="checkbox" @click="completed(index)" :checked="item.state==false">
+                    <!-- 通过css样式区分显示完成的待办事项 -->
+                    <span class="itemClass" :class="item.state?'not':'doneClass'">{{item.content}}</span>
+                    <!-- 设置单击"x"删除该待办事项 -->
+                    <span class="cancelClass" @click="delOne(index)">x</span>
+                </li>
+            </ol>
+            <footer>
+                <!-- 动态切换显示项目总数/剩余待完成事项数 -->
+                <div id="inlineDiv" v-show="total==notDoneCount">
+                    <span>共有</span><span v-text="total"></span><span>项</span>
+                </div>
+                <div id="inlineDiv" v-show="total!=notDoneCount">
+                    <span>剩余</span><span v-text="notDoneCount"></span><span>项</span>
+                </div>
+                <!-- 设置分类显示不同待办事项的按钮,也可以使用超链接完成同样的功能 -->
+                <div id="inlineDiv">
+                    <button @click="all" class="btn2">全部</button>
+                    <button @click="isActive" class="btn2">待完成</button>
+                    <button @click="isCompleted" class="btn2">已完成</button>
+                    <button @click="clearDone" class="btn2" v-show="total-notDoneCount>0">清除完成</button>
+                </div>
+            </footer>
+        </fieldset>
+    </div>
+</body>
+<script src="index-4-2.js"></script>
+</html>
