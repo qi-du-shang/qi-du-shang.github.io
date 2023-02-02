@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title>提交评价</title>
+		<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+		<link rel="stylesheet" type="text/css" href="css/demo1.css" />
+		<link rel="stylesheet" type="text/css" href="css/component1.css" />
+		<link rel="stylesheet" type="text/css" href="css/cs-select.css" />
+		<link rel="stylesheet" type="text/css" href="css/cs-skin-boxes.css" />
+		<link rel="icon" href="./images/丰顺之旅.png">
+		<script src="js/modernizr.custom1.js"></script>
+	</head>
+	<body>
+		<div class="container">
+
+			<div class="fs-form-wrap" id="fs-form-wrap">
+				<div class="fs-title">
+					<h1>问卷调查表</h1>
+				</div>
+				<form id="myform" class="fs-form fs-form-full" autocomplete="off">
+					<ol class="fs-fields">
+						<li>
+							<label class="fs-field-label fs-anim-upper" for="q1" data-info="您的信息我们将为您保密.">你叫什么名字?</label>
+							<input class="fs-anim-lower" id="q1" name="q1" type="name" placeholder="姓名" required/>
+						</li>
+						<li>
+							<label class="fs-field-label fs-anim-upper" for="q2" data-info="您的信息我们将为您保密.">你的电话号码?</label>
+							<input class="fs-anim-lower" id="q2" name="q2" type="phone" placeholder="电话" required/>
+						</li>
+						<li>
+							<label class="fs-field-label fs-anim-upper" for="q3">页面内容如何？</label>
+							<input class="fs-anim-lower" id="q3" name="q3" type="text" placeholder="页面内容" required/>
+						</li>
+						<li>
+							<label class="fs-field-label fs-anim-upper" for="q4">希望的页面内容？</label>
+							<input class="fs-anim-lower" id="q4" name="q4" type="text" placeholder="希望的页面内容" required/>
+						</li>
+						<li>
+							<label class="fs-field-label fs-anim-upper" for="q5">页面布局如何？</label>
+							<input class="fs-anim-lower" id="q5" name="q5" type="text" placeholder="页面布局" required/>
+						</li>
+						<li>
+							<label class="fs-field-label fs-anim-upper" for="q6">希望的页面布局？</label>
+							<input class="fs-anim-lower" id="q6" name="q6" type="text" placeholder="希望的页面布局" required/>
+						</li>
+						<li>
+							<label class="fs-field-label fs-anim-upper" for="q7">主题色彩如何？</label>
+							<input class="fs-anim-lower" id="q7" name="q7" type="text" placeholder="主题色彩" required/>
+						</li>
+						<li>
+							<label class="fs-field-label fs-anim-upper" for="q8">希望的主题色彩？</label>
+							<input class="fs-anim-lower" id="q8" name="q8" type="text" placeholder="希望的主题色彩" required/>
+						</li>
+						<li>
+							<label class="fs-field-label fs-anim-upper" for="q9">页面评分</label>
+							<input class="fs-anim-lower" id="q9" name="q9" type="number" placeholder="满分为10分" required/>
+						</li>
+
+					</ol><!-- /fs-fields -->
+					<button class="fs-submit" type="submit">提交问卷</button>
+				</form><!-- /fs-form -->
+			</div><!-- /fs-form-wrap -->
+
+		</div><!-- /container -->
+		<script src="js/classie1.js"></script>
+		<script src="js/selectFx.js"></script>
+		<script src="js/fullscreenForm.js"></script>
+		<script>
+			(function() {
+				var formWrap = document.getElementById( 'fs-form-wrap' );
+
+				[].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {	
+					new SelectFx( el, {
+						stickyPlaceholder: false,
+						onChange: function(val){
+							document.querySelector('span.cs-placeholder').style.backgroundColor = val;
+						}
+					});
+				} );
+
+				new FForm( formWrap, {
+					onReview : function() {
+						classie.add( document.body, 'overview' ); // for demo purposes only
+					}
+				} );
+			})();
+		</script>
+	</body>
+</html>
