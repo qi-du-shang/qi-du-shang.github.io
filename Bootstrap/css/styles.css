@@ -24,8 +24,8 @@ a {
 .snow-container {
 	position: fixed;
 	top: 0;
-	left: 35%;
-	width: 20%;
+	left: 50%;
+	width: 5%;
 	height: 100%;
 	/* z-index: 9999; */
 }
