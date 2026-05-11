@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洛克王国世界 - 远行商人信息</title>
+    <link rel="icon" href="./logo.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen py-8 px-4">
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-2 text-indigo-700">蛇瞳-洛克王国世界</h1>
+        <h2 class="text-2xl font-semibold text-center mb-8 text-indigo-500">远行商人信息实时查询</h2>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex flex-wrap items-center gap-4">
+                <button id="fetchBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-md">
+                    🔄 刷新商人信息
+                </button>
+                <span id="lastUpdate" class="text-gray-500 text-sm"></span>
+                <span id="autoRefreshInfo" class="text-blue-500 text-sm hidden"></span>
+            </div>
+        </div>
+        
+        <div id="loading" class="hidden bg-white rounded-xl shadow-lg p-12 text-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-4 border-indigo-200 border-t-indigo-600 mx-auto mb-6"></div>
+            <p class="text-xl text-gray-600">正在获取最新数据...</p>
+            <p class="text-sm text-gray-400 mt-2">倒计时结束后将自动刷新</p>
+        </div>
+        
+        <div id="error" class="hidden bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl mb-6 shadow">
+            <strong class="text-lg">❌ 获取失败：</strong>
+            <span id="errorMsg" class="block mt-2"></span>
+            <p class="text-sm text-red-500 mt-2">提示：公共代理可能不稳定，请点击刷新按钮重试</p>
+        </div>
+        
+        <div id="result" class="hidden bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-indigo-600 text-white px-6 py-4">
+                <h3 class="text-xl font-bold">📦 远行商人最新商品</h3>
+                <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="bg-green-600/30 rounded-lg p-3">
+                        <p class="text-green-200 text-sm">🌿 每日商品（光合球等）</p>
+                        <p id="dailyCountdown" class="text-yellow-300 font-bold text-lg"></p>
+                        <p class="text-indigo-200 text-xs">每日8:00-24:00</p>
+                    </div>
+                    <div class="bg-orange-600/30 rounded-lg p-3">
+                        <p class="text-orange-200 text-sm">⏰ 本轮限时商品（国王球等）</p>
+                        <p id="roundCountdown" class="text-yellow-300 font-bold text-lg"></p>
+                        <p id="roundTime" class="text-indigo-200 text-xs"></p>
+                    </div>
+                </div>
+                <p id="timeSource" class="text-indigo-200 text-xs mt-2"></p>
+            </div>
+            <div id="merchantContent" class="p-6">
+                <!-- 重新生成的商品列表将显示在这里 -->
+            </div>
+        </div>
+        
+        <!-- <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">📋 页面精选攻略</h3>
+            <div id="guidesList" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                
+            </div>
+        </div> -->
+        
+        <footer class="mt-8 text-center text-gray-500 text-sm">
+            <p>数据来源：远行商人</p>
+            <p class="mt-1">本工具仅供学习交流使用，请遵守网站使用条款</p>
+        </footer>
+    </div>
+
+    <script>
+        // 备用CORS代理列表
+        const corsProxies = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest='
+        ];
+        
+        let currentProxyIndex = 0;
+        let dailyCountdownInterval = null;
+        let roundCountdownInterval = null;
+        let autoRefreshTimeout = null;
+        
+        // 洛克王国世界远行商人官方固定刷新规律
+        const merchantSchedule = [
+            { start: 8, end: 12, name: "第一轮" },
+            { start: 12, end: 16, name: "第二轮" },
+            { start: 16, end: 20, name: "第三轮" },
+            { start: 20, end: 24, name: "第四轮" }
+        ];
+        
+        // ✅ 洛克王国世界官方CDN商品图片（持续更新）
+        const officialItemImages = {
+            '祝福项坠': './祝福项坠.png',
+            '奇异血脉秘药': './奇异血脉秘药.png',
+            '魔力果': './魔力果.png',
+            '棱镜球': './棱镜球.png',
+            '首领血脉秘药': './首领血脉秘药.png',
+            '神奇的蛋': './神奇的蛋.png',
+            '光合球': './光合球.png',
+            '黄石榴石': './黄石榴石.png',
+            '黑晶琉璃': './黑晶琉璃.png',
+            '蓝晶碧玺': './蓝晶碧玺.png',
+            '紫莲刚玉': './紫莲刚玉.png',
+            '龙系粉尘': './龙系粉尘.png',
+            '国王球': './国王球.png',
+            '国王球': './国王球.png',
+            '国王球': './国王球.png',
+            '国王球': './国王球.png',
+            '国王球': './国王球.png',
+            '国王球': './国王球.png',
+            '国王球': './国王球.png',
+            '国王球': './国王球.png',
+            '炫彩蛋': './炫彩蛋.png',
+            '高级咕噜球': './高级咕噜球.png',
+            '中级咕噜球': './神奇的蛋.png',
+            '普通咕噜球': './普通咕噜球.png',
+            'HP药剂': './神奇的蛋.png',
+            'PP药剂': './神奇的蛋.png',
+            '火系粉尘': './火系粉尘.png',
+            '水系粉尘': './水系粉尘.png',
+            '草系粉尘': './草系粉尘.png',
+            '电系粉尘': './电系粉尘.png',
+            '冰系粉尘': './冰系粉尘.png',
+            '地系粉尘': './地系粉尘.png'
+        };
+        
+        document.getElementById('fetchBtn').addEventListener('click', fetchMerchantData);
+        
+        // 页面加载时自动获取一次数据
+        window.addEventListener('load', fetchMerchantData);
+        
+        // 页面卸载时清除所有定时器
+        window.addEventListener('beforeunload', () => {
+            if (dailyCountdownInterval) clearInterval(dailyCountdownInterval);
+            if (roundCountdownInterval) clearInterval(roundCountdownInterval);
+            if (autoRefreshTimeout) clearTimeout(autoRefreshTimeout);
+        });
+        
+        async function fetchMerchantData() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+            const lastUpdate = document.getElementById('lastUpdate');
+            const merchantContent = document.getElementById('merchantContent');
+            const autoRefreshInfo = document.getElementById('autoRefreshInfo');
+            
+            // 清除之前的所有定时器
+            if (dailyCountdownInterval) clearInterval(dailyCountdownInterval);
+            if (roundCountdownInterval) clearInterval(roundCountdownInterval);
+            if (autoRefreshTimeout) clearTimeout(autoRefreshTimeout);
+            dailyCountdownInterval = null;
+            roundCountdownInterval = null;
+            autoRefreshTimeout = null;
+            
+            // 重置状态
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            result.classList.add('hidden');
+            autoRefreshInfo.classList.add('hidden');
+            merchantContent.innerHTML = '';
+            currentProxyIndex = 0;
+            
+            try {
+                let htmlText = await fetchWithProxy('https://wiki.lcx.cab/lk/index.php');
+                
+                // ==============================================
+                // 第一步：彻底删除所有"计算中"文字
+                // ==============================================
+                htmlText = htmlText.replace(/计算中/g, '');
+                htmlText = htmlText.replace(/{{#countdown:\d+\|?.*?}}/g, '');
+                
+                // ==============================================
+                // 第二步：计算两个固定的结束时间
+                // ==============================================
+                const now = new Date();
+                const currentHour = now.getHours();
+                
+                // 每日商品结束时间：当天24:00
+                const dailyEndTime = new Date();
+                dailyEndTime.setHours(24, 0, 0, 0);
+                
+                // 本轮限时商品结束时间
+                let currentPeriod = null;
+                for (const period of merchantSchedule) {
+                    if (currentHour >= period.start && currentHour < period.end) {
+                        currentPeriod = period;
+                        break;
+                    }
+                }
+                
+                const roundEndTime = new Date();
+                if (currentPeriod) {
+                    roundEndTime.setHours(currentPeriod.end, 0, 0, 0);
+                }
+                
+                // ==============================================
+                // 第三步：解析商品信息
+                // ==============================================
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, 'text/html');
+                
+                // 提取基本信息
+                let merchantInfo = {
+                    date: '',
+                    itemCount: 0,
+                    round: '',
+                    items: []
+                };
+                
+                // 查找远行商人区块
+                const merchantText = doc.body.textContent;
+                
+                // 提取日期
+                const dateMatch = merchantText.match(/(\d{4}-\d{2}-\d{2})/);
+                if (dateMatch) merchantInfo.date = dateMatch[1];
+                
+                // 提取商品数
+                const countMatch = merchantText.match(/当前商品数\s*(\d+)/);
+                if (countMatch) merchantInfo.itemCount = parseInt(countMatch[1]);
+                
+                // 提取轮次
+                const roundMatch = merchantText.match(/第\s*(\d+)\s*\/\s*(\d+)\s*轮/);
+                if (roundMatch) merchantInfo.round = `第 ${roundMatch[1]} / ${roundMatch[2]} 轮`;
+                
+                // 提取所有商品
+                const itemPattern = /([^\d\n\s]+)\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/g;
+                let match;
+                
+                while ((match = itemPattern.exec(merchantText)) !== null) {
+                    const itemName = match[1].trim();
+                    const startTime = match[2];
+                    const endTime = match[3];
+                    
+                    // 去重
+                    if (!merchantInfo.items.some(item => item.name === itemName)) {
+                        merchantInfo.items.push({
+                            name: itemName,
+                            startTime: startTime,
+                            endTime: endTime,
+                            image: officialItemImages[itemName] || ''
+                        });
+                    }
+                }
+                
+                // ==============================================
+                // 第四步：重新生成干净的商品列表
+                // ==============================================
+                let html = '';
+                
+                // 基本信息
+                html += `
+                    <div class="mb-6 pb-4 border-b border-gray-200">
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">远行商人</h4>
+                        <p class="text-gray-600">日期：${merchantInfo.date || new Date().toLocaleDateString()}</p>
+                        <p class="text-gray-600">当前商品数：${merchantInfo.itemCount || merchantInfo.items.length}</p>
+                        <p class="text-gray-600">${merchantInfo.round || currentPeriod ? `${currentPeriod.name} ${currentPeriod.start}:00-${currentPeriod.end}:00` : ''}</p>
+                    </div>
+                `;
+                
+                // 商品列表
+                html += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+                
+                merchantInfo.items.forEach(item => {
+                    html += `
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-indigo-300 transition-colors">
+                            <div class="flex flex-col items-center">
+                                <div class="w-24 h-24 bg-white rounded-lg flex items-center justify-center mb-3 shadow-sm">
+                                    ${item.image 
+                                        ? `<img src="${item.image}" alt="${item.name}" class="max-w-full max-h-full object-contain" loading="lazy">`
+                                        : `<div class="text-gray-400 text-center">${item.name}</div>`
+                                    }
+                                </div>
+                                <h5 class="font-bold text-gray-800 text-lg mb-1">${item.name}</h5>
+                                <p class="text-gray-500 text-sm">${item.startTime} - ${item.endTime}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                
+                // 提取精选攻略
+                // extractGuides(doc);
+                
+                // 显示内容
+                merchantContent.innerHTML = html;
+                
+                lastUpdate.textContent = `最后更新：${new Date().toLocaleTimeString()}`;
+                lastUpdate.className = 'text-green-600 text-sm';
+                
+                // 启动两个固定的倒计时
+                startDailyCountdown(dailyEndTime.getTime());
+                
+                if (currentPeriod) {
+                    startRoundCountdown(roundEndTime.getTime());
+                    document.getElementById('roundTime').textContent = `${currentPeriod.name} ${currentPeriod.start}:00-${currentPeriod.end}:00`;
+                    
+                    // 计算下一次自动刷新时间
+                    const nextRefreshTime = Math.min(dailyEndTime.getTime(), roundEndTime.getTime());
+                    const refreshDelay = nextRefreshTime - Date.now() + 1000; // 加1秒确保数据已更新
+                    
+                    // 设置自动刷新
+                    autoRefreshTimeout = setTimeout(() => {
+                        autoRefreshInfo.textContent = '倒计时结束，正在自动刷新...';
+                        autoRefreshInfo.classList.remove('hidden');
+                        fetchMerchantData();
+                    }, refreshDelay);
+                    
+                    // 显示自动刷新提示
+                    const minutes = Math.floor(refreshDelay / 60000);
+                    const seconds = Math.floor((refreshDelay % 60000) / 1000);
+                    autoRefreshInfo.textContent = `将在 ${minutes}分${seconds}秒 后自动刷新`;
+                    autoRefreshInfo.classList.remove('hidden');
+                    
+                } else {
+                    document.getElementById('roundCountdown').textContent = '商人已离开';
+                    document.getElementById('roundCountdown').className = 'text-red-300 font-bold text-lg';
+                    document.getElementById('roundTime').textContent = '每日8:00准时出现';
+                    
+                    // 设置第二天8:00自动刷新
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(8, 0, 0, 0);
+                    const refreshDelay = tomorrow.getTime() - Date.now();
+                    
+                    autoRefreshTimeout = setTimeout(() => {
+                        autoRefreshInfo.textContent = '商人已出现，正在自动刷新...';
+                        autoRefreshInfo.classList.remove('hidden');
+                        fetchMerchantData();
+                    }, refreshDelay);
+                }
+                
+                document.getElementById('timeSource').textContent = '使用官方固定规律 | 图片来自洛克王国世界官方CDN';
+                result.classList.remove('hidden');
+                
+            } catch (err) {
+                error.classList.remove('hidden');
+                document.getElementById('errorMsg').textContent = err.message;
+                lastUpdate.textContent = '获取失败';
+                lastUpdate.className = 'text-red-600 text-sm';
+                console.error('爬取错误:', err);
+                
+                // 失败后5分钟自动重试
+                autoRefreshTimeout = setTimeout(() => {
+                    fetchMerchantData();
+                }, 5 * 60 * 1000);
+                
+                autoRefreshInfo.textContent = '获取失败，将在5分钟后自动重试';
+                autoRefreshInfo.classList.remove('hidden');
+                
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+        
+        // 使用代理列表自动重试
+        async function fetchWithProxy(url) {
+            while (currentProxyIndex < corsProxies.length) {
+                try {
+                    const proxyUrl = corsProxies[currentProxyIndex] + encodeURIComponent(url);
+                    const response = await fetch(proxyUrl, {
+                        signal: AbortSignal.timeout(15000) // 15秒超时
+                    });
+                    
+                    if (response.ok) {
+                        return await response.text();
+                    }
+                } catch (e) {
+                    console.log(`代理 ${corsProxies[currentProxyIndex]} 失败，尝试下一个...`);
+                }
+                currentProxyIndex++;
+            }
+            throw new Error('所有代理服务器都无法访问，请稍后再试');
+        }
+        
+        // 每日商品倒计时
+        function startDailyCountdown(endTime) {
+            const countdownEl = document.getElementById('dailyCountdown');
+            
+            function updateCountdown() {
+                const now = Date.now();
+                const remaining = endTime - now;
+                
+                if (remaining <= 0) {
+                    countdownEl.textContent = '今日已结束';
+                    countdownEl.className = 'text-red-300 font-bold text-lg';
+                    clearInterval(dailyCountdownInterval);
+                    return;
+                }
+                
+                const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                
+                countdownEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            updateCountdown();
+            dailyCountdownInterval = setInterval(updateCountdown, 1000);
+        }
+        
+        // 轮次商品倒计时
+        function startRoundCountdown(endTime) {
+            const countdownEl = document.getElementById('roundCountdown');
+            
+            function updateCountdown() {
+                const now = Date.now();
+                const remaining = endTime - now;
+                
+                if (remaining <= 0) {
+                    countdownEl.textContent = '本轮已结束';
+                    countdownEl.className = 'text-red-300 font-bold text-lg';
+                    clearInterval(roundCountdownInterval);
+                    return;
+                }
+                
+                const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                
+                countdownEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            updateCountdown();
+            roundCountdownInterval = setInterval(updateCountdown, 1000);
+        }
+        
+        // 提取精选攻略
+        // function extractGuides(doc) {
+        //     const guidesList = document.getElementById('guidesList');
+        //     guidesList.innerHTML = '';
+            
+        //     const links = doc.querySelectorAll('a[href*="bilibili.com"]');
+        //     const guides = new Set(); // 去重
+            
+        //     links.forEach(link => {
+        //         const title = link.textContent.trim();
+        //         const url = link.href;
+        //         if (title && url && !guides.has(url) && title.length > 5) {
+        //             guides.add(url);
+        //             const card = document.createElement('a');
+        //             card.href = url;
+        //             card.target = '_blank';
+        //             card.className = 'block p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-200 hover:border-indigo-300';
+        //             card.innerHTML = `<span class="text-indigo-600 hover:underline">${title}</span>`;
+        //             guidesList.appendChild(card);
+        //         }
+        //     });
+            
+        //     if (guides.size === 0) {
+        //         guidesList.innerHTML = '<p class="text-gray-500 col-span-2">暂无攻略信息</p>';
+        //     }
+        // }
+    </script>
+</body>
+</html>
