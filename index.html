@@ -34,6 +34,19 @@
                 background-image: radial-gradient(#E8D8C0 1px, transparent 1px);
                 background-size: 16px 16px;
             }
+            .round-btn {
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .round-btn:hover {
+                transform: scale(1.02);
+            }
+            .round-btn.active {
+                background-color: rgba(255, 209, 102, 0.2);
+            }
+            .round-btn.gray-out {
+                opacity: 0.6;
+            }
         }
     </style>
 </head>
@@ -78,17 +91,22 @@
             </div>
         </div>
 
+        <!-- 每日轮次（可点击切换） -->
+        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
+            <h2 class="text-2xl font-bold mb-4">每日轮次（点击切换查看）</h2>
+            <div id="roundsContainer" class="space-y-3">
+                <!-- 轮次按钮将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 轮次状态提示 -->
+        <div id="roundStatus" class="bg-yellow-100 border-2 border-yellow-400 rounded-2xl p-4 mb-6 text-center hidden">
+            <p class="text-yellow-800 font-bold" id="roundStatusText">该轮次已结束，以下为历史商品</p>
+        </div>
+
         <!-- 商品列表容器 -->
         <div id="itemsContainer" class="space-y-5 mb-6">
             <div class="text-center py-10 text-gray-500">正在加载商品数据...</div>
-        </div>
-
-        <!-- 每日轮次 -->
-        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
-            <h2 class="text-2xl font-bold mb-4">每日轮次</h2>
-            <div id="roundsContainer" class="space-y-3">
-                <!-- 轮次信息将在这里动态生成 -->
-            </div>
         </div>
 
         <!-- 最后更新 -->
@@ -111,17 +129,20 @@
 
         let merchantData = null;
         let countdownInterval = null;
+        let selectedRound = 1; // 当前选中的轮次
 
         // 页面加载完成 → 读取本地JSON数据
         document.addEventListener('DOMContentLoaded', async () => {
             await loadLocalJsonData();
             if (merchantData) {
+                // 默认选中当前轮次
+                selectedRound = merchantData.round;
                 renderPage();
                 startCountdown();
             }
         });
 
-        // 核心：读取本地 data.json（不再请求外部API/代理）
+        // 核心：读取本地 data.json
         async function loadLocalJsonData() {
             try {
                 const res = await fetch(JSON_FILE_URL, { cache: "default" });
@@ -132,18 +153,17 @@
                 return true;
             } catch (err) {
                 console.error("❌ 读取JSON失败，启用本地兜底数据：", err);
-                // 读取失败时使用内置静态数据兜底
                 merchantData = getFallbackStaticData();
                 document.getElementById('dataSource').textContent = "数据来源: 本地备份(文件异常)";
                 return false;
             }
         }
 
-        // 渲染整个页面（原有逻辑完全保留）
+        // 渲染整个页面
         function renderPage() {
             renderMerchantInfo();
-            renderItems();
             renderRounds();
+            renderItems();
             updateLastUpdateTime();
         }
 
@@ -156,17 +176,93 @@
             document.getElementById('merchantLocation').textContent = merchantData.merchantPosition || '源站暂未返回坐标';
         }
 
-        // 渲染商品列表
+        // 渲染每日轮次 + 完整状态判断：已结束 / 当前 / 未开始
+        function renderRounds() {
+            const container = document.getElementById('roundsContainer');
+            container.innerHTML = '';
+            
+            const times = ['08:00', '12:00', '16:00', '20:00'];
+            const names = ['第一轮', '第二轮', '第三轮', '第四轮'];
+            const currentRound = merchantData.round;
+            
+            for (let i = 0; i < 4; i++) {
+                const roundNum = i + 1;
+                const isSelected = roundNum === selectedRound;
+                // 状态判断
+                const isEnded = roundNum < currentRound;
+                const isNotStart = roundNum > currentRound;
+                const isCurrent = roundNum === currentRound;
+
+                const el = document.createElement('div');
+                // 样式：选中高亮 / 已结束/未开始 统一置灰
+                let baseClass = `round-btn rounded-2xl border-3 border-border p-3 flex items-center gap-3 ${isSelected ? 'active bg-primary/20' : 'bg-white'}`;
+                if (isEnded || isNotStart) {
+                    baseClass += ' gray-out';
+                }
+                el.className = baseClass;
+                el.dataset.round = roundNum;
+
+                // 右侧状态标签
+                let statusText = '';
+                if (isEnded) {
+                    statusText = '<span class="text-xs text-gray-500 ml-auto">已结束</span>';
+                } else if (isNotStart) {
+                    statusText = '<span class="text-xs text-blue-500 ml-auto">未开始</span>';
+                } else if (isCurrent) {
+                    statusText = '<span class="text-xs text-accent ml-auto font-bold">当前轮次</span>';
+                }
+
+                el.innerHTML = `
+                    <div class="w-10 h-10 ${isCurrent ? 'bg-primary' : 'bg-gray-200'} rounded-full flex items-center justify-center font-bold border-2 border-border text-lg">${roundNum}</div>
+                    <span class="text-lg font-medium">${times[i]} ${names[i]}</span>
+                    ${statusText}
+                `;
+                
+                // 点击切换轮次
+                el.addEventListener('click', () => {
+                    selectedRound = roundNum;
+                    renderRounds();
+                    renderItems();
+                });
+                
+                container.appendChild(el);
+            }
+        }
+
+        // 渲染商品列表 + 顶部提示文字
         function renderItems() {
             const container = document.getElementById('itemsContainer');
+            const statusEl = document.getElementById('roundStatus');
+            const statusTextEl = document.getElementById('roundStatusText');
             container.innerHTML = '';
+
+            // 顶部提示文案区分三种状态
+            if (selectedRound < merchantData.round) {
+                statusEl.classList.remove('hidden');
+                statusTextEl.textContent = '该轮次已结束，以下为历史商品';
+            } else if (selectedRound > merchantData.round) {
+                statusEl.classList.remove('hidden');
+                statusTextEl.textContent = '该轮次暂未开始，以下为往期商品参考';
+            } else {
+                statusEl.classList.add('hidden');
+            }
 
             if (!merchantData.items || merchantData.items.length === 0) {
                 container.innerHTML = '<div class="text-center py-10 text-gray-500">本轮次暂无商品</div>';
                 return;
             }
 
-            merchantData.items.forEach(item => {
+            // 按选中轮次筛选商品
+            const filteredItems = merchantData.items.filter(item => 
+                item.rounds && item.rounds.includes(selectedRound)
+            );
+
+            if (filteredItems.length === 0) {
+                container.innerHTML = '<div class="text-center py-10 text-gray-500">该轮次暂无商品</div>';
+                return;
+            }
+
+            filteredItems.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-3xl border-4 border-border p-5 card-shadow';
                 card.innerHTML = `
@@ -189,27 +285,7 @@
             });
         }
 
-        // 渲染每日轮次
-        function renderRounds() {
-            const container = document.getElementById('roundsContainer');
-            container.innerHTML = '';
-            
-            const times = ['08:00', '12:00', '16:00', '20:00'];
-            const names = ['第一轮', '第二轮', '第三轮', '第四轮'];
-            
-            for (let i = 0; i < 4; i++) {
-                const isActive = (i + 1) === merchantData.round;
-                const el = document.createElement('div');
-                el.className = `rounded-2xl border-3 border-border p-3 flex items-center gap-3 ${isActive ? 'bg-primary/20' : 'bg-white'}`;
-                el.innerHTML = `
-                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center font-bold border-2 border-border text-lg">${i+1}</div>
-                    <span class="text-lg font-medium">${times[i]} ${names[i]}</span>
-                `;
-                container.appendChild(el);
-            }
-        }
-
-        // 实时倒计时（原有逻辑保留）
+        // 实时倒计时
         function startCountdown() {
             if (countdownInterval) clearInterval(countdownInterval);
             updateCountdown();
@@ -246,16 +322,16 @@
             }
         }
 
-        // 内置静态数据兜底（JSON读取失败时使用）
+        // 内置静态兜底数据
         function getFallbackStaticData() {
             return {
                 "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
                 "fetchedAt": "2026-06-11T07:42:33.079Z",
                 "timezone": "Asia/Shanghai",
                 "status": "open",
-                "round": 2,
-                "startedAtBeijing": "2026-06-11 12:00:00",
-                "nextRefreshBeijing": "2026-06-11 16:00:00",
+                "round": 1,
+                "startedAtBeijing": "2026-06-11 08:00:00",
+                "nextRefreshBeijing": "2026-06-11 12:00:00",
                 "durationHours": 4,
                 "merchantPosition": "",
                 "items": [
@@ -267,7 +343,7 @@
                         "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
                         "category": "炼金材料",
                         "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
-                        "rounds": [1, 2]
+                        "rounds": [1, 2, 3, 4]
                     },
                     {
                         "name": "黑晶琉璃",
@@ -277,7 +353,7 @@
                         "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
                         "category": "炼金材料",
                         "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
-                        "rounds": [2]
+                        "rounds": [2, 3, 4]
                     },
                     {
                         "name": "龙系粉尘",
@@ -287,7 +363,7 @@
                         "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ac/jhbsu0fzhq55ivqu89qz81366owvkki.png/100px-100131.png",
                         "category": "炼金材料",
                         "description": "常见的炼金材料，蕴含少量龙系魔法，是合成技能石的主要触媒。",
-                        "rounds": [2]
+                        "rounds": [2, 3, 4]
                     }
                 ]
             };
