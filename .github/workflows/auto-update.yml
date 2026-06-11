@@ -1,14 +1,13 @@
-
 name: 定时更新数据
 
 on:
   schedule:
-    # 北京时间 8:00 / 12:00 / 16:00 / 20:00 定时执行
+    # 北京时间 8:00 / 12:00 / 16:00 / 20:00
     - cron: '0 0 * * *'
     - cron: '0 4 * * *'
     - cron: '0 8 * * *'
     - cron: '0 12 * * *'
-  workflow_dispatch: # 支持手动触发测试
+  workflow_dispatch: # 支持手动测试
 
 jobs:
   update:
@@ -25,6 +24,10 @@ jobs:
           node-version: 22
 
       - name: 执行更新脚本
+        env:
+          # 注入 PushPlus 密钥与群组编码
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          PUSHPLUS_TOPIC: ${{ secrets.PUSHPLUS_TOPIC }}
         run: node fetch-data.js
 
       - name: 提交并推送文件
@@ -33,4 +36,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data.json
           git commit -m "🤖 定时更新商户数据" || echo "无数据变更，跳过提交"
-          git push origin HEAD:main
+          git push
