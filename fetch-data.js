@@ -6,8 +6,8 @@ const https = require('https');
 const IMPORTANT_GOODS = [
   "祝福项坠",
   "棱镜球",
-  "首领血脉",
-  "万能血脉",
+  "首领血脉秘药",
+  "万能血脉秘药",
   "残缺魔镜",
   "适格钥匙",
   "能力钥匙",
