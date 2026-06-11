@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>远行商人 - 实时商品</title>
+    <link rel="icon" href="./logo.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FFD166',
+                        secondary: '#70D699',
+                        accent: '#E94E9A',
+                        border: '#3D2B1F',
+                        bg: '#FFF5E1',
+                        text: '#3D2B1F'
+                    },
+                    fontFamily: {
+                        game: ['system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-shadow {
+                box-shadow: 0 4px 0 0 #3D2B1F;
+            }
+            .dot-pattern {
+                background-image: radial-gradient(#E8D8C0 1px, transparent 1px);
+                background-size: 16px 16px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-bg dot-pattern min-h-screen font-game text-text">
+    <div class="max-w-md mx-auto px-4 py-6">
+        <!-- 顶部标题区域 -->
+        <div class="mb-6">
+            <div class="inline-block bg-primary rounded-full px-4 py-1 font-bold text-text mb-3 border-2 border-border">
+                4小时轮换
+            </div>
+            <h1 class="text-[clamp(2.5rem,8vw,3.5rem)] font-bold leading-tight">
+                洛克王国世界<br>
+                <span class="text-accent relative">
+                    蛇瞳
+                    <span class="absolute bottom-1 left-0 w-full h-3 bg-primary/70 -z-10"></span>
+                </span>
+            </h1>
+            <p class="mt-4 text-base leading-relaxed">
+                查看当前轮次、下一次刷新时间、在售商品、价格和限购数量。每天8/12/16/20点自动同步最新数据。
+            </p>
+        </div>
+
+        <!-- 商人信息卡片 -->
+        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
+            <h2 class="text-3xl font-bold mb-3">远行商人</h2>
+            <p class="text-lg mb-4">每天 08:00、12:00、16:00、20:00 北京时间刷新，自动同步最新数据。</p>
+            
+            <div class="flex flex-wrap gap-3 mb-5">
+                <div class="bg-primary rounded-full px-5 py-2 font-bold border-2 border-border">
+                    当前轮次: <span id="currentRound">加载中...</span>
+                </div>
+                <div class="bg-white rounded-full px-5 py-2 font-bold border-2 border-border">
+                    剩余时间: <span id="countdown">--:--:--</span>
+                </div>
+            </div>
+            
+            <div class="space-y-2 text-lg">
+                <p><span class="text-gray-500">本轮开始</span> <span id="roundStart">--</span></p>
+                <p><span class="text-gray-500">下次刷新</span> <span id="nextRefresh">--</span></p>
+                <p><span class="text-gray-500">持续时间</span> <span id="durationHours">4h</span></p>
+                <p><span class="text-gray-500">商人坐标</span> <span id="merchantLocation">源站暂未返回坐标</span></p>
+            </div>
+        </div>
+
+        <!-- 商品列表容器 -->
+        <div id="itemsContainer" class="space-y-5 mb-6">
+            <div class="text-center py-10 text-gray-500">正在加载商品数据...</div>
+        </div>
+
+        <!-- 每日轮次 -->
+        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
+            <h2 class="text-2xl font-bold mb-4">每日轮次</h2>
+            <div id="roundsContainer" class="space-y-3">
+                <!-- 轮次信息将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 最后更新 -->
+        <div class="bg-white rounded-2xl border-3 border-border p-4 mb-6 text-center">
+            <p class="text-gray-600">最后更新: <span id="lastUpdate">--</span></p>
+            <p class="text-xs text-gray-400 mt-1" id="dataSource">数据来源: 静态JSON文件</p>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="text-center text-gray-600 text-sm">
+            <p class="mb-4">蛇瞳-2026,Maoming City,Guangdong Province</p>
+        </footer>
+    </div>
+
+    <script>
+        // 刷新时间节点（北京时间）
+        const REFRESH_HOURS = [8, 12, 16, 20];
+        // 静态JSON文件地址（同目录，只读）
+        const JSON_FILE_URL = "./data.json";
+
+        let merchantData = null;
+        let countdownInterval = null;
+
+        // 页面加载完成 → 读取本地JSON数据
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadLocalJsonData();
+            if (merchantData) {
+                renderPage();
+                startCountdown();
+            }
+        });
+
+        // 核心：读取本地 data.json（不再请求外部API/代理）
+        async function loadLocalJsonData() {
+            try {
+                const res = await fetch(JSON_FILE_URL, { cache: "default" });
+                if (!res.ok) throw new Error("JSON文件读取失败");
+
+                merchantData = await res.json();
+                console.log("✅ 成功读取本地 data.json 数据");
+                return true;
+            } catch (err) {
+                console.error("❌ 读取JSON失败，启用本地兜底数据：", err);
+                // 读取失败时使用内置静态数据兜底
+                merchantData = getFallbackStaticData();
+                document.getElementById('dataSource').textContent = "数据来源: 本地备份(文件异常)";
+                return false;
+            }
+        }
+
+        // 渲染整个页面（原有逻辑完全保留）
+        function renderPage() {
+            renderMerchantInfo();
+            renderItems();
+            renderRounds();
+            updateLastUpdateTime();
+        }
+
+        // 渲染商人基本信息
+        function renderMerchantInfo() {
+            document.getElementById('currentRound').textContent = merchantData.round;
+            document.getElementById('roundStart').textContent = merchantData.startedAtBeijing;
+            document.getElementById('nextRefresh').textContent = merchantData.nextRefreshBeijing;
+            document.getElementById('durationHours').textContent = `${merchantData.durationHours}h`;
+            document.getElementById('merchantLocation').textContent = merchantData.merchantPosition || '源站暂未返回坐标';
+        }
+
+        // 渲染商品列表
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = '';
+
+            if (!merchantData.items || merchantData.items.length === 0) {
+                container.innerHTML = '<div class="text-center py-10 text-gray-500">本轮次暂无商品</div>';
+                return;
+            }
+
+            merchantData.items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-3xl border-4 border-border p-5 card-shadow';
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                        <div class="w-28 h-28 bg-[#FFF5E1] rounded-2xl border-2 border-border flex items-center justify-center flex-shrink-0">
+                            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-contain" loading="lazy">
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-secondary rounded-full px-4 py-1 text-sm font-bold inline-block mb-2 border-2 border-border">
+                                ${item.category}
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">${item.name}</h3>
+                            <p class="text-lg mb-1">价格: ${item.price} 洛克贝</p>
+                            <p class="text-lg mb-3">限购: ${item.limit}</p>
+                            <p class="text-gray-600 leading-relaxed">${item.description}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 渲染每日轮次
+        function renderRounds() {
+            const container = document.getElementById('roundsContainer');
+            container.innerHTML = '';
+            
+            const times = ['08:00', '12:00', '16:00', '20:00'];
+            const names = ['第一轮', '第二轮', '第三轮', '第四轮'];
+            
+            for (let i = 0; i < 4; i++) {
+                const isActive = (i + 1) === merchantData.round;
+                const el = document.createElement('div');
+                el.className = `rounded-2xl border-3 border-border p-3 flex items-center gap-3 ${isActive ? 'bg-primary/20' : 'bg-white'}`;
+                el.innerHTML = `
+                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center font-bold border-2 border-border text-lg">${i+1}</div>
+                    <span class="text-lg font-medium">${times[i]} ${names[i]}</span>
+                `;
+                container.appendChild(el);
+            }
+        }
+
+        // 实时倒计时（原有逻辑保留）
+        function startCountdown() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function updateCountdown() {
+            const [datePart, timePart] = merchantData.nextRefreshBeijing.split(' ');
+            const [y, m, d] = datePart.split('-').map(Number);
+            const [h, min, s] = timePart.split(':').map(Number);
+            
+            const nextRefreshTime = new Date(y, m-1, d, h, min, s);
+            const diff = nextRefreshTime - new Date();
+            
+            if (diff <= 0) {
+                document.getElementById('countdown').textContent = '00:00:00';
+                return;
+            }
+            
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            document.getElementById('countdown').textContent = 
+                `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+        }
+
+        // 更新最后更新时间显示
+        function updateLastUpdateTime() {
+            if (merchantData?.fetchedAt) {
+                const date = new Date(merchantData.fetchedAt);
+                document.getElementById('lastUpdate').textContent = 
+                    date.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+            }
+        }
+
+        // 内置静态数据兜底（JSON读取失败时使用）
+        function getFallbackStaticData() {
+            return {
+                "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
+                "fetchedAt": "2026-06-11T07:42:33.079Z",
+                "timezone": "Asia/Shanghai",
+                "status": "open",
+                "round": 2,
+                "startedAtBeijing": "2026-06-11 12:00:00",
+                "nextRefreshBeijing": "2026-06-11 16:00:00",
+                "durationHours": 4,
+                "merchantPosition": "",
+                "items": [
+                    {
+                        "name": "黄石榴石",
+                        "price": "1000",
+                        "priceRaw": "1000",
+                        "limit": "100",
+                        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
+                        "category": "炼金材料",
+                        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+                        "rounds": [1, 2]
+                    },
+                    {
+                        "name": "黑晶琉璃",
+                        "price": "1000",
+                        "priceRaw": "1000",
+                        "limit": "100",
+                        "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
+                        "category": "炼金材料",
+                        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
+                        "rounds": [2]
+                    },
+                    {
+                        "name": "龙系粉尘",
+                        "price": "500",
+                        "priceRaw": "500",
+                        "limit": "100",
+                        "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ac/jhbsu0fzhq55ivqu89qz81366owvkki.png/100px-100131.png",
+                        "category": "炼金材料",
+                        "description": "常见的炼金材料，蕴含少量龙系魔法，是合成技能石的主要触媒。",
+                        "rounds": [2]
+                    }
+                ]
+            };
+        }
+    </script>
+</body>
+</html>
