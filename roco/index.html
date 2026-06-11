@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>远行商人 - 实时商品</title>
+<link rel="icon" href="./logo.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FFD166',
+                        secondary: '#70D699',
+                        accent: '#E94E9A',
+                        border: '#3D2B1F',
+                        bg: '#FFF5E1',
+                        text: '#3D2B1F'
+                    },
+                    fontFamily: {
+                        game: ['system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-shadow {
+                box-shadow: 0 4px 0 0 #3D2B1F;
+            }
+            .dot-pattern {
+                background-image: radial-gradient(#E8D8C0 1px, transparent 1px);
+                background-size: 16px 16px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-bg dot-pattern min-h-screen font-game text-text">
+    <div class="max-w-md mx-auto px-4 py-6">
+        <!-- 顶部标题区域 -->
+        <div class="mb-6">
+            <div class="inline-block bg-primary rounded-full px-4 py-1 font-bold text-text mb-3 border-2 border-border">
+                4小时轮换
+            </div>
+            <h1 class="text-[clamp(2.5rem,8vw,3.5rem)] font-bold leading-tight">
+                洛克王国世界<br>
+                <span class="text-accent relative">
+                    蛇瞳
+                    <span class="absolute bottom-1 left-0 w-full h-3 bg-primary/70 -z-10"></span>
+                </span>
+            </h1>
+            <p class="mt-4 text-base leading-relaxed">
+                查看当前轮次、下一次刷新时间、在售商品、价格和限购数量。每天8/12/16/20点自动同步最新数据。
+            </p>
+        </div>
+
+        <!-- 商人信息卡片 -->
+        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
+            <h2 class="text-3xl font-bold mb-3">远行商人</h2>
+            <p class="text-lg mb-4">每天 08:00、12:00、16:00、20:00 北京时间刷新，自动同步最新数据。</p>
+            
+            <div class="flex flex-wrap gap-3 mb-5">
+                <div class="bg-primary rounded-full px-5 py-2 font-bold border-2 border-border">
+                    当前轮次: <span id="currentRound">加载中...</span>
+                </div>
+                <div class="bg-white rounded-full px-5 py-2 font-bold border-2 border-border">
+                    剩余时间: <span id="countdown">--:--:--</span>
+                </div>
+            </div>
+            
+            <div class="space-y-2 text-lg">
+                <p><span class="text-gray-500">本轮开始</span> <span id="roundStart">--</span></p>
+                <p><span class="text-gray-500">下次刷新</span> <span id="nextRefresh">--</span></p>
+                <p><span class="text-gray-500">持续时间</span> <span id="durationHours">4h</span></p>
+                <p><span class="text-gray-500">商人坐标</span> <span id="merchantLocation">源站暂未返回坐标</span></p>
+            </div>
+        </div>
+
+        <!-- 商品列表容器 -->
+        <div id="itemsContainer" class="space-y-5 mb-6">
+            <div class="text-center py-10 text-gray-500">正在加载商品数据...</div>
+        </div>
+
+        <!-- 每日轮次 -->
+        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
+            <h2 class="text-2xl font-bold mb-4">每日轮次</h2>
+            <div id="roundsContainer" class="space-y-3">
+                <!-- 轮次信息将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 最后更新 -->
+        <div class="bg-white rounded-2xl border-3 border-border p-4 mb-6 text-center">
+            <p class="text-gray-600">最后更新: <span id="lastUpdate">--</span></p>
+            <p class="text-xs text-gray-400 mt-1" id="dataSource">数据来源: --</p>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="text-center text-gray-600 text-sm">
+            <p class="mb-4">蛇瞳-2026,Maoming City,Guangdong Province</p>
+        </footer>
+    </div>
+
+    <script>
+        const API_URL = 'https://rocokingdomworld.org/api/merchant/live';
+        const REFRESH_HOURS = [8, 12, 16, 20]; // 每日刷新时间点
+        const CACHE_KEY = 'merchant_data_cache'; // 本地缓存键名
+        
+        let merchantData = null;
+        let countdownInterval = null;
+        let nextRefreshTimer = null;
+
+        // 页面加载时获取数据
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadMerchantData();
+            if (merchantData) {
+                renderPage();
+                startCountdown();
+                scheduleNextRefresh();
+            }
+        });
+
+        // 智能加载数据（优先使用缓存，仅在轮次切换时自动请求API）
+        async function loadMerchantData() {
+            // 1. 优先检查本地缓存
+            const cachedData = getCachedData();
+            if (cachedData) {
+                console.log('使用本地缓存数据');
+                merchantData = cachedData;
+                document.getElementById('dataSource').textContent = '数据来源: 本地缓存';
+                return true;
+            }
+
+            // 2. 缓存无效，请求API（仅在轮次切换后第一次打开页面时执行）
+            console.log('轮次已更新，请求最新API数据');
+            try {
+                const response = await fetch(API_URL, {
+                    cache: 'no-store',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API请求失败: ${response.status}`);
+                }
+                
+                merchantData = await response.json();
+                
+                // 3. 将新数据存入本地缓存
+                saveToCache(merchantData);
+                
+                document.getElementById('dataSource').textContent = '数据来源: 官方API';
+                return true;
+                
+            } catch (error) {
+                console.error('API请求失败:', error);
+                
+                // 4. API失败时，降级使用任何可用的旧缓存
+                const oldCache = localStorage.getItem(CACHE_KEY);
+                if (oldCache) {
+                    try {
+                        const parsed = JSON.parse(oldCache);
+                        merchantData = parsed.data;
+                        document.getElementById('dataSource').textContent = '数据来源: 本地缓存 (API暂时不可用)';
+                        return true;
+                    } catch (e) {
+                        console.error('缓存解析失败:', e);
+                    }
+                }
+                
+                document.getElementById('itemsContainer').innerHTML = 
+                    '<div class="text-center py-10 text-red-500">数据加载失败，请检查网络连接后刷新页面</div>';
+                return false;
+            }
+        }
+
+        // 检查缓存是否有效（同一轮次内永久有效）
+        function getCachedData() {
+            const cacheStr = localStorage.getItem(CACHE_KEY);
+            if (!cacheStr) return null;
+            
+            try {
+                const cache = JSON.parse(cacheStr);
+                const now = new Date();
+                
+                // 计算当前轮次的开始时间
+                const currentRoundStart = getCurrentRoundStartTime(now);
+                
+                // 如果缓存的获取时间在当前轮次开始时间之后，说明缓存有效
+                if (new Date(cache.fetchedAt) >= currentRoundStart) {
+                    return cache.data;
+                }
+                
+                // 缓存已过期（进入了新的轮次）
+                console.log('进入新轮次，缓存已过期，将请求最新数据');
+                return null;
+                
+            } catch (error) {
+                console.error('缓存解析失败:', error);
+                return null;
+            }
+        }
+
+        // 保存数据到缓存
+        function saveToCache(data) {
+            const cache = {
+                data: data,
+                fetchedAt: new Date().toISOString()
+            };
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+            console.log('数据已存入本地缓存，本轮次内不再请求API');
+        }
+
+        // 获取当前轮次的开始时间（完美处理跨天情况）
+        function getCurrentRoundStartTime(date) {
+            const hour = date.getHours();
+            
+            // 找到当前所在的轮次开始小时
+            let roundStartHour = REFRESH_HOURS[REFRESH_HOURS.length - 1]; // 默认最后一轮
+            for (let i = 0; i < REFRESH_HOURS.length; i++) {
+                if (hour < REFRESH_HOURS[i]) {
+                    break;
+                }
+                roundStartHour = REFRESH_HOURS[i];
+            }
+            
+            const roundStart = new Date(date);
+            roundStart.setHours(roundStartHour, 0, 0, 0);
+            
+            // 如果当前时间早于第一个轮次（8点前），则是昨天的最后一轮
+            if (hour < REFRESH_HOURS[0]) {
+                roundStart.setDate(roundStart.getDate() - 1);
+            }
+            
+            return roundStart;
+        }
+
+        // 渲染整个页面
+        function renderPage() {
+            renderMerchantInfo();
+            renderItems();
+            renderRounds();
+            updateLastUpdateTime();
+        }
+
+        // 渲染商人基本信息
+        function renderMerchantInfo() {
+            document.getElementById('currentRound').textContent = merchantData.round;
+            document.getElementById('roundStart').textContent = merchantData.startedAtBeijing;
+            document.getElementById('nextRefresh').textContent = merchantData.nextRefreshBeijing;
+            document.getElementById('durationHours').textContent = `${merchantData.durationHours}h`;
+            
+            document.getElementById('merchantLocation').textContent = 
+                merchantData.merchantPosition || '源站暂未返回坐标';
+        }
+
+        // 渲染商品列表
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = '';
+
+            merchantData.items.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'bg-white rounded-3xl border-4 border-border p-5 card-shadow';
+                
+                itemCard.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                        <div class="w-28 h-28 bg-[#FFF5E1] rounded-2xl border-2 border-border flex items-center justify-center flex-shrink-0">
+                            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-contain" loading="lazy">
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-secondary rounded-full px-4 py-1 text-sm font-bold inline-block mb-2 border-2 border-border">
+                                ${item.category}
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">${item.name}</h3>
+            <p class="text-lg mb-1">价格: ${item.price} 洛克贝</p>
+            <p class="text-lg mb-3">限购: ${item.limit}</p>
+                            <p class="text-gray-600 leading-relaxed">
+                                ${item.description}
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(itemCard);
+            });
+        }
+
+        // 渲染每日轮次
+        function renderRounds() {
+            const container = document.getElementById('roundsContainer');
+            container.innerHTML = '';
+            
+            const roundTimes = ['08:00', '12:00', '16:00', '20:00'];
+            const roundNames = ['第一轮', '第二轮', '第三轮', '第四轮'];
+            
+            for (let i = 0; i < 4; i++) {
+                const roundNumber = i + 1;
+                const isActive = roundNumber === merchantData.round;
+                
+                const roundElement = document.createElement('div');
+                roundElement.className = `rounded-2xl border-3 border-border p-3 flex items-center gap-3 ${isActive ? 'bg-primary/20' : 'bg-white'}`;
+                
+                roundElement.innerHTML = `
+                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center font-bold border-2 border-border text-lg">${roundNumber}</div>
+                    <span class="text-lg font-medium">${roundTimes[i]} ${roundNames[i]}</span>
+                `;
+                
+                container.appendChild(roundElement);
+            }
+        }
+
+        // 倒计时功能
+        function startCountdown() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function updateCountdown() {
+            const [datePart, timePart] = merchantData.nextRefreshBeijing.split(' ');
+            const [year, month, day] = datePart.split('-').map(Number);
+            const [hours, minutes, seconds] = timePart.split(':').map(Number);
+            
+            const nextRefreshTime = new Date(year, month - 1, day, hours, minutes, seconds);
+            const now = new Date();
+            let diff = nextRefreshTime - now;
+            
+            if (diff <= 0) {
+                document.getElementById('countdown').textContent = '00:00:00';
+                return;
+            }
+            
+            const h = Math.floor(diff / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('countdown').textContent = 
+                `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // 安排下一次自动刷新（精确到秒）
+        function scheduleNextRefresh() {
+            if (nextRefreshTimer) clearTimeout(nextRefreshTimer);
+            
+            const now = new Date();
+            const currentHour = now.getHours();
+            
+            // 找到下一个刷新时间点
+            let nextRefreshHour = REFRESH_HOURS.find(h => h > currentHour);
+            let nextRefreshDate = new Date(now);
+            
+            if (nextRefreshHour === undefined) {
+                // 今天没有刷新了，明天第一个
+                nextRefreshDate.setDate(nextRefreshDate.getDate() + 1);
+                nextRefreshHour = REFRESH_HOURS[0];
+            }
+            
+            nextRefreshDate.setHours(nextRefreshHour, 0, 0, 0);
+            const timeUntilRefresh = nextRefreshDate - now;
+            
+            console.log(`下一次自动刷新时间: ${nextRefreshDate.toLocaleString()}`);
+            
+            // 设置定时器，精确到点自动刷新
+            nextRefreshTimer = setTimeout(async () => {
+                console.log('到达刷新时间，正在获取最新数据...');
+                
+                // 到点强制清除旧缓存并请求新数据
+                localStorage.removeItem(CACHE_KEY);
+                await loadMerchantData();
+                
+                if (merchantData) {
+                    renderPage();
+                    startCountdown();
+                }
+                
+                // 安排下一次刷新
+                scheduleNextRefresh();
+                
+            }, timeUntilRefresh);
+        }
+
+        // 更新最后更新时间
+        function updateLastUpdateTime() {
+            if (merchantData && merchantData.fetchedAt) {
+                const fetchedDate = new Date(merchantData.fetchedAt);
+                const utcString = fetchedDate.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+                document.getElementById('lastUpdate').textContent = utcString;
+            }
+        }
+    </script>
+</body>
+</html>
