@@ -1,1 +1,37 @@
+name: 定时更新数据
+
+on:
+  schedule:
+    # GitHub 时区 UTC = 北京时间 -8小时
+    - cron: '0 0 * * *'  # 北京时间 08:00
+    - cron: '0 4 * * *'  # 北京时间 12:00
+    - cron: '0 8 * * *'  # 北京时间 16:00
+    - cron: '0 12 * * *' # 北京时间 20:00
+  workflow_dispatch: # 支持网页手动触发测试
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 执行更新脚本
+        run: node fetch-data.js
+
+      - name: 提交并推送文件
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add data.json
+          git commit -m "🤖 定时更新商户数据" || echo "数据无变化，跳过提交"
+          git push
 
