@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>远行商人 - 实时商品</title>
+    <link rel="icon" href="./logo.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FFD166',
+                        secondary: '#70D699',
+                        accent: '#E94E9A',
+                        border: '#3D2B1F',
+                        bg: '#FFF5E1',
+                        text: '#3D2B1F'
+                    },
+                    fontFamily: {
+                        game: ['system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-shadow {
+                box-shadow: 0 4px 0 0 #3D2B1F;
+            }
+            .dot-pattern {
+                background-image: radial-gradient(#E8D8C0 1px, transparent 1px);
+                background-size: 16px 16px;
+            }
+            .round-btn {
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .round-btn:hover {
+                transform: scale(1.02);
+            }
+            .round-btn.active {
+                background-color: rgba(255, 209, 102, 0.2);
+            }
+            .round-btn.gray-out {
+                opacity: 0.6;
+            }
+            .step-card {
+                transition: all 0.3s ease;
+            }
+            .guide-toggle {
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .guide-toggle:hover {
+                background-color: rgba(255, 209, 102, 0.3);
+            }
+            .guide-content {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.5s ease;
+            }
+            .guide-content.expanded {
+                max-height: 5000px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-bg dot-pattern min-h-screen font-game text-text">
+    <div class="max-w-md mx-auto px-4 py-6">
+        <!-- 顶部标题区域 -->
+        <div class="mb-6">
+            <div class="inline-block bg-primary rounded-full px-4 py-1 font-bold text-text mb-3 border-2 border-border">
+                4小时轮换
+            </div>
+            <h1 class="text-[clamp(2.5rem,8vw,3.5rem)] font-bold leading-tight">
+                洛克王国世界<br>
+                <span class="text-accent relative">
+                    蛇瞳
+                    <span class="absolute bottom-1 left-0 w-full h-3 bg-primary/70 -z-10"></span>
+                </span>
+            </h1>
+            <p class="mt-4 text-base leading-relaxed">
+                查看当前轮次、下一次刷新时间、在售商品、价格和限购数量。每天8/12/16/20点自动同步最新数据。
+            </p>
+        </div>
+        <!-- 商人信息卡片 -->
+        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
+            <h2 class="text-3xl font-bold mb-3">远行商人</h2>
+            <p class="text-lg mb-4">每天 08:00、12:00、16:00、20:00 北京时间刷新，自动同步最新数据。</p>
+            
+            <div class="flex flex-wrap gap-3 mb-5">
+                <div class="bg-primary rounded-full px-5 py-2 font-bold border-2 border-border">
+                    当前轮次: <span id="currentRound">加载中...</span>
+                </div>
+                <div class="bg-white rounded-full px-5 py-2 font-bold border-2 border-border">
+                    剩余时间: <span id="countdown">--:--:--</span>
+                </div>
+            </div>
+            
+            <div class="space-y-2 text-lg">
+                <p><span class="text-gray-500">本轮开始</span> <span id="roundStart">--</span></p>
+                <p><span class="text-gray-500">下次刷新</span> <span id="nextRefresh">--</span></p>
+                <p><span class="text-gray-500">持续时间</span> <span id="durationHours">4h</span></p>
+                <p><span class="text-gray-500">商人坐标</span> <span id="merchantLocation">源站暂未返回坐标</span></p>
+            </div>
+        </div>
+
+        <!-- ========== PushPlus 订阅引导模块 START ========== -->
+        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
+            <!-- 模块标题 + 展开/收起按钮 -->
+            <div class="guide-toggle flex items-center justify-between" onclick="toggleGuide()">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-[#07C160] rounded-2xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8.5 14.5L12 11l3.5 3.5M12 3C7.03 3 3 7.03 3 12c0 2.12.74 4.07 1.97 5.61L3 21l3.39-1.97C7.93 20.26 9.88 21 12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold">📱 微信消息订阅</h2>
+                        <p class="text-sm text-gray-500">重要商品刷新时自动推送通知</p>
+                    </div>
+                </div>
+                <svg id="guideArrow" class="w-6 h-6 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </div>
+
+            <!-- 引导内容（默认收起） -->
+            <div id="guideContent" class="guide-content mt-5">
+                <div class="space-y-6">
+                    <!-- 步骤 1：关注公众号 -->
+                    <div class="step-card bg-[#F0FDF4] rounded-2xl border-2 border-[#22C55E] p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-7 h-7 bg-[#22C55E] text-white rounded-full flex items-center justify-center font-bold text-sm">1</span>
+                            <h3 class="font-bold text-lg text-[#166534]">微信搜索并关注 pushplus 推送加</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">打开微信，在搜索框输入「pushplus 推送加」，找到官方服务号并点击关注</p>
+                        <div class="bg-white rounded-xl p-3 border border-gray-200">
+                            <img src="https://aka.doubaocdn.com/s/f79i1waaQT" alt="搜索pushplus服务号" class="w-full rounded-lg shadow-sm">
+                            <p class="text-xs text-gray-500 mt-2 text-center">▲ 微信搜索「pushplus 推送加」服务号</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-3 border border-gray-200 mt-3">
+                            <img src="https://aka.doubaocdn.com/s/8v7T1waaQT" alt="关注pushplus服务号" class="w-full rounded-lg shadow-sm">
+                            <p class="text-xs text-gray-500 mt-2 text-center">▲ 点击「关注服务号」完成关注</p>
+                        </div>
+                    </div>
+
+                    <!-- 步骤 2：扫描订阅二维码 -->
+                    <div class="step-card bg-[#EFF6FF] rounded-2xl border-2 border-[#3B82F6] p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-7 h-7 bg-[#3B82F6] text-white rounded-full flex items-center justify-center font-bold text-sm">2</span>
+                            <h3 class="font-bold text-lg text-[#1E40AF]">长按扫描下方订阅二维码</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">使用微信扫一扫功能，扫描下方二维码完成订阅授权</p>
+                        <div class="flex justify-center">
+                            <div class="bg-white p-4 rounded-xl border-2 border-dashed border-[#93C5FD]">
+                                <img src="https://aka.doubaocdn.com/s/hcUO1waaQT" alt="订阅二维码" class="w-48 h-48">
+                            </div>
+                        </div>
+                        <p class="text-xs text-center text-gray-500 mt-2">👆 长按识别二维码，完成订阅授权</p>
+                    </div>
+
+                    <!-- 步骤 3：授权确认 -->
+                    <div class="step-card bg-[#FEF3C7] rounded-2xl border-2 border-[#F59E0B] p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-7 h-7 bg-[#F59E0B] text-white rounded-full flex items-center justify-center font-bold text-sm">3</span>
+                            <h3 class="font-bold text-lg text-[#92400E]">确认授权接收消息</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">扫码后将收到授权确认消息，确认后即可接收远行商人通知</p>
+                        <div class="bg-white rounded-xl p-3 border border-gray-200">
+                            <img src="https://aka.doubaocdn.com/s/cedr1waaQT" alt="授权接收消息" class="w-full rounded-lg shadow-sm">
+                            <p class="text-xs text-gray-500 mt-2 text-center">▲ 收到授权消息即表示订阅成功</p>
+                        </div>
+                    </div>
+
+                    <!-- 步骤 4：开启通知提醒 -->
+                    <div class="step-card bg-[#FAF5FF] rounded-2xl border-2 border-[#8B5CF6] p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-7 h-7 bg-[#8B5CF6] text-white rounded-full flex items-center justify-center font-bold text-sm">4</span>
+                            <h3 class="font-bold text-lg text-[#6B21A8]">开启手机通知栏提醒</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">确保开启微信通知，重要商品刷新时将在手机顶部弹出提醒</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white rounded-xl p-2 border border-gray-200">
+                                <img src="https://aka.doubaocdn.com/s/XLUQ1waaQT" alt="服务号消息列表" class="w-full rounded-lg">
+                                <p class="text-xs text-gray-500 mt-1 text-center">服务号消息提醒</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2 border border-gray-200">
+                                <img src="https://aka.doubaocdn.com/s/ZXWD1waaQT" alt="通知详情" class="w-full rounded-lg">
+                                <p class="text-xs text-gray-500 mt-1 text-center">通知详情展示</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-3">
+                            <div class="bg-white rounded-xl p-2 border border-gray-200">
+                                <img src="https://aka.doubaocdn.com/s/Ceca1waaQT" alt="开启通知提醒" class="w-full rounded-lg">
+                                <p class="text-xs text-gray-500 mt-1 text-center">选择「开启该通知的提醒」</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2 border border-gray-200">
+                                <img src="https://aka.doubaocdn.com/s/7dLe1waaQT" alt="顶部通知栏" class="w-full rounded-lg">
+                                <p class="text-xs text-gray-500 mt-1 text-center">手机顶部通知栏效果</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 完成提示 -->
+                    <div class="bg-gradient-to-r from-[#22C55E] to-[#16A34A] rounded-2xl p-4 text-white text-center">
+                        <div class="text-3xl mb-2">🎉</div>
+                        <h3 class="font-bold text-lg mb-1">订阅完成！</h3>
+                        <p class="text-sm opacity-90">远行商人刷新出重要商品时，您将第一时间收到微信推送通知</p>
+                        <p class="text-xs opacity-75 mt-2">通知商品包含：国王球、棱镜球、祝福项链、各类性格/血脉/资质道具等稀有物品</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ========== PushPlus 订阅引导模块 END ========== -->
+
+        <!-- 每日轮次（可点击切换） -->
+        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
+            <h2 class="text-2xl font-bold mb-4">每日轮次（点击切换查看）</h2>
+            <div id="roundsContainer" class="space-y-3">
+                <!-- 轮次按钮将在这里动态生成 -->
+            </div>
+        </div>
+        <!-- 轮次状态提示 -->
+        <div id="roundStatus" class="bg-yellow-100 border-2 border-yellow-400 rounded-2xl p-4 mb-6 text-center hidden">
+            <p class="text-yellow-800 font-bold" id="roundStatusText">该轮次已结束，以下为历史商品</p>
+        </div>
+        <!-- 商品列表容器 -->
+        <div id="itemsContainer" class="space-y-5 mb-6">
+            <div class="text-center py-10 text-gray-500">正在加载商品数据...</div>
+        </div>
+        <!-- 最后更新 -->
+        <div class="bg-white rounded-2xl border-3 border-border p-4 mb-6 text-center">
+            <p class="text-gray-600">最后更新: <span id="lastUpdate">--</span></p>
+            <p class="text-xs text-gray-400 mt-1" id="dataSource">数据来源: 静态JSON文件</p>
+        </div>
+        <!-- 页脚 -->
+        <footer class="text-center text-gray-600 text-sm">
+            <p class="mb-4">蛇瞳-2026-6-12,Maoming City,Guangdong Province</p>
+        </footer>
+    </div>
+
+    <script>
+        // ========== PushPlus 引导模块展开/收起功能 ==========
+        function toggleGuide() {
+            const content = document.getElementById('guideContent');
+            const arrow = document.getElementById('guideArrow');
+            content.classList.toggle('expanded');
+            if (content.classList.contains('expanded')) {
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 刷新时间节点（北京时间）
+        const REFRESH_HOURS = [8, 12, 16, 20];
+        // 静态JSON文件地址（同目录，只读）
+        const JSON_FILE_URL = "../data.json";
+        let merchantData = null;
+        let countdownInterval = null;
+        let selectedRound = 1; // 当前选中的轮次
+        // 页面加载完成 → 读取本地JSON数据
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadLocalJsonData();
+            if (merchantData) {
+                // 默认选中当前轮次
+                selectedRound = merchantData.round;
+                renderPage();
+                startCountdown();
+            }
+        });
+        // 核心：读取本地 data.json
+        async function loadLocalJsonData() {
+            try {
+                const res = await fetch(JSON_FILE_URL, { cache: "default" });
+                if (!res.ok) throw new Error("JSON文件读取失败");
+                merchantData = await res.json();
+                console.log("✅ 成功读取本地 data.json 数据");
+                return true;
+            } catch (err) {
+                console.error("❌ 读取JSON失败，启用本地兜底数据：", err);
+                merchantData = getFallbackStaticData();
+                document.getElementById('dataSource').textContent = "数据来源: 本地备份(文件异常)";
+                return false;
+            }
+        }
+        // 渲染整个页面
+        function renderPage() {
+            renderMerchantInfo();
+            renderRounds();
+            renderItems();
+            updateLastUpdateTime();
+        }
+        // 渲染商人基本信息
+        function renderMerchantInfo() {
+            document.getElementById('currentRound').textContent = merchantData.round;
+            document.getElementById('roundStart').textContent = merchantData.startedAtBeijing;
+            document.getElementById('nextRefresh').textContent = merchantData.nextRefreshBeijing;
+            document.getElementById('durationHours').textContent = `${merchantData.durationHours}h`;
+            document.getElementById('merchantLocation').textContent = merchantData.merchantPosition || '源站暂未返回坐标';
+        }
+        // 渲染每日轮次 + 完整状态判断：已结束 / 当前 / 未开始
+        function renderRounds() {
+            const container = document.getElementById('roundsContainer');
+            container.innerHTML = '';
+            
+            const times = ['08:00', '12:00', '16:00', '20:00'];
+            const names = ['第一轮', '第二轮', '第三轮', '第四轮'];
+            const currentRound = merchantData.round;
+            
+            for (let i = 0; i < 4; i++) {
+                const roundNum = i + 1;
+                const isSelected = roundNum === selectedRound;
+                // 状态判断
+                const isEnded = roundNum < currentRound;
+                const isNotStart = roundNum > currentRound;
+                const isCurrent = roundNum === currentRound;
+                const el = document.createElement('div');
+                // 样式：选中高亮 / 已结束/未开始 统一置灰
+                let baseClass = `round-btn rounded-2xl border-3 border-border p-3 flex items-center gap-3 ${isSelected ? 'active bg-primary/20' : 'bg-white'}`;
+                if (isEnded || isNotStart) {
+                    baseClass += ' gray-out';
+                }
+                el.className = baseClass;
+                el.dataset.round = roundNum;
+                // 右侧状态标签
+                let statusText = '';
+                if (isEnded) {
+                    statusText = '<span class="text-xs text-gray-500 ml-auto">已结束</span>';
+                } else if (isNotStart) {
+                    statusText = '<span class="text-xs text-blue-500 ml-auto">未开始</span>';
+                } else if (isCurrent) {
+                    statusText = '<span class="text-xs text-accent ml-auto font-bold">当前轮次</span>';
+                }
+                el.innerHTML = `
+                    <div class="w-10 h-10 ${isCurrent ? 'bg-primary' : 'bg-gray-200'} rounded-full flex items-center justify-center font-bold border-2 border-border text-lg">${roundNum}</div>
+                    <span class="text-lg font-medium">${times[i]} ${names[i]}</span>
+                    ${statusText}
+                `;
+                
+                // 点击切换轮次
+                el.addEventListener('click', () => {
+                    selectedRound = roundNum;
+                    renderRounds();
+                    renderItems();
+                });
+                
+                container.appendChild(el);
+            }
+        }
+        // 渲染商品列表 + 顶部提示文字
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            const statusEl = document.getElementById('roundStatus');
+            const statusTextEl = document.getElementById('roundStatusText');
+            container.innerHTML = '';
+            // 顶部提示文案区分三种状态
+            if (selectedRound < merchantData.round) {
+                statusEl.classList.remove('hidden');
+                statusTextEl.textContent = '该轮次已结束，以下为历史商品';
+            } else if (selectedRound > merchantData.round) {
+                statusEl.classList.remove('hidden');
+                statusTextEl.textContent = '该轮次暂未开始，以下为往期商品参考';
+            } else {
+                statusEl.classList.add('hidden');
+            }
+            if (!merchantData.items || merchantData.items.length === 0) {
+                container.innerHTML = '<div class="text-center py-10 text-gray-500">本轮次暂无商品</div>';
+                return;
+            }
+            // 按选中轮次筛选商品
+            const filteredItems = merchantData.items.filter(item => 
+                item.rounds && item.rounds.includes(selectedRound)
+            );
+            if (filteredItems.length === 0) {
+                container.innerHTML = '<div class="text-center py-10 text-gray-500">该轮次暂无商品</div>';
+                return;
+            }
+            filteredItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-3xl border-4 border-border p-5 card-shadow';
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                        <div class="w-28 h-28 bg-[#FFF5E1] rounded-2xl border-2 border-border flex items-center justify-center flex-shrink-0">
+                            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-contain" loading="lazy">
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-secondary rounded-full px-4 py-1 text-sm font-bold inline-block mb-2 border-2 border-border">
+                                ${item.category}
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">${item.name}</h3>
+                            <p class="text-lg mb-1">价格: ${item.price} 洛克贝</p>
+                            <p class="text-lg mb-3">限购: ${item.limit}</p>
+                            <p class="text-gray-600 leading-relaxed">${item.description}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        // 实时倒计时
+        function startCountdown() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+        function updateCountdown() {
+            const [datePart, timePart] = merchantData.nextRefreshBeijing.split(' ');
+            const [y, m, d] = datePart.split('-').map(Number);
+            const [h, min, s] = timePart.split(':').map(Number);
+            
+            const nextRefreshTime = new Date(y, m-1, d, h, min, s);
+            const diff = nextRefreshTime - new Date();
+            
+            if (diff <= 0) {
+                document.getElementById('countdown').textContent = '00:00:00';
+                return;
+            }
+            
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            document.getElementById('countdown').textContent = 
+                `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+        }
+        // 更新最后更新时间显示
+        function updateLastUpdateTime() {
+            if (merchantData?.fetchedAt) {
+                const date = new Date(merchantData.fetchedAt);
+                document.getElementById('lastUpdate').textContent = 
+                    date.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+            }
+        }
+        // 内置静态兜底数据
+        function getFallbackStaticData() {
+            return {
+                "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
+                "fetchedAt": "2026-06-11T07:42:33.079Z",
+                "timezone": "Asia/Shanghai",
+                "status": "open",
+                "round": 1,
+                "startedAtBeijing": "2026-06-11 08:00:00",
+                "nextRefreshBeijing": "2026-06-11 12:00:00",
+                "durationHours": 4,
+                "merchantPosition": "",
+                "items": [
+                    {
+                        "name": "黄石榴石",
+                        "price": "1000",
+                        "priceRaw": "1000",
+                        "limit": "100",
+                        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
+                        "category": "炼金材料",
+                        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+                        "rounds": [1, 2, 3, 4]
+                    }
+                ]
+            };
+        }
+    </script>
+</body>
+</html>
