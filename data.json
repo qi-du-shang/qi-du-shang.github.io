@@ -1,6 +1,6 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-06-13T00:00:06.428Z",
+  "fetchedAt": "2026-06-13T00:57:24.940Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
   "round": 1,
@@ -53,6 +53,57 @@
         3,
         4
       ]
+    },
+    {
+      "name": "蓝晶碧玺",
+      "price": "1000",
+      "priceRaw": "1000",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
+      "category": "炼金材料",
+      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+      "rounds": [
+        1
+      ]
+    },
+    {
+      "name": "暗星球",
+      "price": "3000",
+      "priceRaw": "3000",
+      "limit": "200",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png",
+      "category": "特制咕噜球",
+      "description": "更适合用来捕捉幽系、恶系精灵。 爱捉弄的球，喜欢偷袭精灵。",
+      "rounds": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "name": "冰系血脉秘药",
+      "price": "160000",
+      "priceRaw": "16w",
+      "limit": "3",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/3f/8uweaysx83rtha1qyqpjvd9tsgkdv90.png/100px-Xuemai_bing.png",
+      "category": "血脉修改道具",
+      "description": "能唤醒血脉力量的远古秘药，使精灵获得冰系血脉。 “一段失落的秘密将被重拾。”",
+      "rounds": [
+        1
+      ]
+    },
+    {
+      "name": "翼系粉尘",
+      "price": "500",
+      "priceRaw": "500",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png",
+      "category": "炼金材料",
+      "description": "常见的炼金材料，蕴含少量翼系魔法，是合成技能石的主要触媒。",
+      "rounds": [
+        1
+      ]
     }
   ],
   "rounds": {
@@ -101,6 +152,57 @@
           3,
           4
         ]
+      },
+      {
+        "name": "蓝晶碧玺",
+        "price": "1000",
+        "priceRaw": "1000",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
+        "category": "炼金材料",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+        "rounds": [
+          1
+        ]
+      },
+      {
+        "name": "暗星球",
+        "price": "3000",
+        "priceRaw": "3000",
+        "limit": "200",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png",
+        "category": "特制咕噜球",
+        "description": "更适合用来捕捉幽系、恶系精灵。 爱捉弄的球，喜欢偷袭精灵。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "冰系血脉秘药",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/3f/8uweaysx83rtha1qyqpjvd9tsgkdv90.png/100px-Xuemai_bing.png",
+        "category": "血脉修改道具",
+        "description": "能唤醒血脉力量的远古秘药，使精灵获得冰系血脉。 “一段失落的秘密将被重拾。”",
+        "rounds": [
+          1
+        ]
+      },
+      {
+        "name": "翼系粉尘",
+        "price": "500",
+        "priceRaw": "500",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png",
+        "category": "炼金材料",
+        "description": "常见的炼金材料，蕴含少量翼系魔法，是合成技能石的主要触媒。",
+        "rounds": [
+          1
+        ]
       }
     ],
     "2": [
@@ -142,6 +244,21 @@
         "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png",
         "category": "个体资质增强道具",
         "description": "对初始个体资质小于10的精灵使用，使该项个体资质的初始值增加1。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "暗星球",
+        "price": "3000",
+        "priceRaw": "3000",
+        "limit": "200",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png",
+        "category": "特制咕噜球",
+        "description": "更适合用来捕捉幽系、恶系精灵。 爱捉弄的球，喜欢偷袭精灵。",
         "rounds": [
           1,
           2,
@@ -195,6 +312,21 @@
           3,
           4
         ]
+      },
+      {
+        "name": "暗星球",
+        "price": "3000",
+        "priceRaw": "3000",
+        "limit": "200",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png",
+        "category": "特制咕噜球",
+        "description": "更适合用来捕捉幽系、恶系精灵。 爱捉弄的球，喜欢偷袭精灵。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
       }
     ],
     "4": [
@@ -236,6 +368,21 @@
         "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png",
         "category": "个体资质增强道具",
         "description": "对初始个体资质小于10的精灵使用，使该项个体资质的初始值增加1。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "暗星球",
+        "price": "3000",
+        "priceRaw": "3000",
+        "limit": "200",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png",
+        "category": "特制咕噜球",
+        "description": "更适合用来捕捉幽系、恶系精灵。 爱捉弄的球，喜欢偷袭精灵。",
         "rounds": [
           1,
           2,
