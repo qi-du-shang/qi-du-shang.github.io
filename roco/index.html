@@ -260,15 +260,11 @@
         function getRoundEndTime(roundNum, baseDateStr) {
             // 兼容iOS日期格式，替换横杠为斜杠
             const baseDate = new Date(baseDateStr.replace(/-/g, '/'));
-            const endHourMap = { 1: 12, 2: 16, 3: 20, 4: 8 };
+            const endHourMap = { 1: 12, 2: 16, 3: 20, 4: 24 };
             const endHour = endHourMap[roundNum];
             
             const endTime = new Date(baseDate);
             endTime.setHours(endHour, 0, 0, 0);
-            // 第四轮结束时间为次日8点，日期+1
-            if (roundNum === 4) {
-                endTime.setDate(endTime.getDate() + 1);
-            }
             return endTime.getTime(); // 返回时间戳，方便计算
         }
 
