@@ -1,6 +1,6 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-06-14T00:00:06.831Z",
+  "fetchedAt": "2026-06-14T00:03:01.516Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
   "round": 1,
@@ -47,6 +47,21 @@
       "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png",
       "category": "个体资质增强道具",
       "description": "对初始个体资质小于10的精灵使用，使该项个体资质的初始值增加1。",
+      "rounds": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "name": "棱镜球",
+      "price": "3200000",
+      "priceRaw": "320w",
+      "limit": "1",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9b/kkwd244su5nzzg5pj99volbt84ohied.png/100px-100795.png",
+      "category": "特制咕噜球",
+      "description": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵。 蕴含改变精灵外观、提升天分的神秘力量，还能使其个体资质变为极致。 棱镜中反射出无数个世界。",
       "rounds": [
         1,
         2,
@@ -101,6 +116,21 @@
           3,
           4
         ]
+      },
+      {
+        "name": "棱镜球",
+        "price": "3200000",
+        "priceRaw": "320w",
+        "limit": "1",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9b/kkwd244su5nzzg5pj99volbt84ohied.png/100px-100795.png",
+        "category": "特制咕噜球",
+        "description": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵。 蕴含改变精灵外观、提升天分的神秘力量，还能使其个体资质变为极致。 棱镜中反射出无数个世界。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
       }
     ],
     "2": [
@@ -142,6 +172,21 @@
         "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png",
         "category": "个体资质增强道具",
         "description": "对初始个体资质小于10的精灵使用，使该项个体资质的初始值增加1。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "棱镜球",
+        "price": "3200000",
+        "priceRaw": "320w",
+        "limit": "1",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9b/kkwd244su5nzzg5pj99volbt84ohied.png/100px-100795.png",
+        "category": "特制咕噜球",
+        "description": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵。 蕴含改变精灵外观、提升天分的神秘力量，还能使其个体资质变为极致。 棱镜中反射出无数个世界。",
         "rounds": [
           1,
           2,
@@ -195,6 +240,21 @@
           3,
           4
         ]
+      },
+      {
+        "name": "棱镜球",
+        "price": "3200000",
+        "priceRaw": "320w",
+        "limit": "1",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9b/kkwd244su5nzzg5pj99volbt84ohied.png/100px-100795.png",
+        "category": "特制咕噜球",
+        "description": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵。 蕴含改变精灵外观、提升天分的神秘力量，还能使其个体资质变为极致。 棱镜中反射出无数个世界。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
       }
     ],
     "4": [
@@ -236,6 +296,21 @@
         "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png",
         "category": "个体资质增强道具",
         "description": "对初始个体资质小于10的精灵使用，使该项个体资质的初始值增加1。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "棱镜球",
+        "price": "3200000",
+        "priceRaw": "320w",
+        "limit": "1",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9b/kkwd244su5nzzg5pj99volbt84ohied.png/100px-100795.png",
+        "category": "特制咕噜球",
+        "description": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵。 蕴含改变精灵外观、提升天分的神秘力量，还能使其个体资质变为极致。 棱镜中反射出无数个世界。",
         "rounds": [
           1,
           2,
