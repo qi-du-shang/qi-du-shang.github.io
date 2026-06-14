@@ -107,7 +107,6 @@
                 <p><span class="text-gray-500">商人坐标</span> <span id="merchantLocation">源站暂未返回坐标</span></p>
             </div>
         </div>
-
         <!-- ========== PushPlus 订阅引导模块 START ========== -->
         <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
             <!-- 模块标题 + 展开/收起按钮 -->
@@ -127,7 +126,6 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
             </div>
-
             <!-- 引导内容（默认收起） -->
             <div id="guideContent" class="guide-content mt-5">
                 <div class="space-y-6">
@@ -147,7 +145,6 @@
                             <p class="text-xs text-gray-500 mt-2 text-center">▲ 点击「关注服务号」完成关注</p>
                         </div>
                     </div>
-
                     <!-- 步骤 2：扫描订阅二维码 -->
                     <div class="step-card bg-[#EFF6FF] rounded-2xl border-2 border-[#3B82F6] p-4">
                         <div class="flex items-center gap-2 mb-3">
@@ -162,7 +159,6 @@
                         </div>
                         <p class="text-xs text-center text-gray-500 mt-2">👆 长按识别二维码，完成订阅授权</p>
                     </div>
-
                     <!-- 步骤 3：授权确认 -->
                     <div class="step-card bg-[#FEF3C7] rounded-2xl border-2 border-[#F59E0B] p-4">
                         <div class="flex items-center gap-2 mb-3">
@@ -175,7 +171,6 @@
                             <p class="text-xs text-gray-500 mt-2 text-center">▲ 收到授权消息即表示订阅成功</p>
                         </div>
                     </div>
-
                     <!-- 步骤 4：开启通知提醒 -->
                     <div class="step-card bg-[#FAF5FF] rounded-2xl border-2 border-[#8B5CF6] p-4">
                         <div class="flex items-center gap-2 mb-3">
@@ -204,7 +199,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- 完成提示 -->
                     <div class="bg-gradient-to-r from-[#22C55E] to-[#16A34A] rounded-2xl p-4 text-white text-center">
                         <div class="text-3xl mb-2">🎉</div>
@@ -216,7 +210,6 @@
             </div>
         </div>
         <!-- ========== PushPlus 订阅引导模块 END ========== -->
-
         <!-- 每日轮次（可点击切换） -->
         <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
             <h2 class="text-2xl font-bold mb-4">每日轮次（点击切换查看）</h2>
@@ -242,7 +235,6 @@
             <p class="mb-4">蛇瞳-2026-6-12,Maoming City,Guangdong Province</p>
         </footer>
     </div>
-
     <script>
         // ========== PushPlus 引导模块展开/收起功能 ==========
         function toggleGuide() {
@@ -263,6 +255,23 @@
         let merchantData = null;
         let countdownInterval = null;
         let selectedRound = 1; // 当前选中的轮次
+
+        // ========== 新增：计算指定轮次的结束时间（北京时间） ==========
+        function getRoundEndTime(roundNum, baseDateStr) {
+            // 兼容iOS日期格式，替换横杠为斜杠
+            const baseDate = new Date(baseDateStr.replace(/-/g, '/'));
+            const endHourMap = { 1: 12, 2: 16, 3: 20, 4: 8 };
+            const endHour = endHourMap[roundNum];
+            
+            const endTime = new Date(baseDate);
+            endTime.setHours(endHour, 0, 0, 0);
+            // 第四轮结束时间为次日8点，日期+1
+            if (roundNum === 4) {
+                endTime.setDate(endTime.getDate() + 1);
+            }
+            return endTime.getTime(); // 返回时间戳，方便计算
+        }
+
         // 页面加载完成 → 读取本地JSON数据
         document.addEventListener('DOMContentLoaded', async () => {
             await loadLocalJsonData();
@@ -273,6 +282,7 @@
                 startCountdown();
             }
         });
+
         // 核心：读取本地 data.json
         async function loadLocalJsonData() {
             try {
@@ -288,6 +298,7 @@
                 return false;
             }
         }
+
         // 渲染整个页面
         function renderPage() {
             renderMerchantInfo();
@@ -295,6 +306,7 @@
             renderItems();
             updateLastUpdateTime();
         }
+
         // 渲染商人基本信息
         function renderMerchantInfo() {
             document.getElementById('currentRound').textContent = merchantData.round;
@@ -303,6 +315,7 @@
             document.getElementById('durationHours').textContent = `${merchantData.durationHours}h`;
             document.getElementById('merchantLocation').textContent = merchantData.merchantPosition || '源站暂未返回坐标';
         }
+
         // 渲染每日轮次 + 完整状态判断：已结束 / 当前 / 未开始
         function renderRounds() {
             const container = document.getElementById('roundsContainer');
@@ -352,7 +365,8 @@
                 container.appendChild(el);
             }
         }
-        // 渲染商品列表 + 顶部提示文字
+
+        // 渲染商品列表 + 顶部提示文字 + 新增商品类型标签和倒计时
         function renderItems() {
             const container = document.getElementById('itemsContainer');
             const statusEl = document.getElementById('roundStatus');
@@ -380,7 +394,16 @@
                 container.innerHTML = '<div class="text-center py-10 text-gray-500">该轮次暂无商品</div>';
                 return;
             }
+
+            // 取本轮开始日期作为基准日期，用于计算商品下架时间
+            const baseDate = merchantData.startedAtBeijing.split(' ')[0];
+
             filteredItems.forEach(item => {
+                const rounds = item.rounds || [selectedRound];
+                const maxRound = Math.max(...rounds);
+                const endTime = getRoundEndTime(maxRound, baseDate);
+                const isLimit = rounds.length === 1;
+
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-3xl border-4 border-border p-5 card-shadow';
                 card.innerHTML = `
@@ -389,20 +412,53 @@
                             <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-contain" loading="lazy">
                         </div>
                         <div class="flex-1">
-                            <div class="bg-secondary rounded-full px-4 py-1 text-sm font-bold inline-block mb-2 border-2 border-border">
-                                ${item.category}
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <div class="bg-secondary rounded-full px-3 py-1 text-sm font-bold inline-block border-2 border-border">
+                                    ${item.category}
+                                </div>
+                                <div class="${isLimit ? 'bg-accent text-white' : 'bg-primary'} rounded-full px-3 py-1 text-sm font-bold inline-block border-2 border-border">
+                                    ${isLimit ? '限时商品' : `常驻·持续${rounds.length}轮`}
+                                </div>
                             </div>
                             <h3 class="text-2xl font-bold mb-2">${item.name}</h3>
                             <p class="text-lg mb-1">价格: ${item.price} 洛克贝</p>
-                            <p class="text-lg mb-3">限购: ${item.limit}</p>
+                            <p class="text-lg mb-2">限购: ${item.limit}</p>
+                            <p class="text-sm text-gray-600 mb-3">
+                                距离下架: <span class="item-countdown font-mono font-bold text-accent" data-end-time="${endTime}">计算中...</span>
+                            </p>
                             <p class="text-gray-600 leading-relaxed">${item.description}</p>
                         </div>
                     </div>
                 `;
                 container.appendChild(card);
             });
+
+            // 商品渲染完成后立即更新一次倒计时
+            updateAllItemCountdowns();
         }
-        // 实时倒计时
+
+        // ========== 新增：更新所有商品的倒计时 ==========
+        function updateAllItemCountdowns() {
+            const now = Date.now();
+            document.querySelectorAll('.item-countdown').forEach(el => {
+                const endTime = parseInt(el.dataset.endTime);
+                const diff = endTime - now;
+
+                if (diff <= 0) {
+                    el.textContent = '已下架';
+                    el.classList.remove('text-accent');
+                    el.classList.add('text-gray-400');
+                    return;
+                }
+
+                const hours = Math.floor(diff / 3600000);
+                const minutes = Math.floor((diff % 3600000) / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                el.textContent = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+            });
+        }
+
+        // 实时倒计时（轮次总倒计时 + 商品独立倒计时）
         function startCountdown() {
             if (countdownInterval) clearInterval(countdownInterval);
             updateCountdown();
@@ -418,16 +474,19 @@
             
             if (diff <= 0) {
                 document.getElementById('countdown').textContent = '00:00:00';
-                return;
+            } else {
+                const hours = Math.floor(diff / 3600000);
+                const minutes = Math.floor((diff % 3600000) / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                
+                document.getElementById('countdown').textContent = 
+                    `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
             }
-            
-            const hours = Math.floor(diff / 3600000);
-            const minutes = Math.floor((diff % 3600000) / 60000);
-            const seconds = Math.floor((diff % 60000) / 1000);
-            
-            document.getElementById('countdown').textContent = 
-                `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+
+            // 同步更新所有商品的独立倒计时
+            updateAllItemCountdowns();
         }
+
         // 更新最后更新时间显示
         function updateLastUpdateTime() {
             if (merchantData?.fetchedAt) {
@@ -436,6 +495,7 @@
                     date.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
             }
         }
+
         // 内置静态兜底数据
         function getFallbackStaticData() {
             return {
