@@ -247,7 +247,6 @@
                 arrow.style.transform = 'rotate(0deg)';
             }
         }
-
         // 刷新时间节点（北京时间）
         const REFRESH_HOURS = [8, 12, 16, 20];
         // 静态JSON文件地址（同目录，只读）
@@ -255,7 +254,6 @@
         let merchantData = null;
         let countdownInterval = null;
         let selectedRound = 1; // 当前选中的轮次
-
         // ========== 新增：计算指定轮次的结束时间（北京时间） ==========
         function getRoundEndTime(roundNum, baseDateStr) {
             // 兼容iOS日期格式，替换横杠为斜杠
@@ -267,7 +265,6 @@
             endTime.setHours(endHour, 0, 0, 0);
             return endTime.getTime(); // 返回时间戳，方便计算
         }
-
         // 页面加载完成 → 读取本地JSON数据
         document.addEventListener('DOMContentLoaded', async () => {
             await loadLocalJsonData();
@@ -278,7 +275,6 @@
                 startCountdown();
             }
         });
-
         // 核心：读取本地 data.json
         async function loadLocalJsonData() {
             try {
@@ -294,7 +290,6 @@
                 return false;
             }
         }
-
         // 渲染整个页面
         function renderPage() {
             renderMerchantInfo();
@@ -302,7 +297,6 @@
             renderItems();
             updateLastUpdateTime();
         }
-
         // 渲染商人基本信息
         function renderMerchantInfo() {
             document.getElementById('currentRound').textContent = merchantData.round;
@@ -311,7 +305,6 @@
             document.getElementById('durationHours').textContent = `${merchantData.durationHours}h`;
             document.getElementById('merchantLocation').textContent = merchantData.merchantPosition || '源站暂未返回坐标';
         }
-
         // 渲染每日轮次 + 完整状态判断：已结束 / 当前 / 未开始
         function renderRounds() {
             const container = document.getElementById('roundsContainer');
@@ -361,7 +354,6 @@
                 container.appendChild(el);
             }
         }
-
         // 渲染商品列表 + 顶部提示文字 + 新增商品类型标签和倒计时
         function renderItems() {
             const container = document.getElementById('itemsContainer');
@@ -378,28 +370,29 @@
             } else {
                 statusEl.classList.add('hidden');
             }
-            if (!merchantData.items || merchantData.items.length === 0) {
-                container.innerHTML = '<div class="text-center py-10 text-gray-500">本轮次暂无商品</div>';
-                return;
+
+            // ========== 修复：优先从 rounds 对象取对应轮次商品，兼容旧版 items 结构 ==========
+            let filteredItems = [];
+            if (merchantData.rounds && merchantData.rounds[selectedRound]) {
+                filteredItems = merchantData.rounds[selectedRound];
+            } else if (merchantData.items && Array.isArray(merchantData.items)) {
+                // 兼容旧版数据结构
+                filteredItems = merchantData.items.filter(item => 
+                    item.rounds && item.rounds.includes(selectedRound)
+                );
             }
-            // 按选中轮次筛选商品
-            const filteredItems = merchantData.items.filter(item => 
-                item.rounds && item.rounds.includes(selectedRound)
-            );
+
             if (filteredItems.length === 0) {
                 container.innerHTML = '<div class="text-center py-10 text-gray-500">该轮次暂无商品</div>';
                 return;
             }
-
             // 取本轮开始日期作为基准日期，用于计算商品下架时间
             const baseDate = merchantData.startedAtBeijing.split(' ')[0];
-
             filteredItems.forEach(item => {
                 const rounds = item.rounds || [selectedRound];
                 const maxRound = Math.max(...rounds);
                 const endTime = getRoundEndTime(maxRound, baseDate);
                 const isLimit = rounds.length === 1;
-
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-3xl border-4 border-border p-5 card-shadow';
                 card.innerHTML = `
@@ -428,32 +421,27 @@
                 `;
                 container.appendChild(card);
             });
-
             // 商品渲染完成后立即更新一次倒计时
             updateAllItemCountdowns();
         }
-
         // ========== 新增：更新所有商品的倒计时 ==========
         function updateAllItemCountdowns() {
             const now = Date.now();
             document.querySelectorAll('.item-countdown').forEach(el => {
                 const endTime = parseInt(el.dataset.endTime);
                 const diff = endTime - now;
-
                 if (diff <= 0) {
                     el.textContent = '已下架';
                     el.classList.remove('text-accent');
                     el.classList.add('text-gray-400');
                     return;
                 }
-
                 const hours = Math.floor(diff / 3600000);
                 const minutes = Math.floor((diff % 3600000) / 60000);
                 const seconds = Math.floor((diff % 60000) / 1000);
                 el.textContent = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
             });
         }
-
         // 实时倒计时（轮次总倒计时 + 商品独立倒计时）
         function startCountdown() {
             if (countdownInterval) clearInterval(countdownInterval);
@@ -478,11 +466,9 @@
                 document.getElementById('countdown').textContent = 
                     `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
             }
-
             // 同步更新所有商品的独立倒计时
             updateAllItemCountdowns();
         }
-
         // 更新最后更新时间显示
         function updateLastUpdateTime() {
             if (merchantData?.fetchedAt) {
@@ -491,7 +477,6 @@
                     date.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
             }
         }
-
         // 内置静态兜底数据
         function getFallbackStaticData() {
             return {
