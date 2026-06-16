@@ -1,24 +1,24 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-06-16T04:30:01.661Z",
+  "fetchedAt": "2026-06-16T08:30:02.899Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-06-16 12:00:00",
-  "nextRefreshBeijing": "2026-06-16 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-06-16 16:00:00",
+  "nextRefreshBeijing": "2026-06-16 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "水系粉尘",
+      "name": "幽系粉尘",
       "price": "500",
       "priceRaw": "500",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c7/4fxef31uslze9psd9375td9zbqtbllv.png/100px-100123.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png",
       "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量水系魔法，是合成技能石的主要触媒。",
+      "description": "常见的炼金材料，蕴含少量幽系魔法，是合成技能石的主要触媒。",
       "rounds": [
-        2
+        3
       ]
     }
   ],
@@ -51,7 +51,20 @@
         ]
       }
     ],
-    "3": [],
+    "3": [
+      {
+        "name": "幽系粉尘",
+        "price": "500",
+        "priceRaw": "500",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png",
+        "category": "炼金材料",
+        "description": "常见的炼金材料，蕴含少量幽系魔法，是合成技能石的主要触媒。",
+        "rounds": [
+          3
+        ]
+      }
+    ],
     "4": []
   },
   "live": true
