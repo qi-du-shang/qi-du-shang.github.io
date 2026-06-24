@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>王者荣耀战力查询</title>
+     <style>
+         * {
+             margin: 0;
+             padding: 0;
+             box-sizing: border-box;
+         }
+         body {
+             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+             min-height: 100vh;
+             color: #fff;
+             padding: 20px;
+         }
+         .container {
+             max-width: 800px;
+             margin: 0 auto;
+         }
+         .header {
+             text-align: center;
+             margin-bottom: 30px;
+             padding-top: 20px;
+         }
+         .header h1 {
+             font-size: 2.5rem;
+             background: linear-gradient(90deg, #f5d76e, #f7ca18, #f5d76e);
+             -webkit-background-clip: text;
+             -webkit-text-fill-color: transparent;
+             background-clip: text;
+             margin-bottom: 10px;
+             text-shadow: 0 0 30px rgba(245, 215, 110, 0.3);
+         }
+         .header p {
+             color: rgba(255, 255, 255, 0.7);
+             font-size: 1rem;
+         }
+         .query-card {
+             background: rgba(255, 255, 255, 0.05);
+             backdrop-filter: blur(10px);
+             border-radius: 20px;
+             padding: 30px;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+             margin-bottom: 30px;
+         }
+         .hot-heroes {
+             margin-bottom: 20px;
+         }
+         .hot-heroes-label {
+             font-size: 13px;
+             color: rgba(255, 255, 255, 0.6);
+             margin-bottom: 10px;
+         }
+         .hero-tags {
+             display: flex;
+             flex-wrap: wrap;
+             gap: 8px;
+         }
+         .hero-tag {
+             padding: 6px 14px;
+             background: rgba(245, 215, 110, 0.1);
+             border: 1px solid rgba(245, 215, 110, 0.3);
+             border-radius: 20px;
+             font-size: 13px;
+             color: #f5d76e;
+             cursor: pointer;
+             transition: all 0.3s ease;
+         }
+         .hero-tag:hover {
+             background: rgba(245, 215, 110, 0.2);
+             transform: translateY(-1px);
+         }
+         .form-group {
+             margin-bottom: 20px;
+         }
+         .form-group label {
+             display: block;
+             margin-bottom: 8px;
+             color: rgba(255, 255, 255, 0.9);
+             font-size: 14px;
+             font-weight: 500;
+         }
+         .form-group input,
+         .form-group select {
+             width: 100%;
+             padding: 14px 16px;
+             border: 1px solid rgba(255, 255, 255, 0.2);
+             border-radius: 12px;
+             background: rgba(255, 255, 255, 0.08);
+             color: #fff;
+             font-size: 15px;
+             outline: none;
+             transition: all 0.3s ease;
+         }
+         .form-group input:focus,
+         .form-group select:focus {
+             border-color: #f5d76e;
+             box-shadow: 0 0 0 3px rgba(245, 215, 110, 0.1);
+         }
+         .form-group select option {
+             background: #1a1a2e;
+             color: #fff;
+         }
+         .form-row {
+             display: grid;
+             grid-template-columns: 1fr 1fr;
+             gap: 20px;
+         }
+         .query-btn {
+             width: 100%;
+             padding: 16px;
+             background: linear-gradient(135deg, #f5d76e 0%, #f7ca18 100%);
+             border: none;
+             border-radius: 12px;
+             color: #1a1a2e;
+             font-size: 16px;
+             font-weight: 600;
+             cursor: pointer;
+             transition: all 0.3s ease;
+             margin-top: 10px;
+         }
+         .query-btn:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 8px 25px rgba(245, 215, 110, 0.4);
+         }
+         .query-btn:active {
+             transform: translateY(0);
+         }
+         .query-btn:disabled {
+             opacity: 0.6;
+             cursor: not-allowed;
+             transform: none;
+         }
+         .result-card {
+             background: rgba(255, 255, 255, 0.05);
+             backdrop-filter: blur(10px);
+             border-radius: 20px;
+             padding: 30px;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+             display: none;
+         }
+         .result-card.show {
+             display: block;
+             animation: fadeIn 0.5s ease;
+         }
+         @keyframes fadeIn {
+             from {
+                 opacity: 0;
+                 transform: translateY(20px);
+             }
+             to {
+                 opacity: 1;
+                 transform: translateY(0);
+             }
+         }
+         .hero-info {
+             display: flex;
+             align-items: center;
+             gap: 20px;
+             margin-bottom: 30px;
+             padding-bottom: 20px;
+             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+         }
+         .hero-avatar {
+             width: 80px;
+             height: 80px;
+             border-radius: 50%;
+             background: linear-gradient(135deg, #f5d76e, #f7ca18);
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             font-size: 2rem;
+             box-shadow: 0 4px 20px rgba(245, 215, 110, 0.3);
+             flex-shrink: 0;
+         }
+         .hero-avatar img {
+             width: 100%;
+             height: 100%;
+             border-radius: 50%;
+             object-fit: cover;
+         }
+         .hero-detail h2 {
+             font-size: 1.5rem;
+             margin-bottom: 5px;
+             color: #f5d76e;
+         }
+         .hero-detail p {
+             color: rgba(255, 255, 255, 0.7);
+             font-size: 14px;
+         }
+         .power-grid {
+             display: grid;
+             grid-template-columns: repeat(3, 1fr);
+             gap: 15px;
+             margin-bottom: 20px;
+         }
+         .power-item {
+             background: rgba(255, 255, 255, 0.05);
+             border-radius: 16px;
+             padding: 20px;
+             text-align: center;
+             border: 1px solid rgba(255, 255, 255, 0.08);
+             transition: all 0.3s ease;
+         }
+         .power-item:hover {
+             background: rgba(255, 255, 255, 0.08);
+             transform: translateY(-3px);
+         }
+         .power-item .label {
+             font-size: 13px;
+             color: rgba(255, 255, 255, 0.6);
+             margin-bottom: 8px;
+         }
+         .power-item .value {
+             font-size: 1.8rem;
+             font-weight: 700;
+             background: linear-gradient(90deg, #f5d76e, #f7ca18);
+             -webkit-background-clip: text;
+             -webkit-text-fill-color: transparent;
+             background-clip: text;
+         }
+         .power-item .area {
+             font-size: 12px;
+             color: rgba(255, 255, 255, 0.5);
+             margin-top: 5px;
+         }
+         .update-time {
+             text-align: center;
+             color: rgba(255, 255, 255, 0.5);
+             font-size: 12px;
+             margin-top: 20px;
+             padding-top: 15px;
+             border-top: 1px solid rgba(255, 255, 255, 0.08);
+         }
+         .loading {
+             text-align: center;
+             padding: 40px;
+             display: none;
+         }
+         .loading.show {
+             display: block;
+         }
+         .loading-spinner {
+             width: 50px;
+             height: 50px;
+             border: 3px solid rgba(255, 255, 255, 0.1);
+             border-top-color: #f5d76e;
+             border-radius: 50%;
+             animation: spin 1s linear infinite;
+             margin: 0 auto 15px;
+         }
+         @keyframes spin {
+             to { transform: rotate(360deg); }
+         }
+         .loading p {
+             color: rgba(255, 255, 255, 0.7);
+             font-size: 14px;
+         }
+         .error-msg {
+             background: rgba(255, 87, 87, 0.1);
+             border: 1px solid rgba(255, 87, 87, 0.3);
+             border-radius: 12px;
+             padding: 15px 20px;
+             color: #ff7878;
+             font-size: 14px;
+             margin-bottom: 20px;
+             display: none;
+         }
+         .error-msg.show {
+             display: block;
+             animation: shake 0.5s ease;
+         }
+         @keyframes shake {
+             0%, 100% { transform: translateX(0); }
+             25% { transform: translateX(-5px); }
+             75% { transform: translateX(5px); }
+         }
+         .notice-msg {
+             background: rgba(245, 215, 110, 0.1);
+             border: 1px solid rgba(245, 215, 110, 0.3);
+             border-radius: 12px;
+             padding: 15px 20px;
+             color: #f5d76e;
+             font-size: 13px;
+             margin-bottom: 20px;
+             line-height: 1.6;
+         }
+         .notice-msg strong {
+             display: block;
+             margin-bottom: 5px;
+         }
+         .raw-data {
+             margin-top: 20px;
+             padding-top: 20px;
+             border-top: 1px solid rgba(255, 255, 255, 0.08);
+         }
+         .raw-data summary {
+             cursor: pointer;
+             color: rgba(255, 255, 255, 0.6);
+             font-size: 13px;
+             user-select: none;
+         }
+         .raw-data pre {
+             background: rgba(0, 0, 0, 0.3);
+             padding: 15px;
+             border-radius: 8px;
+             margin-top: 10px;
+             font-size: 12px;
+             overflow-x: auto;
+             color: rgba(255, 255, 255, 0.8);
+             max-height: 300px;
+             overflow-y: auto;
+         }
+         .footer {
+             text-align: center;
+             margin-top: 30px;
+             padding-bottom: 20px;
+             color: rgba(255, 255, 255, 0.4);
+             font-size: 12px;
+         }
+         /* 响应式 */
+         @media (max-width: 600px) {
+             .header h1 {
+                 font-size: 1.8rem;
+             }
+             .form-row {
+                 grid-template-columns: 1fr;
+             }
+             .power-grid {
+                 grid-template-columns: 1fr;
+             }
+             .hero-info {
+                 flex-direction: column;
+                 text-align: center;
+             }
+             .query-card,
+             .result-card {
+                 padding: 20px;
+             }
+             .hero-tags {
+                 justify-content: center;
+             }
+         }
+     </style>
+ </head>
+ <body>
+     <div class="container">
+         <div class="header">
+             <h1>👑 王者荣耀战力查询</h1>
+             <p>查询英雄最低战力 · 省市区三级榜单</p>
+         </div>
+         <div class="query-card">
+             <div class="notice-msg">
+                 <strong>💡 使用说明</strong>
+                 由于浏览器跨域限制，直接调用第三方API可能失败。如需正常使用，请部署到服务器并配置后端代理，或在支持CORS的环境中运行。
+             </div>
+             <div class="error-msg" id="errorMsg"></div>
+             <div class="hot-heroes">
+                 <div class="hot-heroes-label">🔥 热门英雄：</div>
+                 <div class="hero-tags">
+                     <span class="hero-tag" onclick="selectHero('孙悟空')">孙悟空</span>
+                     <span class="hero-tag" onclick="selectHero('李白')">李白</span>
+                     <span class="hero-tag" onclick="selectHero('韩信')">韩信</span>
+                     <span class="hero-tag" onclick="selectHero('赵云')">赵云</span>
+                     <span class="hero-tag" onclick="selectHero('貂蝉')">貂蝉</span>
+                     <span class="hero-tag" onclick="selectHero('鲁班七号')">鲁班七号</span>
+                     <span class="hero-tag" onclick="selectHero('亚瑟')">亚瑟</span>
+                     <span class="hero-tag" onclick="selectHero('妲己')">妲己</span>
+                 </div>
+             </div>
+             <div class="form-group">
+                 <label for="heroName">英雄名称</label>
+                 <input type="text" id="heroName" placeholder="请输入英雄名称，如：孙悟空">
+             </div>
+             <div class="form-row">
+                 <div class="form-group">
+                     <label for="serverType">大区类型</label>
+                     <select id="serverType">
+                         <option value="0">安卓QQ大区</option>
+                         <option value="1">安卓微信大区</option>
+                         <option value="2">苹果QQ大区</option>
+                         <option value="3">苹果微信大区</option>
+                     </select>
+                 </div>
+                 <div class="form-group">
+                     <label for="areaType">榜单类型</label>
+                     <select id="areaType">
+                         <option value="0">全国最低省榜</option>
+                         <option value="1">全国最低市榜</option>
+                         <option value="2">全国最低区榜</option>
+                     </select>
+                 </div>
+             </div>
+             <button class="query-btn" id="queryBtn" onclick="queryPower()">
+                 🔍 查询战力
+             </button>
+             <div class="loading" id="loading">
+                 <div class="loading-spinner"></div>
+                 <p>正在查询中，请稍候...</p>
+             </div>
+         </div>
+         <div class="result-card" id="resultCard">
+             <div class="hero-info">
+                 <div class="hero-avatar" id="heroAvatar">⚔️</div>
+                 <div class="hero-detail">
+                     <h2 id="heroNameResult">-</h2>
+                     <p id="heroPlatform">-</p>
+                 </div>
+             </div>
+             <div class="power-grid" id="powerGrid">
+                 <!-- 动态生成 -->
+             </div>
+             <div class="update-time" id="updateTime"></div>
+             <details class="raw-data">
+                 <summary>查看原始数据</summary>
+                 <pre id="rawData"></pre>
+             </details>
+         </div>
+         <div class="footer">
+             数据来源：墨白API · 仅供学习交流使用
+         </div>
+     </div>
+     <script>
+         const API_KEY = '50e7099a396e7cefcba6a5f1170f01a152334cd1bb36610d916c31cc1abb5819';
+         const API_URL = 'https://api.key5.site/API/king/new/index.php';
+         // 大区类型映射
+         const typeMap = {
+             '0': '安卓QQ大区',
+             '1': '安卓微信大区',
+             '2': '苹果QQ大区',
+             '3': '苹果微信大区'
+         };
+         // 榜单类型映射
+         const areaTypeMap = {
+             '0': '省榜',
+             '1': '市榜',
+             '2': '区榜'
+         };
+         // 选择热门英雄
+         function selectHero(name) {
+             document.getElementById('heroName').value = name;
+         }
+         // 显示错误
+         function showError(msg) {
+             const errorMsg = document.getElementById('errorMsg');
+             errorMsg.textContent = msg;
+             errorMsg.classList.add('show');
+             setTimeout(() => {
+                 errorMsg.classList.remove('show');
+             }, 5000);
+         }
+         // 显示/隐藏加载
+         function setLoading(loading) {
+             const loadingEl = document.getElementById('loading');
+             const btn = document.getElementById('queryBtn');
+             
+             if (loading) {
+                 loadingEl.classList.add('show');
+                 btn.disabled = true;
+                 btn.textContent = '查询中...';
+             } else {
+                 loadingEl.classList.remove('show');
+                 btn.disabled = false;
+                 btn.textContent = '🔍 查询战力';
+             }
+         }
+         // 格式化数字
+         function formatNumber(num) {
+             if (typeof num === 'number') {
+                 return num.toLocaleString();
+             }
+             if (typeof num === 'string' && !isNaN(Number(num))) {
+                 return Number(num).toLocaleString();
+             }
+             return num;
+         }
+         // 从数据中提取战力信息
+         function extractPowerData(data) {
+             let result = {
+                 heroName: '',
+                 platform: '',
+                 updateTime: '',
+                 items: []
+             };
+             // 尝试从不同的字段中提取英雄名称
+             result.heroName = data.heroName || data.name || data.hero?.name || data.hero_name || '未知英雄';
+             
+             // 平台信息
+             result.platform = data.platform || data.type || '';
+             
+             // 更新时间
+             result.updateTime = data.updateTime || data.updatetime || data.update || data.time || '';
+             // 尝试提取战力数据
+             // 情况1：直接有 province, city, district 字段
+             if (data.province || data.city || data.district) {
+                 if (data.province) {
+                     result.items.push({
+                         label: '最低省榜',
+                         value: data.province.val || data.province.value || data.province[1] || data.province,
+                         area: data.province.loc || data.province.name || data.province[0] || ''
+                     });
+                 }
+                 if (data.city) {
+                     result.items.push({
+                         label: '最低市榜',
+                         value: data.city.val || data.city.value || data.city[1] || data.city,
+                         area: data.city.loc || data.city.name || data.city[0] || ''
+                     });
+                 }
+                 if (data.district) {
+                     result.items.push({
+                         label: '最低区榜',
+                         value: data.district.val || data.district.value || data.district[1] || data.district,
+                         area: data.district.loc || data.district.name || data.district[0] || ''
+                     });
+                 }
+             }
+             // 情况2：有 sheng, shi, qu 字段
+             else if (data.sheng || data.shi || data.qu) {
+                 if (data.sheng) {
+                     result.items.push({
+                         label: '最低省榜',
+                         value: data.sheng[1] || data.sheng.val || data.sheng,
+                         area: data.sheng[0] || data.sheng.name || ''
+                     });
+                 }
+                 if (data.shi) {
+                     result.items.push({
+                         label: '最低市榜',
+                         value: data.shi[1] || data.shi.val || data.shi,
+                         area: data.shi[0] || data.shi.name || ''
+                     });
+                 }
+                 if (data.qu) {
+                     result.items.push({
+                         label: '最低区榜',
+                         value: data.qu[1] || data.qu.val || data.qu,
+                         area: data.qu[0] || data.qu.name || ''
+                     });
+                 }
+             }
+             // 情况3：data 下有 list 或 data 数组
+             else if (Array.isArray(data.list) || Array.isArray(data.data)) {
+                 const list = data.list || data.data;
+                 list.forEach((item, index) => {
+                     const labels = ['省榜', '市榜', '区榜'];
+                     result.items.push({
+                         label: item.name || item.label || item.type || labels[index] || `榜单${index + 1}`,
+                         value: item.value || item.val || item.power || item.score || '-',
+                         area: item.area || item.region || item.loc || ''
+                     });
+                 });
+             }
+             // 情况4：直接有 Top10, Top100 等
+             else if (data.Top10 || data.Top100) {
+                 if (data.Top10) {
+                     result.items.push({
+                         label: '全国Top10',
+                         value: data.Top10,
+                         area: '全国'
+                     });
+                 }
+                 if (data.Top100) {
+                     result.items.push({
+                         label: '全国Top100',
+                         value: data.Top100,
+                         area: '全国'
+                     });
+                 }
+             }
+             // 情况5：遍历所有数值字段
+             else {
+                 let count = 0;
+                 for (const key in data) {
+                     if (typeof data[key] === 'number' && count < 6) {
+                         result.items.push({
+                             label: key,
+                             value: data[key],
+                             area: ''
+                         });
+                         count++;
+                     }
+                 }
+             }
+             return result;
+         }
+         // 渲染结果
+         function renderResult(data, rawData, isMock = false) {
+             const resultCard = document.getElementById('resultCard');
+             const powerGrid = document.getElementById('powerGrid');
+             
+             const powerData = extractPowerData(data);
+             // 英雄名称
+             document.getElementById('heroNameResult').textContent = powerData.heroName + (isMock ? ' (演示)' : '');
+             
+             // 平台信息
+             const typeSelect = document.getElementById('serverType');
+             const areaSelect = document.getElementById('areaType');
+             const platformText = powerData.platform || 
+                 `${typeMap[typeSelect.value]} · ${areaTypeMap[areaSelect.value]}`;
+             document.getElementById('heroPlatform').textContent = platformText;
+             // 英雄头像
+             const avatarEl = document.getElementById('heroAvatar');
+             if (data.avatar || data.hero?.avatar || data.hero_photo) {
+                 const avatarUrl = data.avatar || data.hero?.avatar || data.hero_photo;
+                 avatarEl.innerHTML = `<img src="${avatarUrl}" alt="头像" onerror="this.parentElement.innerHTML='⚔️'">`;
+             } else {
+                 avatarEl.innerHTML = '⚔️';
+             }
+             // 战力数据
+             if (powerData.items.length > 0) {
+                 powerGrid.innerHTML = powerData.items.map(item => `
+                     <div class="power-item">
+                         <div class="label">${item.label}</div>
+                         <div class="value">${formatNumber(item.value)}</div>
+                         ${item.area ? `<div class="area">📍 ${item.area}</div>` : ''}
+                     </div>
+                 `).join('');
+             } else {
+                 powerGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: rgba(255,255,255,0.5);">暂无战力数据</p>';
+             }
+             // 更新时间
+             const updateTimeEl = document.getElementById('updateTime');
+             if (powerData.updateTime) {
+                 updateTimeEl.textContent = `数据更新时间：${powerData.updateTime}`;
+             } else {
+                 updateTimeEl.textContent = '';
+             }
+             // 原始数据
+             document.getElementById('rawData').textContent = JSON.stringify(rawData, null, 2);
+             // 显示结果
+             resultCard.classList.add('show');
+         }
+         // 查询战力
+         async function queryPower() {
+             const heroName = document.getElementById('heroName').value.trim();
+             const type = document.getElementById('serverType').value;
+             const areaType = document.getElementById('areaType').value;
+             if (!heroName) {
+                 showError('请输入英雄名称');
+                 return;
+             }
+             setLoading(true);
+             document.getElementById('resultCard').classList.remove('show');
+             try {
+                 const url = `${API_URL}?apikey=${API_KEY}&heroName=${encodeURIComponent(heroName)}&type=${type}&areaType=${areaType}`;
+                 
+                 console.log('请求URL:', url);
+                 // 尝试直接请求
+                 const response = await fetch(url);
+                 
+                 if (!response.ok) {
+                     throw new Error(`HTTP错误: ${response.status}`);
+                 }
+                 const result = await response.json();
+                 
+                 console.log('返回数据:', result);
+                 // 检查是否成功
+                 if (result.code && result.code !== 200) {
+                     throw new Error(result.msg || result.message || '查询失败');
+                 }
+                 if (result.msg && result.msg.includes('失败')) {
+                     throw new Error(result.msg);
+                 }
+                 // 获取实际数据
+                 let data = result.data || result;
+                 
+                 // 如果 data 还是字符串，尝试解析
+                 if (typeof data === 'string') {
+                     try {
+                         data = JSON.parse(data);
+                     } catch (e) {
+                         // 不是JSON，直接使用
+                     }
+                 }
+                 renderResult(data, result, false);
+             } catch (error) {
+                 console.error('查询失败:', error);
+                 
+                 // 如果是跨域错误，给出提示并显示模拟数据
+                 if (error.message.includes('Failed to fetch') || error.message.includes('CORS') || error.name === 'TypeError') {
+                     showError('由于浏览器跨域限制，无法直接调用API。已显示演示数据供预览。');
+                     
+                     // 显示模拟数据供预览
+                     showMockData(heroName, type, areaType);
+                 } else {
+                     showError('查询失败：' + error.message);
+                 }
+             } finally {
+                 setLoading(false);
+             }
+         }
+         // 显示模拟数据（用于演示）
+         function showMockData(heroName, type, areaType) {
+             const mockData = {
+                 heroName: heroName,
+                 platform: typeMap[type] + ' · ' + areaTypeMap[areaType],
+                 updateTime: new Date().toLocaleString('zh-CN'),
+                 province: {
+                     val: 3500 + Math.floor(Math.random() * 2000),
+                     loc: '台湾省'
+                 },
+                 city: {
+                     val: 2000 + Math.floor(Math.random() * 1500),
+                     loc: '三沙市'
+                 },
+                 district: {
+                     val: 1000 + Math.floor(Math.random() * 1000),
+                     loc: '西沙区'
+                 }
+             };
+             renderResult(mockData, {
+                 code: 200,
+                 msg: 'success (演示数据 - 实际使用请部署后端代理)',
+                 data: mockData
+             }, true);
+         }
+         // 回车查询
+         document.getElementById('heroName').addEventListener('keypress', (e) => {
+             if (e.key === 'Enter') {
+                 queryPower();
+             }
+         });
+     </script>
+ </body>
+ </html>
