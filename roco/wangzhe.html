@@ -472,7 +472,9 @@
     </div>
 
     <script>
+        // 使用 CORS 代理来绕过跨域问题
         const API_BASE_URL = 'https://api.wzryqz.cn/gethero';
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
 
         async function searchHeroPower() {
             const heroName = document.getElementById('heroName').value.trim();
@@ -488,8 +490,27 @@
             hideResult();
 
             try {
-                const url = `${API_BASE_URL}?hero=${encodeURIComponent(heroName)}&type=${platform}`;
-                const response = await fetch(url);
+                // 先尝试直接请求
+                let url = `${API_BASE_URL}?hero=${encodeURIComponent(heroName)}&type=${platform}`;
+                let response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    mode: 'cors'
+                });
+
+                // 如果直接请求失败，尝试使用代理
+                if (!response.ok) {
+                    console.log('直接请求失败，尝试使用代理...');
+                    const proxyUrl = CORS_PROXY + encodeURIComponent(url);
+                    response = await fetch(proxyUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                        }
+                    });
+                }
 
                 if (!response.ok) {
                     throw new Error(`请求失败: ${response.status}`);
@@ -497,14 +518,24 @@
 
                 const data = await response.json();
 
-                if (!data || data.code !== 200) {
+                if (!data) {
+                    throw new Error('返回数据为空');
+                }
+
+                // 兼容不同的返回格式
+                if (data.code !== undefined && data.code !== 200) {
                     throw new Error(data.msg || '查询失败，请检查英雄名称是否正确');
                 }
 
                 displayResult(data);
             } catch (error) {
-                showError(`查询失败: ${error.message}`);
                 console.error('查询错误:', error);
+                // 提供更详细的错误信息
+                let errorMsg = `查询失败: ${error.message}`;
+                if (error.message.includes('fetch')) {
+                    errorMsg = '网络请求失败，可能是跨域限制。建议：1. 使用本地服务器运行 2. 检查网络连接 3. 稍后重试';
+                }
+                showError(errorMsg);
             } finally {
                 showLoading(false);
             }
