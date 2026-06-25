@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>至信链API接口演示平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f6fa;
+            border-bottom: 2px solid #e1e4e8;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 18px 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #57606a;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: #e8eaf0;
+            color: #333;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #fafbfc;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #f5f6fa;
+            color: #667eea;
+            border: 1px solid #e1e4e8;
+        }
+
+        .btn-secondary:hover {
+            background: #e8eaf0;
+        }
+
+        .loading {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .response-area {
+            margin-top: 30px;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .response-header {
+            background: #f5f6fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e1e4e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .response-header span {
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .response-content {
+            background: #fafbfc;
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .response-content pre {
+            padding: 20px;
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+
+        .info-box h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #e8eaf0;
+            color: #57606a;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 至信链API接口演示平台</h1>
+            <p>数字藏品 · 可信存证 · 证书管理 · SDK集成</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('config')">配置信息</button>
+            <button class="tab" onclick="switchTab('save')">存证接口</button>
+            <button class="tab" onclick="switchTab('query')">查询存证</button>
+            <button class="tab" onclick="switchTab('cert')">证书管理</button>
+            <button class="tab" onclick="switchTab('nft')">数字藏品</button>
+            <button class="tab" onclick="switchTab('sdk')">SDK功能</button>
+        </div>
+
+        <div class="content">
+            <!-- 配置信息 -->
+            <div id="config" class="tab-content active">
+                <div class="info-box">
+                    <h4>🔧 配置说明</h4>
+                    <p>请先配置至信链API的基础信息和鉴权参数，配置完成后其他功能即可正常使用。</p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>API基础URL</label>
+                        <input type="text" id="baseUrl" placeholder="https://b.chinaso.com" value="https://b.chinaso.com">
+                    </div>
+                    <div class="form-group">
+                        <label>CORS代理地址</label>
+                        <input type="text" id="corsProxy" placeholder="https://cors-anywhere.herokuapp.com/" value="https://cors-anywhere.herokuapp.com/">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Secret ID</label>
+                        <input type="text" id="secretId" placeholder="请输入您的Secret ID">
+                    </div>
+                    <div class="form-group">
+                        <label>Secret Key</label>
+                        <input type="password" id="secretKey" placeholder="请输入您的Secret Key">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>链ID</label>
+                    <input type="text" id="chainId" placeholder="请输入链ID" value="zxchain_testnet">
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="saveConfig()">💾 保存配置</button>
+                    <button class="btn btn-secondary" onclick="testConnection()">🔗 测试连接</button>
+                </div>
+
+                <div class="response-area">
+                    <div class="response-header">
+                        <span>配置状态</span>
+                        <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;" onclick="copyResponse('configResponse')">复制</button>
+                    </div>
+                    <div class="response-content">
+                        <pre id="configResponse">等待配置...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 存证接口 -->
+            <div id="save" class="tab-content">
+                <div class="info-box">
+                    <h4>📝 存证接口说明</h4>
+                    <p>提供数据上链存证功能，支持文本、图片、文档等多种数据类型的可信存证。</p>
+                </div>
+
+                <div class="form-group">
+                    <label>存证类型</label>
+                    <select id="saveType" onchange="toggleSaveInputs()">
+                        <option value="text">文本存证</option>
+                        <option value="file">文件存证</option>
+                        <option value="url">URL存证</option>
+                    </select>
+                </div>
+
+                <div id="saveInputs">
+                    <div class="form-group">
+                        <label>存证内容</label>
+                        <textarea id="saveContent" placeholder="请输入要存证的内容" rows="4"></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="executeSave()" id="saveBtn">
+                        <span>⚡ 执行存证</span>
+                    </button>
+                </div>
+
+                <div class="response-area">
+                    <div class="response-header">
+                        <span>存证结果</span>
+                        <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;" onclick="copyResponse('saveResponse')">复制</button>
+                    </div>
+                    <div class="response-content">
+                        <pre id="saveResponse">等待执行...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 查询存证 -->
+            <div id="query" class="tab-content">
+                <div class="info-box">
+                    <h4>🔍 查询存证说明</h4>
+                    <p>通过存证ID、交易ID或内容哈希查询存证记录的详细信息。</p>
+                </div>
+
+                <div class="form-group">
+                    <label>查询类型</label>
+                    <select id="queryType" onchange="toggleQueryInputs()">
+                        <option value="businessId">业务ID查询</option>
+                        <option value="txId">交易ID查询</option>
+                        <option value="hash">内容哈希查询</option>
+                    </select>
+                </div>
+
+                <div id="queryInputs">
+                    <div class="form-group">
+                        <label>业务ID</label>
+                        <input type="text" id="queryBusinessId" placeholder="请输入业务ID">
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="executeQuery()" id="queryBtn">
+                        <span>⚡ 执行查询</span>
+                    </button>
+                </div>
+
+                <div class="response-area">
+                    <div class="response-header">
+                        <span>查询结果</span>
+                        <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;" onclick="copyResponse('queryResponse')">复制</button>
+                    </div>
+                    <div class="response-content">
+                        <pre id="queryResponse">等待执行...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 证书管理 -->
+            <div id="cert" class="tab-content">
+                <div class="info-box">
+                    <h4>🎖️ 证书管理说明</h4>
+                    <p>基于存证数据生成可信证书，支持下载和展示。</p>
+                </div>
+
+                <div class="form-group">
+                    <label>业务ID</label>
+                    <input type="text" id="certBusinessId" placeholder="请输入存证业务ID">
+                </div>
+
+                <div class="form-group">
+                    <label>证书类型</label>
+                    <select id="certType">
+                        <option value="standard">标准证书</option>
+                        <option value="detailed">详细证书</option>
+                        <option value="simple">简约证书</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="generateCert()" id="certBtn">
+                        <span>📜 生成证书</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadCert()">💾 下载证书</button>
+                </div>
+
+                <div class="response-area">
+                    <div class="response-header">
+                        <span>证书结果</span>
+                        <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;" onclick="copyResponse('certResponse')">复制</button>
+                    </div>
+                    <div class="response-content">
+                        <pre id="certResponse">等待生成...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数字藏品管理 -->
+            <div id="nft" class="tab-content">
+                <div class="info-box">
+                    <h4>🎨 数字藏品接口说明</h4>
+                    <p>提供数字藏品的发行、转移、查询等完整功能，支持元商品协议服务。</p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>藏品集合ID</label>
+                        <input type="text" id="collectionSetId" placeholder="格式: AppId_xxx;T01">
+                    </div>
+                    <div class="form-group">
+                        <label>发行方地址</label>
+                        <input type="text" id="collectionSetOwner" placeholder="发行方区块链钱包地址">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>操作类型</label>
+                    <select id="nftOperation" onchange="toggleNftInputs()">
+                        <option value="createSet">创建藏品合集</option>
+                        <option value="createNFT">发行数字藏品</option>
+                        <option value="transferNFT">转移数字藏品</option>
+                        <option value="queryNFT">查询藏品信息</option>
+                        <option value="queryUserNFT">查询用户藏品</option>
+                    </select>
+                </div>
+
+                <div id="nftInputs">
+                    <!-- 动态生成的NFT输入区域 -->
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="executeNftOperation()" id="nftBtn">
+                        <span>⚡ 执行操作</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateNftMetadata()">📋 生成元数据</button>
+                </div>
+
+                <div class="response-area">
+                    <div class="response-header">
+                        <span>数字藏品操作结果</span>
+                        <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;" onclick="copyResponse('nftResponse')">复制</button>
+                    </div>
+                    <div class="response-content">
+                        <pre id="nftResponse">等待执行...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SDK功能 -->
+            <div id="sdk" class="tab-content">
+                <div class="info-box">
+                    <h4>🔧 SDK功能说明</h4>
+                    <p>提供至信链本地SDK的各种功能，包括签名生成、文件上传等。</p>
+                </div>
+
+                <div class="form-group">
+                    <label>SDK本地服务地址</label>
+                    <input type="text" id="sdkUrl" placeholder="http://127.0.0.1:30505" value="http://127.0.0.1:30505">
+                </div>
+
+                <div class="form-group">
+                    <label>SDK操作类型</label>
+                    <select id="sdkOperation" onchange="toggleSdkInputs()">
+                        <option value="generateSign">生成API签名</option>
+                        <option value="uploadFile">上传文件到COS</option>
+                        <option value="verifySign">验证签名</option>
+                    </select>
+                </div>
+
+                <div id="sdkInputs">
+                    <div class="form-group">
+                        <label>请求参数</label>
+                        <textarea id="sdkParams" placeholder='{"method":"POST","url":"/api/v1/save","body":{"data":"test"}}' rows="4"></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="executeSdkOperation()" id="sdkBtn">
+                        <span>⚡ 执行SDK操作</span>
+                    </button>
+                </div>
+
+                <div class="response-area">
+                    <div class="response-header">
+                        <span>SDK操作结果</span>
+                        <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;" onclick="copyResponse('sdkResponse')">复制</button>
+                    </div>
+                    <div class="response-content">
+                        <pre id="sdkResponse">等待执行...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 配置对象
+        const config = {
+            baseUrl: '',
+            corsProxy: '',
+            secretId: '',
+            secretKey: '',
+            chainId: '',
+            sdkUrl: ''
+        };
+
+        // 页面加载初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            toggleSaveInputs();
+            toggleQueryInputs();
+            toggleNftInputs();
+            toggleSdkInputs();
+        });
+
+        // 保存配置
+        function saveConfig() {
+            config.baseUrl = document.getElementById('baseUrl').value;
+            config.corsProxy = document.getElementById('corsProxy').value;
+            config.secretId = document.getElementById('secretId').value;
+            config.secretKey = document.getElementById('secretKey').value;
+            config.chainId = document.getElementById('chainId').value;
+            config.sdkUrl = document.getElementById('sdkUrl').value;
+
+            localStorage.setItem('zxchainConfig', JSON.stringify(config));
+
+            document.getElementById('configResponse').textContent = JSON.stringify({
+                success: true,
+                message: '配置已保存',
+                config: {
+                    baseUrl: config.baseUrl,
+                    corsProxy: config.corsProxy,
+                    secretId: config.secretId,
+                    chainId: config.chainId,
+                    sdkUrl: config.sdkUrl,
+                    secretKey: ' ***已隐藏***'
+                }
+            }, null, 2);
+        }
+
+        // 加载配置
+        function loadConfig() {
+            const savedConfig = localStorage.getItem('zxchainConfig');
+            if (savedConfig) {
+                const parsedConfig = JSON.parse(savedConfig);
+                document.getElementById('baseUrl').value = parsedConfig.baseUrl || 'https://b.chinaso.com';
+                document.getElementById('corsProxy').value = parsedConfig.corsProxy || 'https://cors-anywhere.herokuapp.com/';
+                document.getElementById('secretId').value = parsedConfig.secretId || '';
+                document.getElementById('secretKey').value = parsedConfig.secretKey || '';
+                document.getElementById('chainId').value = parsedConfig.chainId || 'zxchain_testnet';
+                document.getElementById('sdkUrl').value = parsedConfig.sdkUrl || 'http://127.0.0.1:30505';
+
+                Object.assign(config, parsedConfig);
+            }
+        }
+
+        // 测试连接
+        async function testConnection() {
+            const btn = document.querySelector('#config .btn-primary');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> 测试中...';
+
+            try {
+                const testUrl = config.corsProxy + config.baseUrl + '/api/v1/chain/info';
+
+                const response = await fetch(testUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                document.getElementById('configResponse').textContent = JSON.stringify({
+                    success: response.ok,
+                    message: response.ok ? '连接测试成功' : '连接测试失败',
+                    response: result
+                }, null, 2);
+
+            } catch (error) {
+                document.getElementById('configResponse').textContent = JSON.stringify({
+                    success: false,
+                    message: '连接测试失败',
+                    error: error.message
+                }, null, 2);
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>💾 保存配置</span>';
+        }
+
+        // 构建请求头
+        async function buildHeaders() {
+            const timestamp = Math.floor(Date.now() / 1000);
+            const headers = {
+                'Content-Type': 'application/json',
+                'secretID': config.secretId,
+                'timeStamp': timestamp.toString(),
+                'sign': await generateSign(timestamp)
+            };
+
+            return headers;
+        }
+
+        // 生成签名
+        async function generateSign(timestamp) {
+            try {
+                const signUrl = `${config.sdkUrl}/generateApiSign`;
+                const response = await fetch(signUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        secretID: config.secretId,
+                        secretKey: config.secretKey,
+                        timeStamp: timestamp
+                    })
+                });
+
+                const result = await response.json();
+                return result.data?.sign || '';
+
+            } catch (error) {
+                console.error('签名生成失败:', error);
+                return '';
+            }
+        }
+
+        // 切换标签页
+        function switchTab(tabId) {
+            // 隐藏所有内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 移除所有标签激活状态
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 显示选中的内容
+            document.getElementById(tabId).classList.add('active');
+
+            // 激活选中的标签
+            event.target.classList.add('active');
+        }
+
+        // 存证输入切换
+        function toggleSaveInputs() {
+            const type = document.getElementById('saveType').value;
+            const container = document.getElementById('saveInputs');
+
+            let html = '';
+            switch(type) {
+                case 'text':
+                    html = `
+                        <div class="form-group">
+                            <label>存证内容</label>
+                            <textarea id="saveContent" placeholder="请输入要存证的内容" rows="4"></textarea>
+                        </div>
+                    `;
+                    break;
+                case 'file':
+                    html = `
+                        <div class="form-group">
+                            <label>选择文件</label>
+                            <input type="file" id="saveFile" onchange="handleFileSelect(this)">
+                        </div>
+                        <div class="form-group">
+                            <label>文件信息</label>
+                            <div id="fileInfo" class="info-box" style="display: none;">
+                                <p>文件名: <span id="fileName"></span></p>
+                                <p>文件大小: <span id="fileSize"></span></p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'url':
+                    html = `
+                        <div class="form-group">
+                            <label>URL地址</label>
+                            <input type="text" id="saveUrl" placeholder="请输入要存证的URL地址">
+                        </div>
+                    `;
+                    break;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 处理文件选择
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                document.getElementById('fileInfo').style.display = 'block';
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
+            }
+        }
+
+        // 执行存证
+        async function executeSave() {
+            const type = document.getElementById('saveType').value;
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> 存证中...';
+
+            try {
+                const headers = await buildHeaders();
+                let requestData = {};
+
+                switch(type) {
+                    case 'text':
+                        requestData = {
+                            businessId: generateBusinessId(),
+                            data: document.getElementById('saveContent').value,
+                            dataType: 'text'
+                        };
+                        break;
+                    case 'file':
+                        const fileInput = document.getElementById('saveFile');
+                        if (fileInput.files.length > 0) {
+                            const file = fileInput.files[0];
+                            const fileData = await readFileAsBase64(file);
+                            requestData = {
+                                businessId: generateBusinessId(),
+                                data: fileData,
+                                dataType: 'file',
+                                fileName: file.name,
+                                fileSize: file.size
+                            };
+                        }
+                        break;
+                    case 'url':
+                        requestData = {
+                            businessId: generateBusinessId(),
+                            data: document.getElementById('saveUrl').value,
+                            dataType: 'url'
+                        };
+                        break;
+                }
+
+                const url = config.corsProxy + config.baseUrl + '/api/v1/save';
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(requestData)
+                });
+
+                const result = await response.json();
+                document.getElementById('saveResponse').textContent = JSON.stringify(result, null, 2);
+
+            } catch (error) {
+                document.getElementById('saveResponse').textContent = `错误: ${error.message}\n\n请确保配置信息正确且CORS代理可用。`;
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>⚡ 执行存证</span>';
+        }
+
+        // 读取文件为Base64
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 生成业务ID
+        function generateBusinessId() {
+            return 'biz_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // 查询输入切换
+        function toggleQueryInputs() {
+            const type = document.getElementById('queryType').value;
+            const container = document.getElementById('queryInputs');
+
+            let html = '';
+            switch(type) {
+                case 'businessId':
+                    html = `
+                        <div class="form-group">
+                            <label>业务ID</label>
+                            <input type="text" id="queryBusinessId" placeholder="请输入业务ID">
+                        </div>
+                    `;
+                    break;
+                case 'txId':
+                    html = `
+                        <div class="form-group">
+                            <label>交易ID</label>
+                            <input type="text" id="queryTxId" placeholder="请输入交易ID">
+                        </div>
+                    `;
+                    break;
+                case 'hash':
+                    html = `
+                        <div class="form-group">
+                            <label>内容哈希</label>
+                            <input type="text" id="queryHash" placeholder="请输入内容哈希">
+                        </div>
+                    `;
+                    break;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 执行查询
+        async function executeQuery() {
+            const type = document.getElementById('queryType').value;
+            const btn = document.getElementById('queryBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> 查询中...';
+
+            try {
+                const headers = await buildHeaders();
+                let url = config.corsProxy + config.baseUrl + '/api/v1/query';
+                const queryParams = new URLSearchParams();
+
+                switch(type) {
+                    case 'businessId':
+                        queryParams.append('businessId', document.getElementById('queryBusinessId').value);
+                        break;
+                    case 'txId':
+                        queryParams.append('txId', document.getElementById('queryTxId').value);
+                        break;
+                    case 'hash':
+                        queryParams.append('hash', document.getElementById('queryHash').value);
+                        break;
+                }
+
+                url += '?' + queryParams.toString();
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                const result = await response.json();
+                document.getElementById('queryResponse').textContent = JSON.stringify(result, null, 2);
+
+            } catch (error) {
+                document.getElementById('queryResponse').textContent = `错误: ${error.message}\n\n请确保配置信息正确且CORS代理可用。`;
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>⚡ 执行查询</span>';
+        }
+
+        // 生成证书
+        async function generateCert() {
+            const businessId = document.getElementById('certBusinessId').value;
+            const certType = document.getElementById('certType').value;
+            const btn = document.getElementById('certBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> 生成中...';
+
+            try {
+                const headers = await buildHeaders();
+                const url = config.corsProxy + config.baseUrl + '/api/v1/cert/generate';
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({
+                        businessId: businessId,
+                        certType: certType
+                    })
+                });
+
+                const result = await response.json();
+                document.getElementById('certResponse').textContent = JSON.stringify(result, null, 2);
+
+            } catch (error) {
+                document.getElementById('certResponse').textContent = `错误: ${error.message}\n\n请确保业务ID有效且配置正确。`;
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>📜 生成证书</span>';
+        }
+
+        // 下载证书
+        function downloadCert() {
+            const certData = document.getElementById('certResponse').textContent;
+            const blob = new Blob([certData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'certificate.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // NFT操作类型切换
+        function toggleNftInputs() {
+            const operation = document.getElementById('nftOperation').value;
+            const container = document.getElementById('nftInputs');
+
+            let html = '';
+
+            switch(operation) {
+                case 'createSet':
+                    html = `
+                        <div class="form-group">
+                            <label>藏品合集名称</label>
+                            <input type="text" id="collectionSetName" placeholder="合集名称">
+                        </div>
+                        <div class="form-group">
+                            <label>最大发行数量</label>
+                            <input type="number" id="maxSupply" placeholder="发行数量上限" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>合集描述</label>
+                            <textarea id="collectionSetDesc" placeholder="合集描述信息" rows="3"></textarea>
+                        </div>
+                    `;
+                    break;
+                case 'createNFT':
+                    html = `
+                        <div class="form-group">
+                            <label>藏品ID</label>
+                            <input type="number" id="collectionId" placeholder="从1开始的藏品编号" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>元数据URL</label>
+                            <input type="text" id="metadataUrl" placeholder="藏品元数据JSON文件URL">
+                        </div>
+                        <div class="form-group">
+                            <label>或者直接输入元数据JSON</label>
+                            <textarea id="metadataJson" placeholder='{"collectionId":"1","name":"藏品名称","description":"描述","image":"图片URL","attributes":[]}' rows="6"></textarea>
+                        </div>
+                    `;
+                    break;
+                case 'transferNFT':
+                    html = `
+                        <div class="form-group">
+                            <label>藏品ID</label>
+                            <input type="number" id="transferCollectionId" placeholder="要转移的藏品ID" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>转出地址</label>
+                            <input type="text" id="fromAddress" placeholder="当前持有者地址">
+                        </div>
+                        <div class="form-group">
+                            <label>转入地址</label>
+                            <input type="text" id="toAddress" placeholder="接收者地址">
+                        </div>
+                    `;
+                    break;
+                case 'queryNFT':
+                    html = `
+                        <div class="form-group">
+                            <label>藏品ID</label>
+                            <input type="number" id="queryCollectionId" placeholder="要查询的藏品ID" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>藏品集合ID</label>
+                            <input type="text" id="queryCollectionSetId" placeholder="所属合集ID">
+                        </div>
+                    `;
+                    break;
+                case 'queryUserNFT':
+                    html = `
+                        <div class="form-group">
+                            <label>用户地址</label>
+                            <input type="text" id="userAddress" placeholder="用户区块链地址">
+                        </div>
+                        <div class="form-group">
+                            <label>藏品集合ID（可选）</label>
+                            <input type="text" id="queryUserCollectionSetId" placeholder="限定查询特定合集">
+                        </div>
+                    `;
+                    break;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 生成NFT元数据
+        function generateNftMetadata() {
+            const collectionId = document.getElementById('collectionId')?.value || '1';
+            const name = prompt('请输入藏品名称：', '我的数字藏品');
+            const description = prompt('请输入藏品描述：', '这是一件独特的数字艺术品');
+            const imageUrl = prompt('请输入图片URL：', 'https://example.com/image.jpg');
+
+            const metadata = {
+                collectionId: collectionId,
+                name: name,
+                description: description,
+                image: imageUrl,
+                attributes: []
+            };
+
+            document.getElementById('metadataJson').value = JSON.stringify(metadata, null, 2);
+            alert('元数据已生成！');
+        }
+
+        // 执行NFT操作
+        async function executeNftOperation() {
+            const operation = document.getElementById('nftOperation').value;
+            const collectionSetId = document.getElementById('collectionSetId').value;
+            const collectionSetOwner = document.getElementById('collectionSetOwner').value;
+
+            if (!collectionSetId || !collectionSetOwner) {
+                alert('请填写藏品集合ID和发行方地址');
+                return;
+            }
+
+            const btn = document.getElementById('nftBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> 执行中...';
+
+            try {
+                const headers = await buildHeaders();
+                let url, method, requestData;
+
+                switch(operation) {
+                    case 'createSet':
+                        url = config.corsProxy + config.baseUrl + '/api/v1/nft/set/create';
+                        method = 'POST';
+                        requestData = {
+                            collectionSetId: collectionSetId,
+                            collectionSetOwner: collectionSetOwner,
+                            collectionSetName: document.getElementById('collectionSetName').value,
+                            maxSupply: parseInt(document.getElementById('maxSupply').value),
+                            description: document.getElementById('collectionSetDesc').value
+                        };
+                        break;
+
+                    case 'createNFT':
+                        url = config.corsProxy + config.baseUrl + '/api/v1/nft/create';
+                        method = 'POST';
+                        requestData = {
+                            collectionSetId: collectionSetId,
+                            collectionSetOwner: collectionSetOwner,
+                            collectionId: parseInt(document.getElementById('collectionId').value),
+                            url: document.getElementById('metadataUrl').value || ''
+                        };
+
+                        // 如果有直接输入的元数据，可以使用
+                        if (document.getElementById('metadataJson').value) {
+                            requestData.metadata = JSON.parse(document.getElementById('metadataJson').value);
+                        }
+                        break;
+
+                    case 'transferNFT':
+                        url = config.corsProxy + config.baseUrl + '/api/v1/nft/transfer';
+                        method = 'POST';
+                        requestData = {
+                            collectionSetId: collectionSetId,
+                            collectionId: parseInt(document.getElementById('transferCollectionId').value),
+                            from: document.getElementById('fromAddress').value,
+                            to: document.getElementById('toAddress').value
+                        };
+                        break;
+
+                    case 'queryNFT':
+                        url = config.corsProxy + config.baseUrl + '/api/v1/nft/query';
+                        method = 'GET';
+                        const queryParams = new URLSearchParams();
+                        queryParams.append('collectionSetId', document.getElementById('queryCollectionSetId').value);
+                        queryParams.append('collectionId', document.getElementById('queryCollectionId').value);
+                        url += '?' + queryParams.toString();
+                        break;
+
+                    case 'queryUserNFT':
+                        url = config.corsProxy + config.baseUrl + '/api/v1/nft/user/query';
+                        method = 'GET';
+                        const userParams = new URLSearchParams();
+                        userParams.append('userAddress', document.getElementById('userAddress').value);
+                        if (document.getElementById('queryUserCollectionSetId').value) {
+                            userParams.append('collectionSetId', document.getElementById('queryUserCollectionSetId').value);
+                        }
+                        url += '?' + userParams.toString();
+                        break;
+                }
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: headers,
+                    body: method === 'POST' ? JSON.stringify(requestData) : undefined
+                });
+
+                const result = await response.json();
+                document.getElementById('nftResponse').textContent = JSON.stringify(result, null, 2);
+
+            } catch (error) {
+                document.getElementById('nftResponse').textContent = `错误: ${error.message}\n\n注意：数字藏品接口需要在至信链控制台开通元商品协议服务后才能使用。`;
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>⚡ 执行操作</span>';
+        }
+
+        // SDK输入区域切换
+        function toggleSdkInputs() {
+            const operation = document.getElementById('sdkOperation').value;
+            const container = document.getElementById('sdkInputs');
+
+            let html = '';
+            switch(operation) {
+                case 'generateSign':
+                    html = `
+                        <div class="form-group">
+                            <label>请求参数</label>
+                            <textarea id="sdkParams" placeholder='{"method":"POST","url":"/api/v1/save","body":{"data":"test"}}' rows="4"></textarea>
+                        </div>
+                    `;
+                    break;
+                case 'uploadFile':
+                    html = `
+                        <div class="form-group">
+                            <label>选择文件</label>
+                            <input type="file" id="sdkFile" onchange="handleSdkFileSelect(this)">
+                        </div>
+                        <div class="form-group">
+                            <label>文件信息</label>
+                            <div id="sdkFileInfo" class="info-box" style="display: none;">
+                                <p>文件名: <span id="sdkFileName"></span></p>
+                                <p>文件大小: <span id="sdkFileSize"></span></p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'verifySign':
+                    html = `
+                        <div class="form-group">
+                            <label>签名数据</label>
+                            <textarea id="signData" placeholder='{"sign":"xxx","data":"xxx","publicKey":"xxx"}' rows="4"></textarea>
+                        </div>
+                    `;
+                    break;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 处理SDK文件选择
+        function handleSdkFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                document.getElementById('sdkFileInfo').style.display = 'block';
+                document.getElementById('sdkFileName').textContent = file.name;
+                document.getElementById('sdkFileSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
+            }
+        }
+
+        // 执行SDK操作
+        async function executeSdkOperation() {
+            const operation = document.getElementById('sdkOperation').value;
+            const btn = document.getElementById('sdkBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> 执行中...';
+
+            try {
+                let url, requestData;
+
+                switch(operation) {
+                    case 'generateSign':
+                        url = `${config.sdkUrl}/generateApiSign`;
+                        const params = JSON.parse(document.getElementById('sdkParams').value);
+                        requestData = {
+                            secretID: config.secretId,
+                            secretKey: config.secretKey,
+                            timeStamp: Math.floor(Date.now() / 1000),
+                            ...params
+                        };
+                        break;
+
+                    case 'uploadFile':
+                        url = `${config.sdkUrl}/uploadToCos`;
+                        const fileInput = document.getElementById('sdkFile');
+                        if (fileInput.files.length > 0) {
+                            const file = fileInput.files[0];
+                            const fileData = await readFileAsBase64(file);
+                            requestData = {
+                                fileName: file.name,
+                                fileData: fileData
+                            };
+                        }
+                        break;
+
+                    case 'verifySign':
+                        url = `${config.sdkUrl}/verifySign`;
+                        requestData = JSON.parse(document.getElementById('signData').value);
+                        break;
+                }
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const result = await response.json();
+                document.getElementById('sdkResponse').textContent = JSON.stringify(result, null, 2);
+
+            } catch (error) {
+                document.getElementById('sdkResponse').textContent = `错误: ${error.message}\n\n请确保SDK本地服务正在运行。`;
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>⚡ 执行SDK操作</span>';
+        }
+
+        // 复制响应内容
+        function copyResponse(elementId) {
+            const content = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('复制成功！');
+            }).catch(err => {
+                console.error('复制失败:', err);
+            });
+        }
+    </script>
+</body>
+</html>
