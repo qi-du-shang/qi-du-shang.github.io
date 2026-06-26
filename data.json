@@ -1,11 +1,11 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-06-26T04:30:01.831Z",
+  "fetchedAt": "2026-06-26T08:30:01.664Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-06-26 12:00:00",
-  "nextRefreshBeijing": "2026-06-26 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-06-26 16:00:00",
+  "nextRefreshBeijing": "2026-06-26 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -70,15 +70,15 @@
       ]
     },
     {
-      "name": "魔力果",
-      "price": "6000",
-      "priceRaw": "6000",
-      "limit": "20",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
-      "category": "精灵喂养材料",
-      "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+      "name": "火系血脉秘药",
+      "price": "160000",
+      "priceRaw": "16w",
+      "limit": "3",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/58/qcen9i07u68symzdrga5qcli2wq6ws3.png/100px-Xuemai_huo.png",
+      "category": "血脉修改道具",
+      "description": "能唤醒血脉力量的远古秘药，使精灵获得火系血脉。 “一段失落的秘密将被重拾。”",
       "rounds": [
-        2
+        3
       ]
     }
   ],
@@ -290,6 +290,18 @@
           2,
           3,
           4
+        ]
+      },
+      {
+        "name": "火系血脉秘药",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/58/qcen9i07u68symzdrga5qcli2wq6ws3.png/100px-Xuemai_huo.png",
+        "category": "血脉修改道具",
+        "description": "能唤醒血脉力量的远古秘药，使精灵获得火系血脉。 “一段失落的秘密将被重拾。”",
+        "rounds": [
+          3
         ]
       }
     ],
