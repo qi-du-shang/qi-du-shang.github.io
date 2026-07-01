@@ -67,6 +67,29 @@
             }
         }
     </style>
+
+    <!-- APlayer 音乐播放器 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+    <style>
+        /* 自定义播放器主题色 */
+        .aplayer {
+            --theme-color: #FFD166;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played {
+            background: #FFD166 !important;
+        }
+        .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb {
+            background: #FFD166 !important;
+        }
+        .aplayer .aplayer-list ol li.aplayer-list-light {
+            background: rgba(255, 209, 102, 0.2) !important;
+        }
+        /* 确保播放器在最上层 */
+        .aplayer.aplayer-fixed {
+            z-index: 9999 !important;
+        }
+    </style>
+
 </head>
 <body class="bg-bg dot-pattern min-h-screen font-game text-text">
     <div class="max-w-md mx-auto px-4 py-6">
@@ -504,5 +527,29 @@
             };
         }
     </script>
+
+    <!-- 音乐播放器 -->
+    <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    
+    <!-- Meting.js 播放器配置（固定在底部，自动播放） -->
+    <meting-js
+        id="3116636104"
+        server="netease"
+        type="playlist"
+        fixed="true"
+        mini="true"
+        autoplay="true"
+        theme="#FFD166"
+        loop="all"
+        order="random"
+        preload="auto"
+        volume="0.5"
+        mutex="true"
+        list-folded="false"
+        list-max-height="300px"
+        storage-name="roco-music"
+    ></meting-js>
+
 </body>
 </html>
