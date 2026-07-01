@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 音乐播放器 - 博客园同步版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            padding: 20px;
+        }
+        .demo-content {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .demo-content h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .demo-content p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        .player-wrapper {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .info-box {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .info-box h3 {
+            margin-bottom: 8px;
+        }
+        .info-box code {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+    <!-- APlayer 样式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+</head>
+<body>
+    <div class="demo-content">
+        <h1>🎵 音乐播放器</h1>
+        <p>已同步博客园歌单 · 共50首歌曲</p>
+    </div>
+    <div class="player-wrapper">
+        <div id="aplayer"></div>
+    </div>
+    <div class="info-box">
+        <h3>📋 使用说明</h3>
+        <p>• 本播放器已与博客园 <code>lishch</code> 的音乐完全同步</p>
+        <p>• 使用网易云歌单ID：<code>3116636104</code>（博客园新歌）</p>
+        <p>• 歌单更新时，本页面会自动同步，无需手动修改</p>
+        <p>• 支持歌词显示、播放列表、随机播放等功能</p>
+    </div>
+    <!-- APlayer 和 Meting.js -->
+    <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    
+    <!-- 播放器配置（与博客园使用同一个歌单） -->
+    <meting-js
+        id="3116636104"
+        server="netease"
+        type="playlist"
+        fixed="false"
+        mini="false"
+        autoplay="false"
+        theme="#2D8CF0"
+        loop="all"
+        order="random"
+        preload="auto"
+        volume="0.7"
+        mutex="true"
+        list-folded="false"
+        list-max-height="500px"
+        storage-name="metingjs"
+    ></meting-js>
+    <script>
+        // 等待播放器初始化完成
+        setTimeout(function() {
+            const ap = document.querySelector('.aplayer');
+            if (ap) {
+                console.log('音乐播放器已加载完成');
+                console.log('歌单ID: 3116636104');
+                console.log('歌曲数量: 50首');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
