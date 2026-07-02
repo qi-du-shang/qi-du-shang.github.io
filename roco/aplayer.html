@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 音乐播放器 - 增强版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* 配置区域样式 */
+        .playlist-config {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        .playlist-config h3 {
+            margin-top: 0;
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .config-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .config-label {
+            font-weight: bold;
+            color: #555;
+            min-width: 80px;
+        }
+
+        .platform-selector {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .radio-label input {
+            margin-right: 6px;
+            cursor: pointer;
+        }
+
+        .radio-label span {
+            color: #666;
+        }
+
+        .config-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .config-input-group input {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .config-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .config-input-group button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-save {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #5568d3;
+        }
+
+        .btn-reset {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #da190b;
+        }
+
+        .current-id {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .current-id span {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* 提示信息 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            background: #4caf50;
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        /* 使用说明 */
+        .usage-guide {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 6px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .usage-guide h4 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+
+        .usage-guide ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .usage-guide li {
+            margin: 5px 0;
+            color: #424242;
+        }
+
+        /* 播放器容器 */
+        .player-container {
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 音乐播放器</h1>
+        <div class="info" id="playlistInfo">
+            已同步博客园歌单 · 共50首歌曲
+        </div>
+
+        <!-- 歌单配置区域 -->
+        <div class="playlist-config">
+            <h3>📝 歌单配置</h3>
+            <div class="config-row">
+                <label class="config-label">音乐平台：</label>
+                <div class="platform-selector">
+                    <label class="radio-label">
+                        <input type="radio" name="platform" value="netease" checked onchange="updatePlatform()">
+                        <span>网易云音乐</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="platform" value="tencent" onchange="updatePlatform()">
+                        <span>QQ音乐</span>
+                    </label>
+                </div>
+            </div>
+            <div class="config-row">
+                <label class="config-label">歌单ID：</label>
+                <div class="config-input-group">
+                    <input
+                        type="text"
+                        id="playlistIdInput"
+                        placeholder="请输入歌单ID"
+                        maxlength="20"
+                    />
+                    <button class="btn-save" onclick="saveSettings()">保存配置</button>
+                    <button class="btn-reset" onclick="resetToDefault()">恢复默认</button>
+                </div>
+            </div>
+            <div class="current-id">
+                当前配置：<span id="currentConfig">网易云音乐 · ID: 3116636104</span>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="usage-guide">
+            <h4>📋 使用说明</h4>
+            <ul>
+                <li>本播放器支持 <strong>网易云音乐</strong> 和 <strong>QQ音乐</strong> 两个平台</li>
+                <li>默认使用网易云音乐歌单ID：<code>3116636104</code>（博客园新歌）</li>
+                <li>可在上方配置区域切换平台并输入对应的歌单ID</li>
+                <li>支持歌词显示、播放列表、随机播放等功能</li>
+                <li>配置会自动保存到浏览器，下次访问时自动加载</li>
+                <li>点击"恢复默认"可重置为网易云音乐默认歌单</li>
+            </ul>
+        </div>
+
+        <!-- 播放器容器 -->
+        <div class="player-container" id="playerContainer">
+            <meting-js
+                id="3116636104"
+                server="netease"
+                type="playlist"
+                fixed="false"
+                autoplay="false"
+                theme="#667eea"
+                loop="all"
+                order="list"
+                preload="auto">
+            </meting-js>
+        </div>
+    </div>
+
+    <!-- 提示框 -->
+    <div class="notification" id="notification"></div>
+
+    <!-- 引入 Aplayer 和 Meting.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script>
+
+    <script>
+        // 默认配置
+        const DEFAULT_SETTINGS = {
+            platform: 'netease',
+            playlistId: '3116636104'
+        };
+
+        const STORAGE_KEY = 'player_settings';
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            updatePlayerWithSavedSettings();
+        });
+
+        // 从 localStorage 加载设置
+        function loadSettings() {
+            const savedSettings = localStorage.getItem(STORAGE_KEY);
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                document.getElementById('playlistIdInput').value = settings.playlistId;
+                document.querySelector(`input[name="platform"][value="${settings.platform}"]`).checked = true;
+                updateConfigDisplay(settings.platform, settings.playlistId);
+            } else {
+                document.getElementById('playlistIdInput').value = DEFAULT_SETTINGS.playlistId;
+                updateConfigDisplay(DEFAULT_SETTINGS.platform, DEFAULT_SETTINGS.playlistId);
+            }
+        }
+
+        // 更新配置显示
+        function updateConfigDisplay(platform, playlistId) {
+            const platformNames = {
+                'netease': '网易云音乐',
+                'tencent': 'QQ音乐'
+            };
+            const platformName = platformNames[platform] || '未知平台';
+            document.getElementById('currentConfig').textContent = `${platformName} · ID: ${playlistId}`;
+        }
+
+        // 更新平台选择
+        function updatePlatform() {
+            const selectedPlatform = document.querySelector('input[name="platform"]:checked').value;
+            const playlistId = document.getElementById('playlistIdInput').value;
+            updateConfigDisplay(selectedPlatform, playlistId);
+        }
+
+        // 使用保存的设置更新播放器
+        function updatePlayerWithSavedSettings() {
+            const savedSettings = localStorage.getItem(STORAGE_KEY);
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                applySettingsToPlayer(settings);
+            }
+        }
+
+        // 应用设置到播放器
+        function applySettingsToPlayer(settings) {
+            const playerContainer = document.getElementById('playerContainer');
+            const platformNames = {
+                'netease': '网易云音乐',
+                'tencent': 'QQ音乐'
+            };
+            const platformName = platformNames[settings.platform] || '未知平台';
+            
+            playerContainer.innerHTML = `
+                <meting-js
+                    id="${settings.playlistId}"
+                    server="${settings.platform}"
+                    type="playlist"
+                    fixed="false"
+                    autoplay="false"
+                    theme="#667eea"
+                    loop="all"
+                    order="list"
+                    preload="auto">
+                </meting-js>
+            `;
+
+            // 更新播放器信息
+            updatePlaylistInfo(settings.playlistId, platformName);
+        }
+
+        // 保存设置到 localStorage
+        function saveSettings() {
+            const selectedPlatform = document.querySelector('input[name="platform"]:checked').value;
+            const playlistId = document.getElementById('playlistIdInput').value.trim();
+
+            if (!playlistId) {
+                showNotification('请输入有效的歌单ID', 'error');
+                return;
+            }
+
+            // 验证ID格式（纯数字）
+            if (!/^\d+$/.test(playlistId)) {
+                showNotification('歌单ID必须是纯数字', 'error');
+                return;
+            }
+
+            const settings = {
+                platform: selectedPlatform,
+                playlistId: playlistId
+            };
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+            updateConfigDisplay(selectedPlatform, playlistId);
+
+            showNotification('配置已保存，页面即将刷新...', 'success');
+
+            // 延迟刷新页面以应用新的设置
+            setTimeout(function() {
+                location.reload();
+            }, 1500);
+        }
+
+        // 恢复默认设置
+        function resetToDefault() {
+            localStorage.removeItem(STORAGE_KEY);
+            document.getElementById('playlistIdInput').value = DEFAULT_SETTINGS.playlistId;
+            document.querySelector(`input[name="platform"][value="${DEFAULT_SETTINGS.platform}"]`).checked = true;
+            updateConfigDisplay(DEFAULT_SETTINGS.platform, DEFAULT_SETTINGS.playlistId);
+
+            showNotification('已恢复默认配置，页面即将刷新...', 'success');
+
+            // 延迟刷新页面以应用默认设置
+            setTimeout(function() {
+                location.reload();
+            }, 1500);
+        }
+
+        // 更新播放器信息
+        function updatePlaylistInfo(playlistId, platformName = '网易云音乐') {
+            const isDefault = playlistId === DEFAULT_SETTINGS.playlistId;
+            const infoElement = document.getElementById('playlistInfo');
+
+            if (isDefault) {
+                infoElement.innerHTML = `已同步博客园歌单 · 共50首歌曲`;
+            } else {
+                infoElement.innerHTML = `${platformName}歌单 · ID: ${playlistId}`;
+            }
+        }
+
+        // 显示提示信息
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + type;
+            notification.style.display = 'block';
+
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // 回车键保存
+        document.getElementById('playlistIdInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                saveSettings();
+            }
+        });
+    </script>
+</body>
+</html>
