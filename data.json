@@ -1,36 +1,36 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-07-02T04:30:01.904Z",
+  "fetchedAt": "2026-07-02T08:30:01.519Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-07-02 12:00:00",
-  "nextRefreshBeijing": "2026-07-02 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-07-02 16:00:00",
+  "nextRefreshBeijing": "2026-07-02 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "水系粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c7/4fxef31uslze9psd9375td9zbqtbllv.png/100px-100123.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量水系魔法，是合成技能石的主要触媒。",
+      "name": "炫彩蛋",
+      "price": "1600000",
+      "priceRaw": "160w",
+      "limit": "1",
+      "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
+      "category": "精灵蛋",
+      "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
       "rounds": [
-        2
+        3
       ]
     },
     {
-      "name": "普通粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f6/ls7hsygs9epizddf1xo4q9b2iu1dduu.png/100px-100127.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量普通系魔法，是合成技能石的主要触媒。",
+      "name": "冰系血脉秘药",
+      "price": "160000",
+      "priceRaw": "16w",
+      "limit": "3",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/3f/8uweaysx83rtha1qyqpjvd9tsgkdv90.png/100px-Xuemai_bing.png",
+      "category": "血脉修改道具",
+      "description": "能唤醒血脉力量的远古秘药，使精灵获得冰系血脉。 “一段失落的秘密将被重拾。”",
       "rounds": [
-        2
+        3
       ]
     }
   ],
@@ -87,7 +87,32 @@
         ]
       }
     ],
-    "3": [],
+    "3": [
+      {
+        "name": "炫彩蛋",
+        "price": "1600000",
+        "priceRaw": "160w",
+        "limit": "1",
+        "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
+        "category": "精灵蛋",
+        "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
+        "rounds": [
+          3
+        ]
+      },
+      {
+        "name": "冰系血脉秘药",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/3f/8uweaysx83rtha1qyqpjvd9tsgkdv90.png/100px-Xuemai_bing.png",
+        "category": "血脉修改道具",
+        "description": "能唤醒血脉力量的远古秘药，使精灵获得冰系血脉。 “一段失落的秘密将被重拾。”",
+        "rounds": [
+          3
+        ]
+      }
+    ],
     "4": []
   },
   "live": true
