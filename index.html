@@ -66,6 +66,73 @@
                 max-height: 5000px;
             }
         }
+
+                /* 提示信息 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            background: #4caf50;
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+                .btn-save {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #5568d3;
+        }
+
+                .btn-reset {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #da190b;
+        }
+
+                .config-input-group input {
+            flex: 1;
+            min-width: 30px;
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .config-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
     </style>
 
     <!-- APlayer 音乐播放器 -->
@@ -130,6 +197,37 @@
                 <p><span class="text-gray-500">商人坐标</span> <span id="merchantLocation">源站暂未返回坐标</span></p>
             </div>
         </div>
+
+        <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
+                    <div class="playlist-config">
+                        <h3 class="text-2xl font-bold mb-2">歌单配置</h3>
+                        <div class="config-row">
+                            <label class="config-label">音乐平台：</label>
+                            <div class="platform-selector">
+                                <label class="radio-label">
+                                    <input type="radio" name="platform" value="netease" checked onchange="updatePlatform()">
+                                    <span>网易云音乐</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="platform" value="tencent" onchange="updatePlatform()">
+                                    <span>QQ音乐</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">歌单ID：</label>
+                            <div class="config-input-group">
+                                <input type="text" id="playlistIdInput" placeholder="请输入歌单ID" maxlength="20" />
+                                <button class="rounded-3xl border-4 border-border p-1 mb-2 btn-save" onclick="saveSettings()">保存配置</button>
+                                <button class="rounded-3xl border-4 border-border p-1 mb-2 btn-reset" onclick="resetToDefault()">恢复默认</button>
+                            </div>
+                        </div>
+                        <div class="current-id">
+                            当前配置：<span id="currentConfig" class="text-gray-500">网易云音乐 · ID: 18110238585</span>
+                        </div>
+                    </div>
+        </div>
+
         <!-- ========== PushPlus 订阅引导模块 START ========== -->
         <div class="bg-white rounded-3xl border-4 border-border p-5 mb-6 card-shadow">
             <!-- 模块标题 + 展开/收起按钮 -->
@@ -526,6 +624,171 @@
                 ]
             };
         }
+
+                // 默认配置
+        const DEFAULT_SETTINGS = {
+            platform: 'netease',
+            playlistId: '18110238585'
+        };
+
+        const STORAGE_KEY = 'player_settings';
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            updatePlayerWithSavedSettings();
+        });
+
+        // 从 localStorage 加载设置
+        function loadSettings() {
+            const savedSettings = localStorage.getItem(STORAGE_KEY);
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                document.getElementById('playlistIdInput').value = settings.playlistId;
+                document.querySelector(`input[name="platform"][value="${settings.platform}"]`).checked = true;
+                updateConfigDisplay(settings.platform, settings.playlistId);
+            } else {
+                document.getElementById('playlistIdInput').value = DEFAULT_SETTINGS.playlistId;
+                updateConfigDisplay(DEFAULT_SETTINGS.platform, DEFAULT_SETTINGS.playlistId);
+            }
+        }
+
+        // 更新配置显示
+        function updateConfigDisplay(platform, playlistId) {
+            const platformNames = {
+                'netease': '网易云音乐',
+                'tencent': 'QQ音乐'
+            };
+            const platformName = platformNames[platform] || '未知平台';
+            document.getElementById('currentConfig').textContent = `${platformName} · ID: ${playlistId}`;
+        }
+
+        // 更新平台选择
+        function updatePlatform() {
+            const selectedPlatform = document.querySelector('input[name="platform"]:checked').value;
+            const playlistId = document.getElementById('playlistIdInput').value;
+            updateConfigDisplay(selectedPlatform, playlistId);
+        }
+
+        // 使用保存的设置更新播放器
+        function updatePlayerWithSavedSettings() {
+            const savedSettings = localStorage.getItem(STORAGE_KEY);
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                applySettingsToPlayer(settings);
+            }
+        }
+
+        // 应用设置到播放器
+        function applySettingsToPlayer(settings) {
+            const playerContainer = document.getElementById('playerContainer');
+            const platformNames = {
+                'netease': '网易云音乐',
+                'tencent': 'QQ音乐'
+            };
+            const platformName = platformNames[settings.platform] || '未知平台';
+            
+            playerContainer.innerHTML = `
+                <meting-js
+                    id="${settings.playlistId}"
+                    server="${settings.platform}"
+                    type="playlist"
+                    fixed="true"
+                    mini="true"
+                    autoplay="true"
+                    theme="#FFD166"
+                    loop="all"
+                    order="random"
+                    preload="auto"
+                    volume="0.5"
+                    mutex="true"
+                    list-folded="false"
+                    list-max-height="300px"
+                    storage-name="roco-music">
+                </meting-js>
+            `;
+
+            // 更新播放器信息
+            updatePlaylistInfo(settings.playlistId, platformName);
+        }
+
+        // 保存设置到 localStorage
+        function saveSettings() {
+            const selectedPlatform = document.querySelector('input[name="platform"]:checked').value;
+            const playlistId = document.getElementById('playlistIdInput').value.trim();
+
+            if (!playlistId) {
+                showNotification('请输入有效的歌单ID', 'error');
+                return;
+            }
+
+            // 验证ID格式（纯数字）
+            if (!/^\d+$/.test(playlistId)) {
+                showNotification('歌单ID必须是纯数字', 'error');
+                return;
+            }
+
+            const settings = {
+                platform: selectedPlatform,
+                playlistId: playlistId
+            };
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+            updateConfigDisplay(selectedPlatform, playlistId);
+
+            showNotification('配置已保存，页面即将刷新...', 'success');
+
+            // 延迟刷新页面以应用新的设置
+            setTimeout(function() {
+                location.reload();
+            }, 1500);
+        }
+
+        // 恢复默认设置
+        function resetToDefault() {
+            localStorage.removeItem(STORAGE_KEY);
+            document.getElementById('playlistIdInput').value = DEFAULT_SETTINGS.playlistId;
+            document.querySelector(`input[name="platform"][value="${DEFAULT_SETTINGS.platform}"]`).checked = true;
+            updateConfigDisplay(DEFAULT_SETTINGS.platform, DEFAULT_SETTINGS.playlistId);
+
+            showNotification('已恢复默认配置，页面即将刷新...', 'success');
+
+            // 延迟刷新页面以应用默认设置
+            setTimeout(function() {
+                location.reload();
+            }, 1500);
+        }
+
+        // 更新播放器信息
+        function updatePlaylistInfo(playlistId, platformName = '网易云音乐') {
+            const isDefault = playlistId === DEFAULT_SETTINGS.playlistId;
+            const infoElement = document.getElementById('playlistInfo');
+
+            if (isDefault) {
+                infoElement.innerHTML = `已同步默认网易云音乐蛇瞳的歌单`;
+            } else {
+                infoElement.innerHTML = `${platformName}歌单 · ID: ${playlistId}`;
+            }
+        }
+
+        // 显示提示信息
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + type;
+            notification.style.display = 'block';
+
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // 回车键保存
+        document.getElementById('playlistIdInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                saveSettings();
+            }
+        });
     </script>
 
     <!-- 音乐播放器 -->
@@ -533,23 +796,13 @@
     <script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
     
     <!-- Meting.js 播放器配置（固定在底部，自动播放） -->
-    <meting-js
-        id="18110238585"
-        server="netease"
-        type="playlist"
-        fixed="true"
-        mini="true"
-        autoplay="true"
-        theme="#FFD166"
-        loop="all"
-        order="random"
-        preload="auto"
-        volume="0.5"
-        mutex="true"
-        list-folded="false"
-        list-max-height="300px"
-        storage-name="roco-music"
-    ></meting-js>
+            <div id="playerContainer">
+                <meting-js id="18110238585" server="netease" type="playlist" fixed="true" mini="true" autoplay="true"
+                    theme="#FFD166" loop="all" order="random" preload="auto" volume="0.5" mutex="true" list-folded="false"
+                    list-max-height="300px" storage-name="roco-music"></meting-js>
+            </div>
 
+                <!-- 提示框 -->
+    <div class="notification" id="notification"></div>
 </body>
 </html>
