@@ -1,41 +1,14 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-07-03T01:30:01.705Z",
+  "fetchedAt": "2026-07-03T04:30:01.516Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 1,
-  "startedAtBeijing": "2026-07-03 08:00:00",
-  "nextRefreshBeijing": "2026-07-03 12:00:00",
+  "round": 2,
+  "startedAtBeijing": "2026-07-03 12:00:00",
+  "nextRefreshBeijing": "2026-07-03 16:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
-    {
-      "name": "紫莲刚玉",
-      "price": "1000",
-      "priceRaw": "1000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
-      "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
-      "rounds": [
-        1
-      ]
-    },
-    {
-      "name": "调温球",
-      "price": "3000",
-      "priceRaw": "3000",
-      "limit": "200",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
-      "category": "特制咕噜球",
-      "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
-      "rounds": [
-        1,
-        2,
-        3,
-        4
-      ]
-    },
     {
       "name": "残缺魔镜",
       "price": "480000",
@@ -82,6 +55,21 @@
       ]
     },
     {
+      "name": "调温球",
+      "price": "3000",
+      "priceRaw": "3000",
+      "limit": "200",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
+      "category": "特制咕噜球",
+      "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
+      "rounds": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
       "name": "魔力果",
       "price": "6000",
       "priceRaw": "6000",
@@ -90,51 +78,13 @@
       "category": "精灵喂养材料",
       "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
       "rounds": [
-        1
-      ]
-    },
-    {
-      "name": "普通粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f6/ls7hsygs9epizddf1xo4q9b2iu1dduu.png/100px-100127.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量普通系魔法，是合成技能石的主要触媒。",
-      "rounds": [
-        1
+        1,
+        2
       ]
     }
   ],
   "rounds": {
     "1": [
-      {
-        "name": "紫莲刚玉",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
-        "rounds": [
-          1
-        ]
-      },
-      {
-        "name": "调温球",
-        "price": "3000",
-        "priceRaw": "3000",
-        "limit": "200",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
-        "category": "特制咕噜球",
-        "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
-        "rounds": [
-          1,
-          2,
-          3,
-          4
-        ]
-      },
       {
         "name": "残缺魔镜",
         "price": "480000",
@@ -181,6 +131,33 @@
         ]
       },
       {
+        "name": "调温球",
+        "price": "3000",
+        "priceRaw": "3000",
+        "limit": "200",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
+        "category": "特制咕噜球",
+        "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "紫莲刚玉",
+        "price": "1000",
+        "priceRaw": "1000",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
+        "category": "炼金材料",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
+        "rounds": [
+          1
+        ]
+      },
+      {
         "name": "魔力果",
         "price": "6000",
         "priceRaw": "6000",
@@ -189,7 +166,8 @@
         "category": "精灵喂养材料",
         "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
         "rounds": [
-          1
+          1,
+          2
         ]
       },
       {
@@ -207,21 +185,6 @@
     ],
     "2": [
       {
-        "name": "调温球",
-        "price": "3000",
-        "priceRaw": "3000",
-        "limit": "200",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
-        "category": "特制咕噜球",
-        "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
-        "rounds": [
-          1,
-          2,
-          3,
-          4
-        ]
-      },
-      {
         "name": "残缺魔镜",
         "price": "480000",
         "priceRaw": "48w",
@@ -264,26 +227,39 @@
           2,
           3,
           4
+        ]
+      },
+      {
+        "name": "调温球",
+        "price": "3000",
+        "priceRaw": "3000",
+        "limit": "200",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
+        "category": "特制咕噜球",
+        "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "魔力果",
+        "price": "6000",
+        "priceRaw": "6000",
+        "limit": "20",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
+        "category": "精灵喂养材料",
+        "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+        "rounds": [
+          1,
+          2
         ]
       }
     ],
     "3": [
       {
-        "name": "调温球",
-        "price": "3000",
-        "priceRaw": "3000",
-        "limit": "200",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
-        "category": "特制咕噜球",
-        "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
-        "rounds": [
-          1,
-          2,
-          3,
-          4
-        ]
-      },
-      {
         "name": "残缺魔镜",
         "price": "480000",
         "priceRaw": "48w",
@@ -321,6 +297,21 @@
         "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png",
         "category": "个体资质增强道具",
         "description": "对初始个体资质小于10的精灵使用，使该项个体资质的初始值增加1。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "调温球",
+        "price": "3000",
+        "priceRaw": "3000",
+        "limit": "200",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
+        "category": "特制咕噜球",
+        "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
         "rounds": [
           1,
           2,
@@ -331,21 +322,6 @@
     ],
     "4": [
       {
-        "name": "调温球",
-        "price": "3000",
-        "priceRaw": "3000",
-        "limit": "200",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
-        "category": "特制咕噜球",
-        "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
-        "rounds": [
-          1,
-          2,
-          3,
-          4
-        ]
-      },
-      {
         "name": "残缺魔镜",
         "price": "480000",
         "priceRaw": "48w",
@@ -383,6 +359,21 @@
         "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2d/749ek9zbh79fvll7f5vtpxa33dz3mze.png/100px-100009.png",
         "category": "个体资质增强道具",
         "description": "对初始个体资质小于10的精灵使用，使该项个体资质的初始值增加1。",
+        "rounds": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "调温球",
+        "price": "3000",
+        "priceRaw": "3000",
+        "limit": "200",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png",
+        "category": "特制咕噜球",
+        "description": "更适合用来捕捉火系、冰系精灵。 受热不均的球。",
         "rounds": [
           1,
           2,
