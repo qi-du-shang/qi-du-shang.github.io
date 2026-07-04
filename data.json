@@ -1,11 +1,11 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-07-03T12:30:01.894Z",
+  "fetchedAt": "2026-07-04T01:30:01.718Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 4,
-  "startedAtBeijing": "2026-07-03 20:00:00",
-  "nextRefreshBeijing": "2026-07-04 00:00:00",
+  "round": 1,
+  "startedAtBeijing": "2026-07-04 08:00:00",
+  "nextRefreshBeijing": "2026-07-04 12:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -55,43 +55,6 @@
       ]
     },
     {
-      "name": "蓝晶碧玺",
-      "price": "1000",
-      "priceRaw": "1000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
-      "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-      "rounds": [
-        3,
-        4
-      ]
-    },
-    {
-      "name": "炫彩蛋",
-      "price": "1600000",
-      "priceRaw": "160w",
-      "limit": "1",
-      "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
-      "category": "精灵蛋",
-      "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
-      "rounds": [
-        4
-      ]
-    },
-    {
-      "name": "黑晶琉璃",
-      "price": "1000",
-      "priceRaw": "1000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
-      "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
-      "rounds": [
-        4
-      ]
-    },
-    {
       "name": "调温球",
       "price": "3000",
       "priceRaw": "3000",
@@ -104,6 +67,18 @@
         2,
         3,
         4
+      ]
+    },
+    {
+      "name": "火系粉尘",
+      "price": "500",
+      "priceRaw": "500",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a6/a5v60zfm9ivyri166tias4efjnp5vyt.png/100px-100122.png",
+      "category": "炼金材料",
+      "description": "常见的炼金材料，蕴含少量火系魔法，是合成技能石的主要触媒。",
+      "rounds": [
+        1
       ]
     }
   ],
@@ -170,38 +145,13 @@
         ]
       },
       {
-        "name": "紫莲刚玉",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
-        "rounds": [
-          1
-        ]
-      },
-      {
-        "name": "魔力果",
-        "price": "6000",
-        "priceRaw": "6000",
-        "limit": "20",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
-        "category": "精灵喂养材料",
-        "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
-        "rounds": [
-          1,
-          2
-        ]
-      },
-      {
-        "name": "普通粉尘",
+        "name": "火系粉尘",
         "price": "500",
         "priceRaw": "500",
         "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f6/ls7hsygs9epizddf1xo4q9b2iu1dduu.png/100px-100127.png",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a6/a5v60zfm9ivyri166tias4efjnp5vyt.png/100px-100122.png",
         "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量普通系魔法，是合成技能石的主要触媒。",
+        "description": "常见的炼金材料，蕴含少量火系魔法，是合成技能石的主要触媒。",
         "rounds": [
           1
         ]
@@ -267,19 +217,6 @@
           3,
           4
         ]
-      },
-      {
-        "name": "魔力果",
-        "price": "6000",
-        "priceRaw": "6000",
-        "limit": "20",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
-        "category": "精灵喂养材料",
-        "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
-        "rounds": [
-          1,
-          2
-        ]
       }
     ],
     "3": [
@@ -329,19 +266,6 @@
         ]
       },
       {
-        "name": "蓝晶碧玺",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-        "rounds": [
-          3,
-          4
-        ]
-      },
-      {
         "name": "调温球",
         "price": "3000",
         "priceRaw": "3000",
@@ -354,18 +278,6 @@
           2,
           3,
           4
-        ]
-      },
-      {
-        "name": "武系血脉秘药",
-        "price": "160000",
-        "priceRaw": "16w",
-        "limit": "3",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/6/60/07uvni7t86lah2a9c219z9x8smkdnzj.png/100px-Xuemai_wu.png",
-        "category": "血脉修改道具",
-        "description": "能唤醒血脉力量的远古秘药，使精灵获得武系血脉。 “一段失落的秘密将被重拾。”",
-        "rounds": [
-          3
         ]
       }
     ],
@@ -412,43 +324,6 @@
           1,
           2,
           3,
-          4
-        ]
-      },
-      {
-        "name": "蓝晶碧玺",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-        "rounds": [
-          3,
-          4
-        ]
-      },
-      {
-        "name": "炫彩蛋",
-        "price": "1600000",
-        "priceRaw": "160w",
-        "limit": "1",
-        "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
-        "category": "精灵蛋",
-        "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
-        "rounds": [
-          4
-        ]
-      },
-      {
-        "name": "黑晶琉璃",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
-        "rounds": [
           4
         ]
       },
