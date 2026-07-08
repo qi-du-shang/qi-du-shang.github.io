@@ -1,24 +1,48 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-07-08T04:30:01.596Z",
+  "fetchedAt": "2026-07-08T08:30:01.575Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-07-08 12:00:00",
-  "nextRefreshBeijing": "2026-07-08 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-07-08 16:00:00",
+  "nextRefreshBeijing": "2026-07-08 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "火系粉尘",
-      "price": "500",
-      "priceRaw": "500",
+      "name": "黄石榴石",
+      "price": "1000",
+      "priceRaw": "1000",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a6/a5v60zfm9ivyri166tias4efjnp5vyt.png/100px-100122.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
       "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量火系魔法，是合成技能石的主要触媒。",
+      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
       "rounds": [
-        2
+        3
+      ]
+    },
+    {
+      "name": "幻系血脉秘药",
+      "price": "160000",
+      "priceRaw": "16w",
+      "limit": "3",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f5/osnobm6foxcvyf5t5304fz3ozr2w8cp.png/100px-Xuemai_huan.png",
+      "category": "血脉修改道具",
+      "description": "能唤醒血脉力量的远古秘药，使精灵获得幻系血脉。 “一段失落的秘密将被重拾。”",
+      "rounds": [
+        3
+      ]
+    },
+    {
+      "name": "神奇的蛋",
+      "price": "36000",
+      "priceRaw": "36000",
+      "limit": "5",
+      "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png",
+      "category": "精灵蛋",
+      "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+      "rounds": [
+        3
       ]
     }
   ],
@@ -51,7 +75,44 @@
         ]
       }
     ],
-    "3": [],
+    "3": [
+      {
+        "name": "黄石榴石",
+        "price": "1000",
+        "priceRaw": "1000",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
+        "category": "炼金材料",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+        "rounds": [
+          3
+        ]
+      },
+      {
+        "name": "幻系血脉秘药",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f5/osnobm6foxcvyf5t5304fz3ozr2w8cp.png/100px-Xuemai_huan.png",
+        "category": "血脉修改道具",
+        "description": "能唤醒血脉力量的远古秘药，使精灵获得幻系血脉。 “一段失落的秘密将被重拾。”",
+        "rounds": [
+          3
+        ]
+      },
+      {
+        "name": "神奇的蛋",
+        "price": "36000",
+        "priceRaw": "36000",
+        "limit": "5",
+        "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png",
+        "category": "精灵蛋",
+        "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+        "rounds": [
+          3
+        ]
+      }
+    ],
     "4": []
   },
   "live": true
