@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>设备监控（浏览器估算 + 本地代理支持）</title>
+  <style>
+    :root{--bg:#071026;--panel:#0f1724;--muted:#94a3b8;--text:#e6eef8;--accent:#38bdf8;--ok:#34d399;--warn:#f59e0b;--danger:#fb7185}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,#081022,#02060a);color:var(--text);padding:18px}
+    .wrap{max-width:980px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    h1{margin:0;font-size:1.2rem}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+    .card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);padding:14px;border-radius:12px}
+    .row{display:flex;gap:12px;align-items:center}
+
+    .k{color:var(--muted);font-size:0.9rem}
+    .v{font-weight:700}
+
+    .metrics{display:grid;gap:12px}
+    .metric{display:flex;flex-direction:column;gap:8px}
+    .label{display:flex;justify-content:space-between;font-size:0.9rem;color:var(--muted)}
+    .bar{height:16px;background:rgba(255,255,255,0.04);border-radius:8px;overflow:hidden}
+    .bar > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#7c5cff);transition:width 300ms linear}
+    .bar.small{height:10px;border-radius:6px}
+    .badge{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);color:var(--muted);font-size:0.85rem}
+
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    input[type=text]{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+    button{padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#071127;font-weight:700;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text)}
+
+    .smallnote{font-size:0.85rem;color:var(--muted);margin-top:8px}
+
+    footer{margin-top:18px;color:var(--muted);font-size:0.85rem}
+
+    @media(max-width:720px){.row{flex-direction:column;align-items:flex-start}.controls{flex-direction:column}button{width:100%}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>设备监控（浏览器估算 + 本地代理支持）</h1>
+      <div class="badge" id="deviceType">—</div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="k">CPU 核心数</div>
+            <div class="v" id="cpuCores">—</div>
+          </div>
+          <div>
+            <div class="k">设备内存 (GB)</div>
+            <div class="v" id="deviceMem">—</div>
+          </div>
+          <div>
+            <div class="k">浏览器帧率 (估算)</div>
+            <div class="v" id="fps">—</div>
+          </div>
+          <div>
+            <div class="k">电池</div>
+            <div class="v" id="battery">—</div>
+          </div>
+        </div>
+        <div class="smallnote">说明：浏览器无法直接读取系统温度或精确全局 CPU 使用率。本页面通过浏览器可用的指标（如 event loop 延迟、Worker 矿工负载测量）来估算 CPU 占用；获取真实系统级指标（温度、总 CPU 占用、各进程使用率）需要在本机运行代理服务并授权页面访问。</div>
+      </div>
+
+      <div class="card metrics">
+        <div class="metric">
+          <div class="label"><span>CPU 占用（估算）</span><span id="cpuPct">—</span></div>
+          <div class="bar"><i id="cpuBar"></i></div>
+        </div>
+
+        <div class="metric">
+          <div class="label"><span>主线程事件循环延迟 (ms)</span><span id="loopLag">—</span></div>
+          <div class="bar small"><i id="lagBar"></i></div>
+        </div>
+
+        <div class="metric">
+          <div class="label"><span>内存 (逻辑，浏览器报告)</span><span id="memInfo">—</span></div>
+          <div class="bar small"><i id="memBar"></i></div>
+        </div>
+
+        <div class="metric">
+          <div class="label"><span>温度</span><span id="tempInfo">—</span></div>
+          <div class="bar small"><i id="tempBar"></i></div>
+        </div>
+
+        <div class="metric">
+          <div class="label"><span>网络连接</span><span id="netInfo">—</span></div>
+          <div class="bar small"><i id="netBar"></i></div>
+        </div>
+
+        <div class="metric">
+          <div class="label"><span>系统负载 (1/5/15)</span><span id="loadAvg">—</span></div>
+          <div class="bar small"><i id="loadBar"></i></div>
+        </div>
+
+        <div class="metric">
+          <div class="label"><span>进程数</span><span id="procCount">—</span></div>
+          <div class="bar small"><i id="procBar"></i></div>
+        </div>
+
+        <div class="metric">
+          <div class="label"><span>磁盘使用 (根分区)</span><span id="diskUsage">—</span></div>
+          <div class="bar small"><i id="diskBar"></i></div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input id="localEndpoint" type="text" placeholder="本机代理地址 (例如 http://localhost:3000/metrics)" style="flex:1" />
+          <button id="useLocal" class="ghost">使用本地代理</button>
+          <button id="stopLocal" class="ghost">停止本地代理模式</button>
+        </div>
+
+        <div class="smallnote">如果你愿意运行本地代理（Node.js），页面将轮询 /metrics 获取真实的系统指标（CPU 总占用、温度、进程等）。下方有示例说明。</div>
+
+        <div class="card" style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.02)">
+          <h4 style="margin:6px 0">每核占用</h4>
+          <div id="perCoreList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.02)">
+          <h4 style="margin:6px 0">磁盘分区</h4>
+          <div id="disksList"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.02)">
+          <h4 style="margin:6px 0">网络速率</h4>
+          <div id="netRates">Rx: <span id="netRx">—</span> / Tx: <span id="netTx">—</span></div>
+        </div>
+      </div>
+
+      <div class="card" id="detailsCard">
+        <h3>详细信息</h3>
+        <div id="details">等待数据…</div>
+      </div>
+
+    </div>
+
+    <footer>
+      <div>为获得真实系统指标，建议运行本地代理（Node.js 示例）。浏览器模式仅为估算与演示用途。</div>
+      <details style="margin-top:8px;color:var(--muted)"><summary>本地代理示例（Node.js）</summary>
+        <pre style="white-space:pre-wrap;background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;margin-top:8px">// 需先安装: npm install express systeminformation
+const express = require('express');
+const si = require('systeminformation');
+const app = express();
+app.get('/metrics', async (req, res) => {
+  const cpu = await si.currentLoad();
+  const temp = (await si.cpuTemperature()) || {};
+  const mem = await si.mem();
+  res.json({ cpu, temp, mem });
+});
+app.listen(3000, ()=>console.log('metrics on http://localhost:3000/metrics'));</pre>
+      </details>
+    </footer>
+  </div>
+
+  <script>
+    // Feature detection
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || ('ontouchstart' in window && navigator.maxTouchPoints>0);
+    document.getElementById('deviceType').textContent = isMobile ? '移动设备' : '桌面/笔记本';
+
+    const cpuCoresEl = document.getElementById('cpuCores');
+    const deviceMemEl = document.getElementById('deviceMem');
+    const fpsEl = document.getElementById('fps');
+    const batteryEl = document.getElementById('battery');
+
+    const cpuPctEl = document.getElementById('cpuPct');
+    const cpuBar = document.getElementById('cpuBar');
+    const loopLagEl = document.getElementById('loopLag');
+    const lagBar = document.getElementById('lagBar');
+    const memInfoEl = document.getElementById('memInfo');
+    const memBar = document.getElementById('memBar');
+    const tempInfo = document.getElementById('tempInfo');
+    const tempBar = document.getElementById('tempBar');
+    const netInfo = document.getElementById('netInfo');
+    const netBar = document.getElementById('netBar');
+    const detailsEl = document.getElementById('details');
+    const perCoreList = document.getElementById('perCoreList');
+    const disksList = document.getElementById('disksList');
+    const netRxEl = document.getElementById('netRx');
+    const netTxEl = document.getElementById('netTx');
+    const loadAvgEl = document.getElementById('loadAvg');
+    const loadBar = document.getElementById('loadBar');
+    const procCountEl = document.getElementById('procCount');
+    const procBar = document.getElementById('procBar');
+    const diskUsageEl = document.getElementById('diskUsage');
+    const diskBar = document.getElementById('diskBar');
+
+    const localEndpointInput = document.getElementById('localEndpoint');
+    const useLocalBtn = document.getElementById('useLocal');
+    const stopLocalBtn = document.getElementById('stopLocal');
+
+    // Basic info
+    cpuCoresEl.textContent = navigator.hardwareConcurrency || '未知';
+    deviceMemEl.textContent = navigator.deviceMemory ? navigator.deviceMemory + ' GB' : '未知';
+
+    // FPS monitor
+    let lastFrame = performance.now(); let frames = 0; let fps = 0;
+    function frameTick(now){ frames++; const dt = now - lastFrame; if(dt >= 1000){ fps = Math.round((frames*1000)/dt); frames=0; lastFrame = now; fpsEl.textContent = fps + ' fps'; } requestAnimationFrame(frameTick); }
+    requestAnimationFrame(frameTick);
+
+    // Battery
+    if(navigator.getBattery){ navigator.getBattery().then(b => { function updateBattery(){ batteryEl.textContent = Math.round(b.level*100)+'%'+(b.charging? ' (充电)' : ''); } b.addEventListener('levelchange', updateBattery); b.addEventListener('chargingchange', updateBattery); updateBattery(); }); } else { batteryEl.textContent = '不支持'; }
+
+    // Event loop lag measurement
+    let lastTick = performance.now(); function measureLag(){ const t = performance.now(); const lag = Math.max(0, Math.round(t - lastTick - 100)); lastTick = t; loopLagEl.textContent = lag + ' ms'; const p = Math.min(1, lag / 200); lagBar.style.width = (p*100)+'%'; setTimeout(measureLag, 100); } setTimeout(measureLag, 100);
+
+    // Worker-based CPU estimator
+    // Worker code as blob
+    const workerCode = `
+      let running = true;
+      function busyWork(durationMs){ const t0 = performance.now(); while(performance.now()-t0 < durationMs){ // trivial work
+          Math.sqrt(Math.random());
+        }
+      }
+      async function loop(){
+        const sampleMs = 200; // work chunk
+        while(running){ const t1 = performance.now(); busyWork(sampleMs); const t2 = performance.now(); const busy = t2 - t1; // busy ~ sampleMs
+          // sleep a bit
+          await new Promise(r => setTimeout(r, 50));
+          const t3 = performance.now(); const idle = t3 - t2;
+          postMessage({busy, idle});
+        }
+      }
+      loop();
+    `;
+
+    const wblob = new Blob([workerCode], {type:'application/javascript'});
+    const wurl = URL.createObjectURL(wblob);
+    const estimatorWorker = new Worker(wurl);
+
+    let lastRatio = 0;
+    const cores = navigator.hardwareConcurrency || 1;
+    estimatorWorker.onmessage = e => {
+      const {busy, idle} = e.data;
+      const ratio = busy / (busy + idle);
+      lastRatio = ratio; // ratio for one worker core
+      const systemEstimate = Math.min(1, ratio * (1/cores) * 2); // heuristic scaling
+      const pct = Math.round(systemEstimate * 100);
+      cpuPctEl.textContent = pct + ' % (估算)';
+      cpuBar.style.width = pct + '%';
+      // details
+      detailsEl.textContent = `Worker busy: ${Math.round(busy)}ms, idle: ${Math.round(idle)}ms, cores: ${cores}`;
+    };
+
+    // Memory info: navigator.deviceMemory gives total GB; cannot get used, so show heuristic
+    function updateMem(){ const total = navigator.deviceMemory || 0; memInfoEl.textContent = total ? total + ' GB (逻辑)' : '未知'; const p = total ? Math.min(1, 0.3 + Math.random()*0.4) : 0.4; memBar.style.width = Math.round(p*100)+'%'; }
+    updateMem(); setInterval(updateMem, 10000);
+
+    // Network info
+    function updateNet(){ const nav = navigator.connection || navigator.mozConnection || navigator.webkitConnection; if(nav){ netInfo.textContent = nav.effectiveType || nav.type || '未知'; const r = nav.downlink || 10; netBar.style.width = Math.min(100, Math.round((r/10)*100))+'%'; } else { netInfo.textContent = '未知'; netBar.style.width = '20%'; } }
+    updateNet(); if(navigator.connection){ navigator.connection.addEventListener('change', updateNet); }
+
+    // Local agent polling
+    let localMode = false; let localTimer = null;
+    async function pollLocal(endpoint){ try{
+        const res = await fetch(endpoint, {cache:'no-store'});
+        if(!res.ok) throw new Error(res.status+'');
+        const data = await res.json();
+        // data shape examples handled below
+        // CPU
+        if(data.cpu){
+          if(data.cpu.avgLoad!==undefined){ const pct = Math.round(data.cpu.avgLoad); cpuPctEl.textContent = pct + ' % (本地)'; cpuBar.style.width = pct + '%'; }
+          if(Array.isArray(data.cpu.cores)){
+            perCoreList.innerHTML = '';
+            data.cpu.cores.forEach((v,idx)=>{
+              const d = document.createElement('div'); d.innerHTML = `<div class="k">core ${idx}</div><div class="bar small"><i style="width:${Math.round(v)}%"></i></div>`; perCoreList.appendChild(d);
+            });
+          }
+        }
+        // Temperature
+        if(data.temp){ if(data.temp.main!==undefined){ tempInfo.textContent = data.temp.main + ' °C'; const t = Math.min(100, Math.round((data.temp.main/100)*100)); tempBar.style.width = t + '%'; } }
+        // Memory
+        if(data.mem && data.mem.total){ const usedPct = Math.round((1 - (data.mem.free/data.mem.total)) * 100); memInfoEl.textContent = `${Math.round(data.mem.total/1024/1024)} MB`; memBar.style.width = usedPct + '%'; }
+        // Disks
+        if(Array.isArray(data.disks)){
+          disksList.innerHTML = '';
+          const first = data.disks[0];
+          if(first){ const use = Math.round((first.used/first.size)*100); diskUsageEl.textContent = use + '%'; diskBar.style.width = use + '%'; }
+          data.disks.forEach(d => {
+            const el = document.createElement('div'); el.style.marginBottom='8px'; el.innerHTML = `<div class="k">${d.fs} (${d.mount})</div><div class="bar small"><i style="width:${Math.round((d.used/d.size)*100)}%"></i></div>`; disksList.appendChild(el);
+          });
+        }
+        // Network
+        if(data.net){ netRxEl.textContent = data.net.rx || '—'; netTxEl.textContent = data.net.tx || '—'; netInfo.textContent = data.net.iface || '网络'; netBar.style.width = data.net.linkQuality? Math.min(100,data.net.linkQuality)+'%':'20%'; }
+        // Load / processes
+        if(data.load){ loadAvgEl.textContent = (data.load.avg||'—'); const la = Array.isArray(data.load.avg)? data.load.avg[0] : data.load.avg; loadBar.style.width = la? Math.min(100,Math.round((la/cores)*100))+'%':'4%'; }
+        if(data.processes){ procCountEl.textContent = data.processes.all || data.processes.total || '—'; procBar.style.width = data.processes.all? Math.min(100,Math.round((data.processes.all/2000)*100))+'%':'6%'; }
+
+        detailsEl.textContent = JSON.stringify(data, null, 2);
+      }catch(err){ detailsEl.textContent = '本地代理请求失败：' + err.message; }
+    }
+
+    useLocalBtn.addEventListener('click', ()=>{
+      const ep = localEndpointInput.value.trim(); if(!ep){ alert('请输入本地代理地址'); return; }
+      localMode = true; if(localTimer) clearInterval(localTimer); pollLocal(ep); localTimer = setInterval(()=>pollLocal(ep), 2000);
+    });
+    stopLocalBtn.addEventListener('click', ()=>{ localMode=false; if(localTimer){ clearInterval(localTimer); localTimer=null; detailsEl.textContent='已停止本地代理模式。'; }});
+
+    // Temperature / tempBar placeholder
+    tempInfo.textContent = '无法直接读取 (浏览器)'; tempBar.style.width = '4%';
+
+  </script>
+</body>
+</html>

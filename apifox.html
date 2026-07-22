@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Apifox Echo 接口测试器</title>
+  <style>
+    :root{--bg:#0b1220;--panel:#0f1724;--muted:#94a3b8;--text:#e6eef8;--accent:#38bdf8;--card:#0b1228}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,Segoe UI,system-ui,Segoe UI Emoji,Arial;background:linear-gradient(180deg,#071026 0%,#02101a 100%);color:var(--text);padding:12px}
+
+    /* 容器 */
+    .wrap{width:100%;max-width:1200px;margin:0 auto;display:block;padding:0 12px 24px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    h1{margin:0;font-size:1.25rem}
+
+    /* 两栏布局：主列可缩放，右侧列最大宽度 420px，可根据可用空间收缩到 260px */
+    .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,420px);gap:18px;align-items:start}
+
+    .panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);padding:14px;border-radius:12px;min-width:0}
+
+    /* 右侧固定区域在滚动时保持可见 */
+    .grid > aside.panel{position:sticky;top:12px;align-self:start}
+
+    .controls{display:grid;gap:10px}
+    label{font-size:0.95rem;color:var(--muted)}
+    input[type=text], select, textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);font-size:0.95rem}
+    textarea{min-height:120px}
+
+    .row{display:flex;gap:8px}
+    .row> *{flex:1;min-width:0}
+    .method{width:120px;min-width:80px}
+    .btn{background:linear-gradient(90deg,var(--accent),#7c5cff);border:none;padding:10px 14px;border-radius:10px;color:#071127;font-weight:700;cursor:pointer}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text);font-weight:600}
+
+    .kv-list{display:grid;gap:8px;margin-top:6px}
+    .kv{display:flex;gap:8px;align-items:center}
+    .kv input{flex:1;padding:8px}
+    .small{font-size:0.9rem;color:var(--muted)}
+
+    .tabs{display:flex;gap:6px;margin-top:8px}
+    .tabs button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:6px 10px;border-radius:8px;cursor:pointer}
+    .tabs button.active{background:rgba(56,189,248,0.12);color:var(--text);border-color:rgba(56,189,248,0.22)}
+
+    .response{height:520px;overflow:auto;padding:12px;border-radius:10px;background:#04101a;border:1px solid rgba(255,255,255,0.02);min-width:0}
+    pre{white-space:pre-wrap;word-break:break-word;font-size:0.92rem}
+
+    /* 历史区：自定义滚动条，更美观 */
+    .history{max-height:260px;overflow:auto;min-width:0;padding-right:6px}
+    .history .entry{padding:8px;margin-bottom:6px;border-radius:8px;background:rgba(255,255,255,0.02)}
+    .history .entry:hover{background:rgba(56,189,248,0.06)}
+    /* WebKit 浏览器（Chrome、Edge、Safari）滚动条 */
+    .history::-webkit-scrollbar{width:10px}
+    .history::-webkit-scrollbar-track{background:transparent;border-radius:8px}
+    .history::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(56,189,248,0.32),rgba(124,92,255,0.28));border-radius:8px;border:2px solid rgba(8,11,21,0.0);}
+    .history::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,rgba(56,189,248,0.55),rgba(124,92,255,0.45));}
+    /* Firefox 滚动条 */
+    .history{scrollbar-width:thin;scrollbar-color: rgba(56,189,248,0.45) transparent}
+
+    .history-tools{display:flex;gap:8px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+    .history-tools .history-wrap{flex:1;min-width:0}
+    .history-tools .tools-wrap{flex:0 0 220px;max-width:40%;min-width:160px}
+    .history-tools .tools-wrap .btn{display:inline-block;margin-right:8px;margin-bottom:6px}
+    .chip{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03);margin-right:6px;color:var(--muted);font-size:0.85rem}
+    .footer{font-size:0.9rem;color:var(--muted);margin-top:8px}
+
+    @media (max-width: 700px) {
+      .history-tools{flex-direction:column}
+      .history-tools .tools-wrap{flex:0 0 auto;max-width:100%;min-width:0}
+      .history-tools .tools-wrap .btn{width:48%;min-width:120px}
+    }
+
+    /* Small screens: 单列，控件堆叠，增大触控目标 */
+    @media (max-width: 980px) {
+      body{padding:10px}
+      .grid{grid-template-columns:1fr;}
+      .response{height:420px}
+      .row{flex-direction:column}
+      .method{width:100%;min-width:unset}
+      .btn{width:100%}
+      .kv{flex-direction:column}
+      .kv input{width:100%}
+      .panel{padding:12px}
+      header{align-items:flex-start}
+      .grid > aside.panel{position:static}
+    }
+
+    /* 手机小屏：更紧凑布局 */
+    @media (max-width: 540px) {
+      body{padding:8px}
+      h1{font-size:1.05rem}
+      input[type=text], select, textarea{padding:9px;font-size:0.95rem}
+      .response{height:360px}
+      .controls{gap:8px}
+      .tabs button{padding:6px 8px}
+    }
+
+    /* 极窄屏额外优化 */
+    @media (max-width: 360px) {
+      .method{display:block}
+      .row> *{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Apifox Echo - 接口测试器 (单文件)</h1>
+      <div class="small">默认 Base: <span class="chip">https://echo.apifox.com</span></div>
+    </header>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="controls">
+          <div class="row">
+            <select id="method" class="method">
+              <option>GET</option>
+              <option>POST</option>
+              <option>PUT</option>
+              <option>PATCH</option>
+              <option>DELETE</option>
+              <option>HEAD</option>
+              <option>OPTIONS</option>
+            </select>
+            <input id="url" type="text" placeholder="完整URL或相对路径，例如 /get 或 https://echo.apifox.com/get" />
+            <button id="send" class="btn">发送</button>
+          </div>
+
+          <div class="row">
+            <label style="flex:1">
+              Base URL
+              <input id="baseUrl" type="text" value="https://echo.apifox.com" />
+            </label>
+            <label style="width:170px">
+              超时(ms)
+              <input id="timeout" type="text" value="15000" />
+            </label>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:center">
+            <label style="flex:1">
+              预置路径
+              <select id="preset">
+                <option value="">— 选择预置 —</option>
+                <option value="/get">/get (GET)</option>
+                <option value="/post">/post (POST)</option>
+                <option value="/put">/put (PUT)</option>
+                <option value="/delete">/delete (DELETE)</option>
+                <option value="/headers">/headers</option>
+                <option value="/ip">/ip</option>
+                <option value="/status/200">/status/200</option>
+                <option value="/status/404">/status/404</option>
+                <option value="/delay/2">/delay/2 (2s)</option>
+                <option value="/redirect/1">/redirect/1</option>
+                <option value="/basic-auth/user/pass">/basic-auth/user/pass</option>
+                <option value="/bearer">/bearer</option>
+              </select>
+            </label>
+            <button id="addHeader" class="btn secondary">添加 Header</button>
+            <button id="addQuery" class="btn secondary">添加 Query</button>
+          </div>
+
+          <div style="display:flex;gap:12px">
+            <div style="flex:1">
+              <label>请求 Headers</label>
+              <div id="headers" class="kv-list"></div>
+            </div>
+            <div style="width:220px">
+              <label>Query 参数</label>
+              <div id="queries" class="kv-list"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <label>请求体（可选）</label>
+              <div class="tabs">
+                <button class="tab active" data-mode="raw">Raw JSON / 文本</button>
+                <button class="tab" data-mode="form">form-data</button>
+                <button class="tab" data-mode="urlenc">x-www-form-urlencoded</button>
+              </div>
+            </div>
+            <div id="bodyRaw" style="margin-top:8px"><textarea id="bodyText" placeholder='例如: {"name":"alice"}' style="height:120px"></textarea></div>
+            <div id="bodyForm" style="display:none;margin-top:8px">
+              <div id="formList" class="kv-list"></div>
+              <div style="margin-top:8px"><input id="fileInput" type="file" multiple /></div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+            <label style="margin:0"><input id="showCurl" type="checkbox" /> 生成 cURL</label>
+            <label style="margin:0"><input id="saveHistory" type="checkbox" checked /> 保存到历史</label>
+            <button id="clearHistory" class="btn secondary">清空历史</button>
+          </div>
+
+          <div class="footer">提示：你可以直接填写完整 URL（包含 https://..），也可以填写相对路径（会基于 Base URL）。Apifox Echo 支持各种测试场景，页面提供预置路径以便快速试验。</div>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div style="display:grid;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <strong>响应</strong>
+              <div class="small" id="meta">状态: — &nbsp; 耗时: — &nbsp; 大小: —</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button id="viewHeaders" class="btn secondary">响应 Headers</button>
+              <button id="viewBody" class="btn secondary">响应 Body</button>
+              <button id="downloadBtn" class="btn secondary" style="display:none">下载</button>
+            </div>
+          </div>
+
+          <div id="response" class="response"><pre id="respPre">尚无响应</pre></div>
+
+          <div class="history-tools">
+            <div class="history-wrap">
+              <strong>历史</strong>
+              <div class="history" id="historyList"></div>
+            </div>
+            <div class="tools-wrap">
+              <strong>工具</strong>
+              <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;">
+                <button id="copyCurl" class="btn secondary" title="复制 cURL">复制 cURL</button>
+                <button id="prettyJson" class="btn secondary">格式化 JSON</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // 简单的单文件 API 测试器，适配 Apifox Echo
+    const methodEl = document.getElementById('method');
+    const urlEl = document.getElementById('url');
+    const baseUrlEl = document.getElementById('baseUrl');
+    const sendBtn = document.getElementById('send');
+    const headersEl = document.getElementById('headers');
+    const queriesEl = document.getElementById('queries');
+    const addHeaderBtn = document.getElementById('addHeader');
+    const addQueryBtn = document.getElementById('addQuery');
+    const preset = document.getElementById('preset');
+    const bodyText = document.getElementById('bodyText');
+    const bodyRaw = document.getElementById('bodyRaw');
+    const bodyForm = document.getElementById('bodyForm');
+    const formList = document.getElementById('formList');
+    const fileInput = document.getElementById('fileInput');
+    const tabs = document.querySelectorAll('.tab');
+    const viewBodyBtn = document.getElementById('viewBody');
+    const viewHeadersBtn = document.getElementById('viewHeaders');
+    const respPre = document.getElementById('respPre');
+    const responseEl = document.getElementById('response');
+    const metaEl = document.getElementById('meta');
+    const historyList = document.getElementById('historyList');
+    const showCurlEl = document.getElementById('showCurl');
+    const saveHistoryEl = document.getElementById('saveHistory');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const timeoutEl = document.getElementById('timeout');
+    const clearHistoryBtn = document.getElementById('clearHistory');
+    const copyCurlBtn = document.getElementById('copyCurl');
+    const prettyJsonBtn = document.getElementById('prettyJson');
+
+    const STORAGE_KEY = 'apifox_tester_history_v1';
+
+    // 转义 HTML，防止历史内容注入或破坏布局
+    function escapeHtml(text) {
+      return String(text === undefined || text === null ? '' : text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function createKV(listEl, placeholderKey='Key', placeholderVal='Value'){
+      const wrap = document.createElement('div'); wrap.className='kv';
+      const k = document.createElement('input'); k.placeholder=placeholderKey; k.type='text';
+      const v = document.createElement('input'); v.placeholder=placeholderVal; v.type='text';
+      const del = document.createElement('button'); del.textContent='✕'; del.className='btn secondary'; del.style.width='44px';
+      del.addEventListener('click', ()=>wrap.remove());
+      wrap.appendChild(k); wrap.appendChild(v); wrap.appendChild(del);
+      listEl.appendChild(wrap);
+      return wrap;
+    }
+
+    // 初始化默认 header 和 query
+    createKV(headersEl,'Name','Value');
+    createKV(queriesEl,'Name','Value');
+    createKV(formList,'name','value');
+
+    addHeaderBtn.addEventListener('click', ()=>createKV(headersEl,'Name','Value'));
+    addQueryBtn.addEventListener('click', ()=>createKV(queriesEl,'Name','Value'));
+
+    // body tab
+    tabs.forEach(btn=>btn.addEventListener('click', ()=>{
+      tabs.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const m = btn.dataset.mode;
+      bodyRaw.style.display = m==='raw' ? 'block' : 'none';
+      bodyForm.style.display = m==='form' ? 'block' : 'none';
+    }));
+
+    preset.addEventListener('change', ()=>{
+      const v = preset.value; if(!v) return; urlEl.value = v; methodEl.value = v.startsWith('/post')||v.startsWith('/put')? 'POST': 'GET';
+    });
+
+    function buildHeaders(){
+      const headers = {};
+      for(const row of headersEl.querySelectorAll('.kv')){
+        const k = row.children[0].value.trim(); const v = row.children[1].value.trim();
+        if(k) headers[k]=v;
+      }
+      return headers;
+    }
+    function buildQueries(){
+      const params = new URLSearchParams();
+      for(const row of queriesEl.querySelectorAll('.kv')){
+        const k = row.children[0].value.trim(); const v = row.children[1].value.trim();
+        if(k) params.append(k,v);
+      }
+      return params;
+    }
+
+    function buildUrl(){
+      let u = urlEl.value.trim();
+      if(!u) return '';
+      if(/^https?:\/\//i.test(u)) return u;
+      const base = (baseUrlEl.value||'').replace(/\/+$/,'');
+      if(!base) return u;
+      if(u.startsWith('/')) return base+u;
+      return base+'/'+u;
+    }
+
+    function guessContentType(){
+      const mode = document.querySelector('.tab.active').dataset.mode;
+      if(mode==='raw') return 'application/json';
+      if(mode==='form') return 'multipart/form-data';
+      if(mode==='urlenc') return 'application/x-www-form-urlencoded';
+      return '';
+    }
+
+    function makeCurl({method,url,headers,body}){
+      const parts = [`curl -X ${method} '${url.replace(/'/g, "'\\''")}'`];
+      for(const k in headers) parts.push(`-H '${k}: ${headers[k].toString().replace(/'/g, "'\\''")}'`);
+      if(body){ parts.push(`-d '${body.toString().replace(/'/g, "'\\''")}'`); }
+      return parts.join(' ');
+    }
+
+    async function sendRequest(){
+      const method = methodEl.value;
+      const url = buildUrl();
+      if(!url){ alert('请输入 URL'); return; }
+      const headers = buildHeaders();
+      const queries = buildQueries();
+      const fullUrl = queries.toString() ? (url + (url.includes('?')? '&':'?') + queries.toString()) : url;
+
+      let body = null; let fetchOpts = {method, headers: {...headers}};
+      const mode = document.querySelector('.tab.active').dataset.mode;
+      if(['POST','PUT','PATCH'].includes(method)){
+        if(mode==='raw'){
+          body = bodyText.value;
+          fetchOpts.body = body;
+          if(!('Content-Type' in fetchOpts.headers)) fetchOpts.headers['Content-Type'] = 'application/json';
+        } else if(mode==='urlenc'){
+          const data = new URLSearchParams(); for(const row of formList.querySelectorAll('.kv')){ const k=row.children[0].value; const v=row.children[1].value; if(k) data.append(k,v); }
+          body = data.toString(); fetchOpts.body = body; fetchOpts.headers['Content-Type']='application/x-www-form-urlencoded';
+        } else if(mode==='form'){
+          const fd = new FormData(); for(const row of formList.querySelectorAll('.kv')){ const k=row.children[0].value; const v=row.children[1].value; if(k) fd.append(k,v); }
+          const files = fileInput.files; for(let i=0;i<files.length;i++){ fd.append(files[i].name, files[i]); }
+          fetchOpts.body = fd; // browser sets Content-Type with boundary
+          // delete content-type if user accidentally set
+          if('Content-Type' in fetchOpts.headers) delete fetchOpts.headers['Content-Type'];
+        }
+      }
+
+      // cURL preview
+      let curlText = '';
+      if(showCurlEl.checked){ curlText = makeCurl({method,url:fullUrl,headers:fetchOpts.headers,body:fetchOpts.body}); }
+
+      // timeout via AbortController
+      const controller = new AbortController(); fetchOpts.signal = controller.signal;
+      const t = Number(timeoutEl.value) || 15000; const timer = setTimeout(()=>controller.abort(), t);
+
+      const start = performance.now();
+      setStatus('请求中...'); respPre.textContent = '等待响应...'; downloadBtn.style.display='none';
+      try{
+        const res = await fetch(fullUrl, fetchOpts);
+        clearTimeout(timer);
+        const duration = Math.round(performance.now()-start);
+        const statusText = res.status + ' ' + res.statusText;
+        const size = res.headers.get('content-length') || '—';
+        metaEl.textContent = `状态: ${statusText}  耗时: ${duration}ms  大小: ${size}`;
+
+        // show headers
+        const respHeaders = {};
+        res.headers.forEach((v,k)=>respHeaders[k]=v);
+        const headersHtml = Object.entries(respHeaders).map(([k,v])=>`${k}: ${v}`).join('\n');
+
+        // try to parse json
+        const ct = res.headers.get('content-type') || '';
+        let bodyTextResp='';
+        if(ct.includes('application/json')){ const json = await res.json(); bodyTextResp = JSON.stringify(json,null,2); }
+        else if(ct.startsWith('text/')||ct.includes('json')){ bodyTextResp = await res.text(); }
+        else { const blob = await res.blob(); bodyTextResp = `<binary ${blob.type || 'application/octet-stream'} — ${Math.round(blob.size/1024)} KB>`; // allow download
+          const urlBlob = URL.createObjectURL(blob); downloadBtn.style.display='inline-block'; downloadBtn.onclick = ()=>{ const a=document.createElement('a'); a.href=urlBlob; a.download = 'download.bin'; a.click(); } }
+
+        // show result area
+        let out = '';
+        out += '--- RESPONSE HEADERS ---\n'; out += headersHtml + '\n\n';
+        out += '--- RESPONSE BODY ---\n'; out += bodyTextResp;
+        if(curlText){ out = '--- cURL ---\n' + curlText + '\n\n' + out; }
+        respPre.textContent = out;
+
+        // save history
+        if(saveHistoryEl.checked){ const hist = loadHistory(); hist.unshift({time:Date.now(),method,url:fullUrl,status:res.status,bodyPreview: (bodyTextResp||'').slice(0,500)}); saveHistory(hist.slice(0,80)); renderHistory(); }
+        setStatus('完成');
+      }catch(err){
+        clearTimeout(timer); setStatus('请求失败'); respPre.textContent = '请求失败: ' + (err.message||err);
+      }
+    }
+
+    function setStatus(t){ metaEl.textContent = t; }
+
+    function saveHistory(h){ localStorage.setItem(STORAGE_KEY, JSON.stringify(h)); }
+    function loadHistory(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){return []} }
+
+    function renderHistory(){ const hist = loadHistory(); historyList.innerHTML=''; for(const item of hist){ const d = new Date(item.time); const btn = document.createElement('div'); btn.className = 'entry'; btn.style.borderBottom='1px solid rgba(255,255,255,0.03)'; btn.style.cursor='pointer'; btn.innerHTML = `<div style="font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${item.method} ${escapeHtml(item.url)}</div><div class="small">${d.toLocaleString()} — 状态: ${item.status}</div><div class="small">${escapeHtml((item.bodyPreview||'').slice(0,200))}</div>`; btn.addEventListener('click', ()=>{ methodEl.value=item.method; urlEl.value=item.url; }); historyList.appendChild(btn);} }
+
+    function saveSample(){ const sample={method:'GET',url:'/get',headers:{},queries:{},body:''}; localStorage.setItem('apifox_tester_sample',JSON.stringify(sample)); }
+
+    // init
+    renderHistory(); saveSample();
+
+    sendBtn.addEventListener('click', sendRequest);
+    copyCurlBtn.addEventListener('click', ()=>{ const t = respPre.textContent.split('\n\n')[0]; navigator.clipboard.writeText(t||''); alert('已复制'); });
+    prettyJsonBtn.addEventListener('click', ()=>{ try{ const s = respPre.textContent; const idx = s.indexOf('\n\n'); const body = s.slice(idx+2); const j = JSON.parse(body); respPre.textContent = JSON.stringify(j,null,2); }catch(e){ alert('无法格式化：响应不是纯 JSON'); } });
+
+    clearHistoryBtn.addEventListener('click', ()=>{ if(confirm('清空历史？')){ saveHistory([]); renderHistory(); } });
+
+    // allow Enter to send when focus in url or body
+    urlEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') sendRequest(); });
+    bodyText.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && e.ctrlKey) sendRequest(); });
+
+    // allow file drag/drop to body area
+    responseEl.addEventListener('dragover', (e)=>{ e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
+
+    // done
+  </script>
+</body>
+</html>
