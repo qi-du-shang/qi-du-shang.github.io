@@ -1,36 +1,24 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-08-03T04:30:01.653Z",
+  "fetchedAt": "2026-08-03T08:30:32.855Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-08-03 12:00:00",
-  "nextRefreshBeijing": "2026-08-03 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-08-03 16:00:00",
+  "nextRefreshBeijing": "2026-08-03 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "紫莲刚玉",
+      "name": "黄石榴石",
       "price": "1000",
       "priceRaw": "1000",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
       "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
+      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
       "rounds": [
-        2
-      ]
-    },
-    {
-      "name": "机械粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/1c/lcsenwszmlkz002ai6du9f32tbfpi19.png/100px-100138.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量机械系魔法，是合成技能石的主要触媒。",
-      "rounds": [
-        2
+        3
       ]
     }
   ],
@@ -99,7 +87,20 @@
         ]
       }
     ],
-    "3": [],
+    "3": [
+      {
+        "name": "黄石榴石",
+        "price": "1000",
+        "priceRaw": "1000",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
+        "category": "炼金材料",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+        "rounds": [
+          3
+        ]
+      }
+    ],
     "4": []
   },
   "live": true
