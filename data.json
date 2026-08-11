@@ -1,24 +1,36 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-08-11T08:30:01.902Z",
+  "fetchedAt": "2026-08-11T12:30:02.486Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 3,
-  "startedAtBeijing": "2026-08-11 16:00:00",
-  "nextRefreshBeijing": "2026-08-11 20:00:00",
+  "round": 4,
+  "startedAtBeijing": "2026-08-11 20:00:00",
+  "nextRefreshBeijing": "2026-08-12 00:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "紫莲刚玉",
+      "name": "黑晶琉璃",
       "price": "1000",
       "priceRaw": "1000",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
       "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
+      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
       "rounds": [
-        3
+        4
+      ]
+    },
+    {
+      "name": "武系血脉秘药",
+      "price": "160000",
+      "priceRaw": "16w",
+      "limit": "3",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/6/60/07uvni7t86lah2a9c219z9x8smkdnzj.png/100px-Xuemai_wu.png",
+      "category": "血脉修改道具",
+      "description": "能唤醒血脉力量的远古秘药，使精灵获得武系血脉。 “一段失落的秘密将被重拾。”",
+      "rounds": [
+        4
       ]
     },
     {
@@ -30,19 +42,7 @@
       "category": "精灵蛋",
       "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
       "rounds": [
-        3
-      ]
-    },
-    {
-      "name": "电系粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2f/2sux0g15uo8at77bwpoxrg32rv3l4dz.png/100px-100132.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量电系魔法，是合成技能石的主要触媒。",
-      "rounds": [
-        3
+        4
       ]
     }
   ],
@@ -149,7 +149,44 @@
         ]
       }
     ],
-    "4": []
+    "4": [
+      {
+        "name": "黑晶琉璃",
+        "price": "1000",
+        "priceRaw": "1000",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
+        "category": "炼金材料",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
+        "rounds": [
+          4
+        ]
+      },
+      {
+        "name": "武系血脉秘药",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/6/60/07uvni7t86lah2a9c219z9x8smkdnzj.png/100px-Xuemai_wu.png",
+        "category": "血脉修改道具",
+        "description": "能唤醒血脉力量的远古秘药，使精灵获得武系血脉。 “一段失落的秘密将被重拾。”",
+        "rounds": [
+          4
+        ]
+      },
+      {
+        "name": "神奇的蛋",
+        "price": "36000",
+        "priceRaw": "36000",
+        "limit": "5",
+        "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png",
+        "category": "精灵蛋",
+        "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
+        "rounds": [
+          4
+        ]
+      }
+    ]
   },
   "live": true
 }
