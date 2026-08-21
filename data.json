@@ -1,11 +1,11 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-08-21T08:30:01.815Z",
+  "fetchedAt": "2026-08-21T12:30:01.741Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 3,
-  "startedAtBeijing": "2026-08-21 16:00:00",
-  "nextRefreshBeijing": "2026-08-21 20:00:00",
+  "round": 4,
+  "startedAtBeijing": "2026-08-21 20:00:00",
+  "nextRefreshBeijing": "2026-08-22 00:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -70,6 +70,18 @@
       ]
     },
     {
+      "name": "黄石榴石",
+      "price": "1000",
+      "priceRaw": "1000",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
+      "category": "炼金材料",
+      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+      "rounds": [
+        4
+      ]
+    },
+    {
       "name": "光合球",
       "price": "3000",
       "priceRaw": "3000",
@@ -82,30 +94,6 @@
         2,
         3,
         4
-      ]
-    },
-    {
-      "name": "武系血脉秘药",
-      "price": "160000",
-      "priceRaw": "16w",
-      "limit": "3",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/6/60/07uvni7t86lah2a9c219z9x8smkdnzj.png/100px-Xuemai_wu.png",
-      "category": "血脉修改道具",
-      "description": "能唤醒血脉力量的远古秘药，使精灵获得武系血脉。 “一段失落的秘密将被重拾。”",
-      "rounds": [
-        3
-      ]
-    },
-    {
-      "name": "幽系粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量幽系魔法，是合成技能石的主要触媒。",
-      "rounds": [
-        3
       ]
     }
   ],
@@ -459,6 +447,18 @@
           1,
           2,
           3,
+          4
+        ]
+      },
+      {
+        "name": "黄石榴石",
+        "price": "1000",
+        "priceRaw": "1000",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
+        "category": "炼金材料",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+        "rounds": [
           4
         ]
       },
