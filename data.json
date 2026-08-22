@@ -1,11 +1,11 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-08-22T08:30:01.865Z",
+  "fetchedAt": "2026-08-22T12:30:01.891Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 3,
-  "startedAtBeijing": "2026-08-22 16:00:00",
-  "nextRefreshBeijing": "2026-08-22 20:00:00",
+  "round": 4,
+  "startedAtBeijing": "2026-08-22 20:00:00",
+  "nextRefreshBeijing": "2026-08-23 00:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -85,15 +85,39 @@
       ]
     },
     {
-      "name": "草系粉尘",
+      "name": "紫莲刚玉",
+      "price": "1000",
+      "priceRaw": "1000",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
+      "category": "炼金材料",
+      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
+      "rounds": [
+        4
+      ]
+    },
+    {
+      "name": "魔力果",
+      "price": "6000",
+      "priceRaw": "6000",
+      "limit": "20",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
+      "category": "精灵喂养材料",
+      "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+      "rounds": [
+        4
+      ]
+    },
+    {
+      "name": "虫系粉尘",
       "price": "500",
       "priceRaw": "500",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/32/2k88qbruf464xxyf02grnmkvun59h0c.png/100px-100121.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c0/ihsb7b9pcs210dtaiswlsaxuhe2jfaa.png/100px-100134.png",
       "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量草系魔法，是合成技能石的主要触媒。",
+      "description": "常见的炼金材料，蕴含少量虫系魔法，是合成技能石的主要触媒。",
       "rounds": [
-        3
+        4
       ]
     }
   ],
@@ -462,6 +486,42 @@
           1,
           2,
           3,
+          4
+        ]
+      },
+      {
+        "name": "紫莲刚玉",
+        "price": "1000",
+        "priceRaw": "1000",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
+        "category": "炼金材料",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
+        "rounds": [
+          4
+        ]
+      },
+      {
+        "name": "魔力果",
+        "price": "6000",
+        "priceRaw": "6000",
+        "limit": "20",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
+        "category": "精灵喂养材料",
+        "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+        "rounds": [
+          4
+        ]
+      },
+      {
+        "name": "虫系粉尘",
+        "price": "500",
+        "priceRaw": "500",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c0/ihsb7b9pcs210dtaiswlsaxuhe2jfaa.png/100px-100134.png",
+        "category": "炼金材料",
+        "description": "常见的炼金材料，蕴含少量虫系魔法，是合成技能石的主要触媒。",
+        "rounds": [
           4
         ]
       }
