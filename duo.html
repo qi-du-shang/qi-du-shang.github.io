@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>访客访问信息记录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background-color: #1a1a2e;
+            color: #eee;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #16213e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px #0f3460;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00d9ff;
+        }
+        .info-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid #2c3e50;
+            font-size: 16px;
+        }
+        .info-item strong {
+            color: #4ee44e;
+            min-width: 140px;
+            display: inline-block;
+        }
+        .json-box {
+            margin-top: 25px;
+            background: #0f0f23;
+            padding: 18px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #ffdd57;
+            font-size: 14px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        .loading{
+            color:#aaa;
+            text-align:center;
+            padding:20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>访客访问信息</h1>
+        <div id="infoWrap">
+            <div class="loading">正在获取访问数据，请稍候...</div>
+        </div>
+
+        <h3 style="margin-top:30px;color:#00d9ff">生成的JSON数据：</h3>
+        <div class="json-box" id="jsonOutput"></div>
+    </div>
+
+    <script>
+        // ========== 这里改成你的腾讯云函数API地址 ==========
+        const SCF_API_URL = "https://xxx.ap-guangzhou.scf.tencentcloudapi.com/report";
+
+        // 获取操作系统、浏览器信息
+        function getSystemInfo(){
+            const ua = navigator.userAgent;
+            let os = "未知系统";
+            let browser = "未知浏览器";
+
+            if (/Windows NT 10/.test(ua)) os = "Windows 10/11";
+            else if (/Windows NT 6.3/.test(ua)) os = "Windows 8.1";
+            else if (/Windows NT 6.2/.test(ua)) os = "Windows 8";
+            else if (/Windows NT 6.1/.test(ua)) os = "Windows 7";
+            else if (/Mac OS X/.test(ua)) os = "MacOS";
+            else if (/Android/.test(ua)) os = "Android";
+            else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS";
+            else if (/Linux/.test(ua)) os = "Linux";
+
+            if (/Edg/.test(ua)) browser = "Edge";
+            else if (/Chrome/.test(ua) && !/Edg/.test(ua)) browser = "Chrome";
+            else if (/Firefox/.test(ua)) browser = "Firefox";
+            else if (/Safari/.test(ua) && !/Chrome/.test(ua)) browser = "Safari";
+
+            return {os, browser, userAgent: ua};
+        }
+
+        //上报数据到腾讯云函数
+        async function sendToScf(record){
+            try{
+                const res = await fetch(SCF_API_URL,{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body: JSON.stringify(record)
+                })
+                const ret = await res.json();
+                console.log("上报成功",ret);
+            }catch(e){
+                console.error("上报失败",e);
+            }
+        }
+
+        // 主逻辑
+        async function loadVisitorInfo(){
+            const systemInfo = getSystemInfo();
+            let ipData = {ip:"获取失败", region:"获取失败", city:""};
+            // 使用你指定的IP接口
+            try{
+                const res = await fetch("https://v.api.aa1.cn/api/myip/index.php?aa1=json");
+                if(res.ok){
+                    const json = await res.json();
+                    ipData.ip = json.ip;
+                    ipData.region = json.country+json.province;
+                    ipData.city = json.city;
+                }
+            }catch(err){
+                console.error("IP接口获取失败",err);
+            }
+
+            const visitRecord = {
+                visitTime: new Date().toLocaleString("zh-CN"),
+                timestamp: Date.now(),
+                ip: ipData.ip,
+                province: ipData.region,
+                city: ipData.city,
+                os: systemInfo.os,
+                browser: systemInfo.browser,
+                userAgent: systemInfo.userAgent,
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height
+            };
+
+            //页面渲染
+            const infoWrap = document.getElementById('infoWrap');
+            infoWrap.innerHTML = `
+                <div class="info-item"><strong>访问时间：</strong>${visitRecord.visitTime}</div>
+                <div class="info-item"><strong>访客IP：</strong>${visitRecord.ip}</div>
+                <div class="info-item"><strong>省份/地区：</strong>${visitRecord.province}</div>
+                <div class="info-item"><strong>城市：</strong>${visitRecord.city}</div>
+                <div class="info-item"><strong>操作系统：</strong>${visitRecord.os}</div>
+                <div class="info-item"><strong>浏览器：</strong>${visitRecord.browser}</div>
+                <div class="info-item"><strong>屏幕分辨率：</strong>${visitRecord.screenWidth} × ${visitRecord.screenHeight}</div>
+            `;
+            document.getElementById("jsonOutput").innerText = JSON.stringify(visitRecord,null,2);
+
+            //上报到腾讯云函数
+            await sendToScf(visitRecord);
+        }
+
+        window.onload = loadVisitorInfo;
+    </script>
+</body>
+</html>
