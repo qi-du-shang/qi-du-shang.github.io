@@ -97,21 +97,15 @@
         }
 
         //上报数据到腾讯云函数
-        async function sendToScf(record){
-            try{
-                const res = await fetch(SCF_API_URL,{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body: JSON.stringify(record)
-                })
-                const ret = await res.json();
-                console.log("上报成功",ret);
-            }catch(e){
-                console.error("上报失败",e);
-            }
-        }
+
+async function sendToScf(record){
+    const jsonStr = JSON.stringify(record);
+    const dataParam = encodeURIComponent(jsonStr);
+    //使用Image发送GET，无预检
+    const img = new Image();
+    img.src = SCF_API_URL + "?payload="+dataParam;
+}
+
 
         // 主逻辑
         async function loadVisitorInfo(){
