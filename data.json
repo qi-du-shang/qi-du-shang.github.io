@@ -1,48 +1,24 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-08-27T04:30:01.857Z",
+  "fetchedAt": "2026-08-27T08:30:02.754Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-08-27 12:00:00",
-  "nextRefreshBeijing": "2026-08-27 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-08-27 16:00:00",
+  "nextRefreshBeijing": "2026-08-27 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "炫彩蛋",
-      "price": "1600000",
-      "priceRaw": "160w",
-      "limit": "1",
-      "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
-      "category": "精灵蛋",
-      "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
-      "rounds": [
-        2
-      ]
-    },
-    {
-      "name": "紫莲刚玉",
-      "price": "1000",
-      "priceRaw": "1000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
-      "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
-      "rounds": [
-        2
-      ]
-    },
-    {
-      "name": "幻系血脉秘药",
+      "name": "普通血脉秘药",
       "price": "160000",
       "priceRaw": "16w",
       "limit": "3",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f5/osnobm6foxcvyf5t5304fz3ozr2w8cp.png/100px-Xuemai_huan.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a8/lx9q220586a1qpy109sy34ghfgtrs6w.png/100px-Xuemai_putong.png",
       "category": "血脉修改道具",
-      "description": "能唤醒血脉力量的远古秘药，使精灵获得幻系血脉。 “一段失落的秘密将被重拾。”",
+      "description": "能唤醒血脉力量的远古秘药，使精灵获得普通系血脉。 “一段失落的秘密将被重拾。”",
       "rounds": [
-        2
+        3
       ]
     }
   ],
@@ -123,7 +99,20 @@
         ]
       }
     ],
-    "3": [],
+    "3": [
+      {
+        "name": "普通血脉秘药",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a8/lx9q220586a1qpy109sy34ghfgtrs6w.png/100px-Xuemai_putong.png",
+        "category": "血脉修改道具",
+        "description": "能唤醒血脉力量的远古秘药，使精灵获得普通系血脉。 “一段失落的秘密将被重拾。”",
+        "rounds": [
+          3
+        ]
+      }
+    ],
     "4": []
   },
   "live": true
