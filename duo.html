@@ -70,7 +70,7 @@
     </div>
 
     <script>
-        // ========== 这里改成你的腾讯云函数API地址 ==========
+        //填入你真实云函数地址
         const SCF_API_URL = "https://1258632161-ccdi04ntyz.ap-singapore.tencentscf.com";
 
         // 获取操作系统、浏览器信息
@@ -116,43 +116,26 @@
         // 主逻辑
         async function loadVisitorInfo(){
             const systemInfo = getSystemInfo();
-            let ipData = {ip:"获取失败", region:"获取失败", city:""};
-            // 使用你指定的IP接口
-            try{
-                const res = await fetch("https://v.api.aa1.cn/api/myip/index.php?aa1=json");
-                if(res.ok){
-                    const json = await res.json();
-                    ipData.ip = json.ip;
-                    ipData.region = json.country+json.province;
-                    ipData.city = json.city;
-                }
-            }catch(err){
-                console.error("IP接口获取失败",err);
-            }
 
             const visitRecord = {
                 visitTime: new Date().toLocaleString("zh-CN"),
                 timestamp: Date.now(),
-                ip: ipData.ip,
-                province: ipData.region,
-                city: ipData.city,
                 os: systemInfo.os,
                 browser: systemInfo.browser,
                 userAgent: systemInfo.userAgent,
                 screenWidth: window.screen.width,
                 screenHeight: window.screen.height
+                //ip、地区交给后端云函数获取，不再前端请求第三方接口
             };
 
             //页面渲染
             const infoWrap = document.getElementById('infoWrap');
             infoWrap.innerHTML = `
                 <div class="info-item"><strong>访问时间：</strong>${visitRecord.visitTime}</div>
-                <div class="info-item"><strong>访客IP：</strong>${visitRecord.ip}</div>
-                <div class="info-item"><strong>省份/地区：</strong>${visitRecord.province}</div>
-                <div class="info-item"><strong>城市：</strong>${visitRecord.city}</div>
                 <div class="info-item"><strong>操作系统：</strong>${visitRecord.os}</div>
                 <div class="info-item"><strong>浏览器：</strong>${visitRecord.browser}</div>
                 <div class="info-item"><strong>屏幕分辨率：</strong>${visitRecord.screenWidth} × ${visitRecord.screenHeight}</div>
+                <div class="info-item"><strong>IP与属地：</strong>后端获取</div>
             `;
             document.getElementById("jsonOutput").innerText = JSON.stringify(visitRecord,null,2);
 
