@@ -1,12 +1,12 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-08-28T12:20:58.158Z",
+  "fetchedAt": "2026-08-29T01:20:57.767Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 4,
-  "startedAtBeijing": "2026-08-28 20:00:00",
-  "nextRefreshBeijing": "2026-08-29 00:00:00",
-  "nextActiveBeijing": "2026-08-29 08:00:00",
+  "round": 1,
+  "startedAtBeijing": "2026-08-29 08:00:00",
+  "nextRefreshBeijing": "2026-08-29 12:00:00",
+  "nextActiveBeijing": "2026-08-29 12:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -56,22 +56,22 @@
       ]
     },
     {
-      "name": "黑晶琉璃",
-      "price": "1000",
-      "priceRaw": "1000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
-      "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
+      "name": "国王球",
+      "price": "160000",
+      "priceRaw": "16w",
+      "limit": "3",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2e/jygbfxpdbup5weqy4zaqnyaw2fcfyrq.png/100px-100255.png",
+      "category": "咕噜球",
+      "description": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵，并能提升精灵的天分。 曾经专供贵族使用，制作方法不明。",
       "rounds": [
-        4
+        1
       ]
     },
     {
       "name": "淘沙球",
       "price": "3000",
       "priceRaw": "3000",
-      "limit": "400",
+      "limit": "100",
       "image": "https://patchwiki.biligame.com/images/rocom/thumb/8/81/7pzswfbn9l7hip6ptdg7f2mo341ztui.png/100px-Img_shaliqiu.png",
       "category": "特制咕噜球",
       "description": "更适合用来捕捉地系、虫系的精灵。 沉重的球，没法扔太远。",
@@ -83,23 +83,20 @@
       ]
     },
     {
-      "name": "光系血脉秘药",
-      "price": "160000",
-      "priceRaw": "16w",
-      "limit": "3",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/34/cz38ekzotsvoydbhmpo5wfxrqj2b3ny.png/100px-Xuemai_guang.png",
+      "name": "首领血脉秘药",
+      "price": "320000",
+      "priceRaw": "32w",
+      "limit": "1",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/26/fbfwlhncfo0pstpv3ibxn1mj3ayg6di.png/100px-Xuemai_shoulingxuemai.png",
       "category": "血脉修改道具",
-      "description": "能唤醒血脉力量的远古秘药，使精灵获得光系血脉。 “一段失落的秘密将被重拾。”",
+      "description": "修改血脉的秘药，使特定精灵获得“首领血脉”。",
       "rounds": [
-        4
+        1
       ]
     }
   ],
   "rounds": {
-    "1": [],
-    "2": [],
-    "3": [],
-    "4": [
+    "1": [
       {
         "name": "残缺魔镜",
         "price": "480000",
@@ -146,22 +143,22 @@
         ]
       },
       {
-        "name": "黑晶琉璃",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
+        "name": "国王球",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/2e/jygbfxpdbup5weqy4zaqnyaw2fcfyrq.png/100px-100255.png",
+        "category": "咕噜球",
+        "description": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵，并能提升精灵的天分。 曾经专供贵族使用，制作方法不明。",
         "rounds": [
-          4
+          1
         ]
       },
       {
         "name": "淘沙球",
         "price": "3000",
         "priceRaw": "3000",
-        "limit": "400",
+        "limit": "100",
         "image": "https://patchwiki.biligame.com/images/rocom/thumb/8/81/7pzswfbn9l7hip6ptdg7f2mo341ztui.png/100px-Img_shaliqiu.png",
         "category": "特制咕噜球",
         "description": "更适合用来捕捉地系、虫系的精灵。 沉重的球，没法扔太远。",
@@ -173,21 +170,24 @@
         ]
       },
       {
-        "name": "光系血脉秘药",
-        "price": "160000",
-        "priceRaw": "16w",
-        "limit": "3",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/34/cz38ekzotsvoydbhmpo5wfxrqj2b3ny.png/100px-Xuemai_guang.png",
+        "name": "首领血脉秘药",
+        "price": "320000",
+        "priceRaw": "32w",
+        "limit": "1",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/26/fbfwlhncfo0pstpv3ibxn1mj3ayg6di.png/100px-Xuemai_shoulingxuemai.png",
         "category": "血脉修改道具",
-        "description": "能唤醒血脉力量的远古秘药，使精灵获得光系血脉。 “一段失落的秘密将被重拾。”",
+        "description": "修改血脉的秘药，使特定精灵获得“首领血脉”。",
         "rounds": [
-          4
+          1
         ]
       }
-    ]
+    ],
+    "2": [],
+    "3": [],
+    "4": []
   },
   "stale": false,
-  "expectedRound": 4,
+  "expectedRound": 1,
   "lastFetchError": "",
   "live": true
 }
