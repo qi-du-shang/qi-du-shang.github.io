@@ -1,0 +1,18 @@
+{
+  "name": "realtime",
+  "version": "1.0.0",
+  "main": "realtime_ws_server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "systeminformation": "^5.33.1",
+    "ws": "^8.21.1"
+  }
+}

@@ -1,0 +1,2105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>定位共享聊天室</title>
+  <style>
+    :root { --bg:#0b1220; --card:#071421; --text:#e6eef8; --muted:#9fb0c8; --accent:#3aa0ff; }
+    /* breathing LED */
+    .led.breathe { animation: breathe 2.4s ease-in-out infinite; }
+    @keyframes breathe {
+      0% { box-shadow: 0 0 0 rgba(58,160,255,0.0); }
+      50% { box-shadow: 0 0 18px rgba(58,160,255,0.18); }
+      100% { box-shadow: 0 0 0 rgba(58,160,255,0.0); }
+    }
+    * { box-sizing:border-box; }
+    html, body { margin:0; min-height:100%; height:100%; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, 'Microsoft Yahei'; background:linear-gradient(180deg,#041024,#071428); color:var(--text); }
+    body { overflow:hidden; }
+    .app { display:flex; flex-direction:column; min-height:100vh; }
+    header { padding:16px 18px 8px; display:flex; flex-direction:column; gap:10px; }
+    header h1 { margin:0; font-size:20px; }
+    .roomModal { position:fixed; inset:0; background:rgba(2,6,21,0.88); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; }
+    .roomCard { background:rgba(7,20,33,0.96); border:1px solid rgba(255,255,255,0.08); border-radius:18px; width:100%; max-width:460px; padding:22px; box-shadow:0 24px 60px rgba(0,0,0,0.35); }
+    .roomCard h2 { margin:0 0 10px 0; font-size:20px; }
+    header .desc { margin:0; color:var(--muted); font-size:13px; line-height:1.6; max-width:980px; }
+    .main { flex:1; width:100%; display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:10px; padding:0 12px 12px; overflow:hidden; }
+    .mapCard, .card { background:var(--card); border-radius:16px; box-shadow:0 16px 40px rgba(0,0,0,0.24); }
+    .mapCard { min-height:clamp(320px, 45vh, 520px); display:flex; flex-direction:column; overflow:hidden; position:relative; }
+    #map { width:100%; height:100%; min-height:clamp(260px, 40vh, 520px); }
+    .mapHint { position:absolute; left:16px; top:16px; right:16px; padding:12px 14px; border-radius:12px; background:rgba(0,0,0,0.65); color:#fff; font-size:13px; line-height:1.6; }
+    .right { display:flex; flex-direction:column; gap:10px; overflow:auto; padding:4px; max-height:calc(100vh - 130px); }
+    .card { padding:16px; }
+    .card.small { padding:14px; }
+    .card-title { margin:0 0 10px 0; color:#fff; font-weight:700; }
+    .small { color:var(--muted); font-size:13px; line-height:1.6; }
+    .field { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+    label { color:var(--muted); font-size:13px; }
+    input, textarea, button { font:inherit; }
+    input, textarea { width:100%; min-height:42px; border-radius:10px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.05); color:var(--text); padding:10px 12px; outline:none; }
+    textarea { resize:vertical; min-height:100px; }
+    button { border:none; border-radius:10px; padding:11px 14px; cursor:pointer; transition:transform .15s ease, background .15s ease, box-shadow .15s ease; }
+    button.primary { background:linear-gradient(180deg,var(--accent),#1a78d6); color:#fff; }
+    button.secondary { background:rgba(255,255,255,0.08); color:var(--text); }
+    button.small { font-size:13px; padding:9px 12px; }
+    button:hover { transform:translateY(-1px); }
+    .toolbar { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+    .status { margin-top:12px; color:var(--muted); font-size:13px; }
+    .roomCard input { width:100%; margin-top:10px; }
+    .led { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px; vertical-align:middle; box-shadow:0 0 10px rgba(0,0,0,0.18); }
+    .led-green { background:linear-gradient(180deg,#42d392,#1fa76a); }
+    .led-blue { background:linear-gradient(180deg,#68b8ff,#1f7fd6); }
+    .led-red { background:linear-gradient(180deg,#ff7b7b,#d63f3f); }
+    .usersList, .chatList, .logList { max-height:260px; overflow:auto; background:rgba(255,255,255,0.04); border-radius:12px; padding:12px; font-size:14px; line-height:1.7; }
+    .chatList { min-height:180px; }
+    .chatRow { display:flex; flex-wrap:wrap; align-items:flex-end; gap:8px; margin-bottom:12px; }
+    .chatRow strong { color:#fff; flex-shrink:0; }
+    .chatRow .chatText { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; word-break:break-word; overflow-wrap:anywhere; }
+    .chatRow .chatText > span { white-space:pre-wrap; line-height:1.6; }
+    .chatRow .chatTime { color:rgba(159,176,200,0.8); font-size:12px; white-space:nowrap; }
+    .chatMeta { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
+    .chatStatus { font-size:12px; color:#ffb36b; }
+    .chatStatus.success { color:#6fe2a4; }
+    .chatStatus.error { color:#ff8a8a; }
+    .adress {display: none;}
+    .chatMedia { max-width:100%; border-radius:10px; overflow:hidden; background:rgba(255,255,255,0.04); padding:8px; }
+    .chatMedia img { display:block; max-width:100%; max-height:280px; border-radius:8px; cursor:zoom-in; }
+    .chatMedia audio, .chatMedia video { width:100%; max-width:100%; border-radius:8px; }
+    .chatMedia video { max-height:220px; cursor:pointer; object-fit:cover; }
+    #videoModal video { width:100%; max-width:100%; max-height:calc(100vh - 80px); border-radius:14px; }
+    .modalCloseHint { position:absolute; top:16px; right:16px; color:#fff; font-size:14px; background:rgba(0,0,0,0.4); padding:6px 10px; border-radius:10px; }
+
+    /* Toast notifications */
+    .toast-wrap { position: fixed; right: 20px; top: 20px; z-index: 20000; display:flex; flex-direction:column; gap:10px; }
+    .toast { min-width:220px; max-width:420px; background: rgba(0,0,0,0.75); color:#fff; padding:12px 14px; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,0.5); font-size:13px; opacity:0; transform:translateY(-8px); transition: all 220ms ease; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .toast.error { background: linear-gradient(90deg,#ff7b7b,#d63f3f); }
+    .toast.info { background: linear-gradient(90deg,#68b8ff,#1f7fd6); }
+
+    /* Video preview styling */
+    .videoPreview { position:relative; width:100%; max-height:220px; overflow:hidden; border-radius:8px; background:#000; display:flex; align-items:center; justify-content:center; }
+    .videoPreview video { width:100%; height:auto; object-fit:cover; display:block; filter:brightness(0.85); }
+    .videoPreview .playOverlay { position:absolute; left:0; right:0; top:0; bottom:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+    .playBtnLarge { pointer-events:auto; width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); color:#fff; font-size:28px; border:2px solid rgba(255,255,255,0.12); cursor:pointer; box-shadow:0 10px 30px rgba(0,0,0,0.6); line-height:0; }
+    .playBtnLarge svg { display:block; width:40px; height:40px; }
+    .videoPreview .playOverlay .playBtnLarge { background:transparent; border:none; box-shadow:none; }
+    .videoPreview .progressBar { position:absolute; left:12px; right:12px; bottom:10px; height:6px; background:rgba(255,255,255,0.12); border-radius:3px; overflow:hidden; }
+    .videoPreview .progressBar .progress { height:100%; width:0%; background:linear-gradient(90deg,#2b8cff,#1a6fe0); }
+    .videoPreview .volumeToggle { position:absolute; right:16px; bottom:18px; background:rgba(0,0,0,0.4); padding:6px; border-radius:6px; display:flex; align-items:center; gap:6px; }
+    .videoModalControls { position:absolute; left:24px; right:24px; bottom:24px; display:flex; gap:12px; align-items:center; width:auto; max-width:1100px; z-index:10010; }
+    .videoModalControls .time { color:rgba(255,255,255,0.92); font-size:13px; min-width:48px; text-align:center; }
+    .videoModalControls input[type=range] { flex:1; -webkit-appearance:none; appearance:none; height:6px; background:rgba(255,255,255,0.12); border-radius:3px; }
+    .videoModalControls input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; background:#fff; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.4); }
+    .videoModalControls .leftControls, .videoModalControls .rightControls { display:flex; align-items:center; gap:8px; }
+    .videoModalControls .volumeWrap { display:flex; align-items:center; gap:6px; }
+    .videoModalControls .volumeWrap input[type=range] { width:100px; flex:0 0 100px; }
+    .videoModalControls input[type=range] { -webkit-appearance:none; appearance:none; height:6px; background:rgba(255,255,255,0.12); border-radius:3px; }
+    .videoModalControls input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; background:#fff; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.4); }
+    .modalSmallBtn { background:rgba(0,0,0,0.6); color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
+    .volumeWrap { display:flex; align-items:center; gap:6px; color:#fff; }
+    .videoModal .modalClose { position:absolute; top:14px; right:14px; background:rgba(0,0,0,0.5); color:#fff; border-radius:10px; padding:8px 10px; cursor:pointer; z-index:10002; }
+    .videoModal .centerPlay { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:84px; height:84px; border-radius:50%; background:transparent; display:flex; align-items:center; justify-content:center; color:#fff; font-size:36px; cursor:pointer; z-index:10001; box-shadow:none; border:none; }
+    .videoModal .centerPlay svg { display:block; width:84px; height:84px; }
+    @media (max-width:720px) { .videoModal .centerPlay { width:64px; height:64px; } .videoModal .centerPlay svg { width:64px; height:64px; } .videoModal .videoModalControls { left:12px; right:12px; bottom:12px; } }
+
+    /* custom voice bubble (WeChat-like) */
+    .voiceBubble { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:18px; background:linear-gradient(90deg,#e6f7ff,#dff3ff); color:#0b2b3a; max-width:220px; cursor:pointer; }
+    .voiceBubble .playBtn { width:28px; height:28px; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#2b8cff,#1a6fe0); color:#fff; border-radius:50%; box-shadow:0 6px 14px rgba(26,111,224,0.24); }
+    .voiceBubble .playBtn svg { width:14px; height:14px; }
+    .voiceBubble .duration { font-size:13px; color:#055; margin-left:auto; }
+    .voiceBars { display:inline-flex; gap:2px; align-items:end; margin-left:6px; }
+    .voiceBars i { display:block; width:3px; background:#0b2b3a; height:6px; border-radius:2px; transition:height .25s ease; }
+    .voiceBars.playing i:nth-child(1) { height:10px; }
+    .voiceBars.playing i:nth-child(2) { height:16px; }
+    .voiceBars.playing i:nth-child(3) { height:12px; }
+    .voiceBubble.playing .playBtn { transform:scale(0.98); }
+    .retractBtn { background:transparent; border:none; color:#ffb36b; font-size:12px; cursor:pointer; padding:4px 8px; }
+    .emojiPanel { display:flex; gap:8px; flex-wrap:wrap; max-width:240px; }
+    .emojiPanel button { background:transparent; border:none; font-size:20px; padding:6px; cursor:pointer; }
+    /* chat input layout */
+    .chatBox { position: relative; display:flex; flex-direction:column; gap:8px; }
+    .chatBox input#chatInput { width:100%; }
+    .chatControls { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    #emojiPanel { position:fixed; display:none; background:rgba(0,0,0,0.9); padding:8px; border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,0.5); z-index:10001; overflow:auto; }
+    #emojiPanel .emojiPanel { max-width:100%; }
+    .imageModal { position:fixed; inset:0; background:rgba(2,6,21,0.9); display:none; align-items:center; justify-content:center; z-index:10000; padding:20px; }
+    .imageModal img { max-width:100%; max-height:100%; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.35); }
+    .scrollable::-webkit-scrollbar { width:10px; height:10px; }
+    .scrollable::-webkit-scrollbar-track { background:rgba(255,255,255,0.06); border-radius:10px; }
+    .scrollable::-webkit-scrollbar-thumb { background:rgba(58,160,255,0.24); border-radius:10px; border:2px solid transparent; background-clip:content-box; }
+    .scrollable::-webkit-scrollbar-thumb:hover { background:rgba(58,160,255,0.4); }
+    .scrollable { scrollbar-width: thin; scrollbar-color: rgba(58,160,255,0.24) rgba(255,255,255,0.06); }
+    @media (max-width:1080px) { .main { grid-template-columns:1fr; } .mapCard { min-height:320px; } .right { max-height:none; } }
+    @media (max-width:720px) { .main { padding:0 8px 8px; } header { padding:12px 10px 6px; } header h1 { font-size:18px; } .toolbar { flex-direction:column; } .chatBox { flex-direction:column; align-items:stretch; } .chatBox button { width:100%; } .right { max-height:none; } }
+    .notice { margin-top:14px; padding:14px 16px; border-radius:14px; background:rgba(255,255,255,0.05); color:var(--muted); font-size:13px; }
+    @media (max-width:1080px) { .main { grid-template-columns:1fr; } .mapCard { min-height:320px; } }
+    @media (max-width:720px) { .main { padding:0 8px 8px; } header { padding:12px 10px 6px; } .toolbar { flex-direction:column; } .chatBox { flex-direction:column; align-items:stretch; } .chatBox button { width:100%; } .right { max-height:none; } }
+    @media (max-width:720px) {
+      body { overflow:auto; }
+      .mapCard { min-height:40vh; }
+      /* ensure right column becomes normal flow and can be scrolled on mobile */
+      .right { max-height:none; }
+    }
+    /* enable smooth native scrolling on iOS/Android for scrollable panels */
+    .scrollable { -webkit-overflow-scrolling: touch; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div id="imageModal" class="imageModal"><img id="imageModalImg" src="" alt="preview" /></div>
+      <div id="videoModal" class="imageModal videoModal" style="display:none;align-items:center;justify-content:center;">
+        <div class="modalClose" id="videoModalClose">关闭 ✕</div>
+        <video id="videoModalPlayer" playsinline webkit-playsinline></video>
+          <div class="centerPlay" id="videoModalCenterPlay" role="button" aria-label="播放">
+            <!-- use inline svg to ensure perfect centering -->
+            <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true" focusable="false">
+              <circle cx="32" cy="32" r="30" fill="rgba(0,0,0,0.6)" />
+              <polygon points="0,-12 0,12 18,0" transform="translate(32,32)" fill="#fff" />
+            </svg>
+          </div>
+          <div class="videoModalControls" id="videoModalControls" style="display:none;">
+            <div class="leftControls">
+              <button type="button" id="videoModalPlayToggle" class="modalSmallBtn" aria-label="播放/暂停">▶</button>
+              <span id="videoModalCurrentTime" class="time">0:00</span>
+            </div>
+            <input id="videoModalProgress" type="range" min="0" max="100" value="0" step="0.1" aria-label="进度">
+            <div class="rightControls">
+              <span id="videoModalTotalTime" class="time">0:00</span>
+              <div class="volumeWrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"/></svg>
+                <input id="videoModalVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="音量">
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+    <div id="roomModal" class="roomModal">      <div class="roomCard">
+        <h2>创建或加入聊天室</h2>
+        <p class="small">Enter a room name. Creating a room that already exists will fail; joining a non-existing room will fail.</p>
+        <input id="roomInput" placeholder="Room name, e.g. room-1" />
+        <div class="toolbar" style="margin-top:12px;">
+          <button id="createRoomBtn" class="primary small">创建聊天室</button>
+          <button id="joinRoomBtn" class="secondary small">加入聊天室</button>
+        </div>
+        <div id="roomError" class="small" style="margin-top:10px;color:#f88"></div>
+      </div>
+    </div>
+    <header>
+      <h1>定位共享聊天室</h1>
+      <!-- <p class="desc">每个标签页代表一名用户。请通过本地服务器访问本页面，百度地图 AK 已写在代码中，WebSocket 地址可在页面上修改。</p> -->
+      <h1><div id="roomLabel" style="margin-top:6px;color:#1f7fd6;"></div></h1>
+    </header>
+    <div class="main">
+      <div class="mapCard">
+        <div id="map"></div>
+        <div id="mapHint" class="mapHint">正在初始化百度地图，请稍候...</div>
+      </div>
+      <div class="right scrollable">
+        <div class="card">
+          <h2 class="card-title">连接设置</h2>
+          <div class="field"><label for="nickInput">昵称</label><input id="nickInput" placeholder="输入昵称并按回车保存" enterkeyhint="done" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" /></div>
+          <div class="field adress"><label for="wsUrl">WebSocket 地址</label><input id="wsUrl" value="ws://localhost:3002/ws" /></div>
+          <div class="toolbar"><button id="connectBtn" class="primary">实时定位连接</button><button id="disconnectBtn" class="secondary">实时定位断开</button></div>
+          <div class="status">聊天室：<span id="connLed" class="led led-red"></span><span id="connStatus">未连接</span> &nbsp; 实时定位：<span id="geoLed" class="led led-red"></span><span id="geoStatus">未连接</span></div>
+          <!-- <p class="small">请使用本地服务器打开：<strong>http://localhost:3002/realtime_map.html</strong>，避免百度地图与浏览器安全策略问题。</p> -->
+        </div>
+        <div class="card">
+          <h2 class="card-title">在线用户</h2>
+          <div id="users" class="usersList scrollable">No online users</div>
+        </div>
+        <div class="card">
+          <h2 class="card-title">聊天</h2>
+          <div id="chat" class="chatList scrollable"></div>
+          <div class="chatBox">
+            <input id="chatInput" placeholder="输入消息后按回车发送" />
+            <div class="chatControls">
+              <button id="sendBtn" class="primary small">发送</button>
+              <button id="emojiBtn" class="secondary small">😊</button>
+              <input id="imageInput" type="file" accept="image/*" style="display:none" />
+              <input id="videoInput" type="file" accept="video/*" style="display:none" />
+              <input id="fileInput" type="file" style="display:none" />
+              <button id="imageBtn" class="secondary small">发送图片</button>
+              <button id="videoBtn" class="secondary small">发送视频</button>
+              <button id="fileBtn" class="secondary small">发送文件</button>
+              <button id="recordVoiceBtn" class="secondary small">开始录音</button>
+            </div>
+            <div id="emojiPanel"><div class="emojiPanel"></div></div>
+          </div>
+        </div>
+        <div class="card small">
+          <h2 class="card-title">本地定位历史</h2>
+          <div id="localHistory" class="logList scrollable"></div>
+        </div>
+        <div class="card small">
+          <h2 class="card-title">所有用户定位历史</h2>
+          <div id="globalHistory" class="logList scrollable"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.3/nacl.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl-util/0.15.1/nacl-util.min.js"></script>
+  <script>
+    const STORAGE_KEY = 'realtime_share_';
+    const DEFAULT_WS = (typeof location !== 'undefined' && location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + (typeof location !== 'undefined' ? location.host : 'localhost:3002') + '/ws';
+    const BAIDU_AK = '42G621Ax2whggZiGLlGztqLGzF2nUXQr';
+    const FALLBACK_CENTER = { lat: 39.915, lng: 116.404 };
+
+    const nickInput = document.getElementById('nickInput');
+    const wsUrlInput = document.getElementById('wsUrl');
+    const connectBtn = document.getElementById('connectBtn');
+    const emojiBtn = document.getElementById('emojiBtn');
+    const emojiPanel = document.getElementById('emojiPanel');
+    const videoInput = document.getElementById('videoInput');
+    const videoBtn = document.getElementById('videoBtn');
+    const fileInput = document.getElementById('fileInput');
+    const fileBtn = document.getElementById('fileBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const connStatus = document.getElementById('connStatus');
+    const connLed = document.getElementById('connLed');
+    const geoStatus = document.getElementById('geoStatus');
+    const geoLed = document.getElementById('geoLed');
+    const usersEl = document.getElementById('users');
+    const chatEl = document.getElementById('chat');
+    const chatInput = document.getElementById('chatInput');
+    const imageInput = document.getElementById('imageInput');
+    const imageBtn = document.getElementById('imageBtn');
+    const recordVoiceBtn = document.getElementById('recordVoiceBtn');
+    const localHistoryEl = document.getElementById('localHistory');
+    const globalHistoryEl = document.getElementById('globalHistory');
+    const mapHint = document.getElementById('mapHint');
+    const roomModal = document.getElementById('roomModal');
+    const roomInput = document.getElementById('roomInput');
+    const roomError = document.getElementById('roomError');
+    const roomLabel = document.getElementById('roomLabel');
+    const createRoomBtn = document.getElementById('createRoomBtn');
+    const joinRoomBtn = document.getElementById('joinRoomBtn');
+    const imageModal = document.getElementById('imageModal');
+    const imageModalImg = document.getElementById('imageModalImg');
+    const videoModal = document.getElementById('videoModal');
+    const videoModalPlayer = document.getElementById('videoModalPlayer');
+    const videoModalCenterPlay = document.getElementById('videoModalCenterPlay');
+    const videoModalClose = document.getElementById('videoModalClose');
+
+    let ws = null;
+    let map = null;
+    let markers = {};
+    let watchId = null;
+    // seed disconnect button disabled state until geolocation starts
+    if (typeof disconnectBtn !== 'undefined' && disconnectBtn) disconnectBtn.disabled = true;
+    let currentPosition = null;
+    let currentRoom = '';
+    let roomAction = '';
+    let shouldReconnect = true;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 5;
+    const RECONNECT_INTERVAL_MS = 3000;
+    let reconnectTimer = null;
+    let networkOffline = false;
+    let geoActionLocked = false;
+    const GEO_ACTION_THROTTLE_MS = 1500;
+        const KEEPALIVE_INTERVAL_MS = 10000;
+        let keepAliveTimer = null;
+        const sessionTabIdKey = STORAGE_KEY + 'tab_id';
+    const sessionNickKey = STORAGE_KEY + 'nick';
+    const sessionColorKey = STORAGE_KEY + 'color';
+    const tabId = sessionStorage.getItem(sessionTabIdKey) || ('u-' + Math.random().toString(36).slice(2,10));
+    sessionStorage.setItem(sessionTabIdKey, tabId);
+    const userId = tabId;
+    let currentNick = sessionStorage.getItem(sessionNickKey) || `Guest-${userId.slice(-4)}`;
+    let currentColor = sessionStorage.getItem(sessionColorKey) || ('#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0'));
+    sessionStorage.setItem(sessionColorKey, currentColor);
+
+    // -- End-to-end encryption helpers (client-side keys & crypto using tweetnacl) --
+    function ensureKeyPair() {
+      try {
+        let pk = localStorage.getItem(STORAGE_KEY + 'pk');
+        let sk = localStorage.getItem(STORAGE_KEY + 'sk');
+        if (pk && sk) return { pk, sk };
+        // generate a new keypair
+        const kp = nacl.box.keyPair();
+        pk = nacl.util.encodeBase64(kp.publicKey);
+        sk = nacl.util.encodeBase64(kp.secretKey);
+        localStorage.setItem(STORAGE_KEY + 'pk', pk);
+        localStorage.setItem(STORAGE_KEY + 'sk', sk);
+        return { pk, sk };
+      } catch (e) { console.warn('Key generation failed', e); return null; }
+    }
+
+    function getMyPublicKey() {
+      // Encryption disabled: return null so client does not advertise a public key
+      return null;
+    }
+    function getMySecretKey() {
+      const s = localStorage.getItem(STORAGE_KEY + 'sk') || (ensureKeyPair() || {}).sk || null;
+      return s;
+    }
+
+    function encryptMessageForRecipient(recipientPkBase64, plaintext) {
+      const recipientPk = nacl.util.decodeBase64(recipientPkBase64);
+      const mySk = nacl.util.decodeBase64(getMySecretKey());
+      const nonce = nacl.randomBytes(nacl.box.nonceLength);
+      const msgUint8 = nacl.util.decodeUTF8(plaintext);
+      const box = nacl.box(msgUint8, nonce, recipientPk, mySk);
+      return { cipher: nacl.util.encodeBase64(box), nonce: nacl.util.encodeBase64(nonce) };
+    }
+
+    function decryptMessageFromSender(senderPkBase64, nonceBase64, cipherBase64) {
+      try {
+        const senderPk = nacl.util.decodeBase64(senderPkBase64);
+        const mySk = nacl.util.decodeBase64(getMySecretKey());
+        const nonce = nacl.util.decodeBase64(nonceBase64);
+        const box = nacl.util.decodeBase64(cipherBase64);
+        const opened = nacl.box.open(box, nonce, senderPk, mySk);
+        if (!opened) return null;
+        return nacl.util.encodeUTF8(opened);
+      } catch (e) { return null; }
+    }
+
+    // store peer public keys mapping (kept in memory)
+    const peerPublicKeys = {}; 
+
+    // -- End crypto helpers --
+
+    let localHistory = JSON.parse(localStorage.getItem(STORAGE_KEY + 'local_history') || '[]');
+    let outQueue = JSON.parse(localStorage.getItem(STORAGE_KEY + 'out_queue') || '[]');
+    let users = {};
+    let chatHistory = [];
+    try {
+      const savedPendingChat = JSON.parse(localStorage.getItem(STORAGE_KEY + 'pending_chat') || '[]');
+      if (Array.isArray(savedPendingChat)) {
+        chatHistory = savedPendingChat.slice(-200);
+      }
+    } catch (e) {
+      chatHistory = [];
+    }
+    let globalPositions = []; // room-wide position history (from server)
+    let mediaRecorder = null;
+    let mediaStream = null;
+    let recordedChunks = [];
+    let isRecording = false;
+    let pendingMessages = new Map();
+    // track processed leave events to avoid duplicate system notices when multiple leave broadcasts arrive
+    const processedLeaveTokens = new Set();
+    const lastLeaveTsById = {}; // optional: record last leave timestamp per user to help dedupe without tokens
+
+    function sanitizePersistedEntry(entry) {
+      if (!entry || typeof entry !== 'object') return entry;
+      const sanitized = { ...entry };
+      if (sanitized.kind && ['image', 'video', 'voice'].includes(sanitized.kind)) {
+        delete sanitized.data;
+      }
+      return sanitized;
+    }
+
+    function saveValueToStorage(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (e) {
+        console.warn('Storage write failed for', key, e);
+        if (e && e.name === 'QuotaExceededError') {
+          try {
+            localStorage.removeItem(key);
+          } catch (removeErr) {}
+          try {
+            if (key.endsWith('pending_chat')) {
+              localStorage.setItem(key, '[]');
+            } else if (key.endsWith('local_history') || key.endsWith('out_queue')) {
+              localStorage.setItem(key, '[]');
+            } else {
+              localStorage.setItem(key, '');
+            }
+          } catch (fallbackErr) {}
+        }
+      }
+    }
+
+    function saveState() {
+      sessionStorage.setItem(STORAGE_KEY + 'nick', currentNick);
+      sessionStorage.setItem(STORAGE_KEY + 'color', currentColor);
+      saveValueToStorage(STORAGE_KEY + 'ws_url', wsUrlInput.value.trim());
+      saveValueToStorage(STORAGE_KEY + 'local_history', JSON.stringify(localHistory));
+      saveValueToStorage(STORAGE_KEY + 'out_queue', JSON.stringify(outQueue));
+      saveValueToStorage(
+        STORAGE_KEY + 'pending_chat',
+        JSON.stringify(
+          chatHistory
+            .filter(item => item && item.requestId && item.status && item.status !== 'sent')
+            .map(sanitizePersistedEntry)
+        )
+      );
+    }
+
+    function throttleGeoAction(callback) {
+      if (geoActionLocked) return;
+      geoActionLocked = true;
+      callback();
+      setTimeout(() => { geoActionLocked = false; }, GEO_ACTION_THROTTLE_MS);
+    }
+
+    function handleNetworkStateChange() {
+      networkOffline = !navigator.onLine;
+      if (networkOffline) {
+        setRoomStatus('offline', 'red');
+        if (watchId != null) {
+          addMessage(chatEl, '[System] 网络已断开，正在等待重连...');
+        }
+      } else {
+        if (!shouldReconnect) return;
+        if (ws && ws.readyState !== WebSocket.OPEN && currentRoom && roomAction) {
+          connect();
+        }
+      }
+    }
+
+    function showRoomModal(show, message) {
+      roomModal.style.display = show ? 'flex' : 'none';
+      roomError.textContent = message || '';
+    }
+
+    function updateRoomLabel() {
+          roomLabel.textContent = currentRoom ? `Room: ${currentRoom}` : '';
+    }
+
+    function setRoomStatus(text, color, breathe = false) {
+      connStatus.textContent = text;
+      connLed.className = 'led led-' + color + (breathe ? ' breathe' : '');
+    }
+
+    function setGeoStatus(text, color, breathe = false) {
+      geoStatus.textContent = text;
+      geoLed.className = 'led led-' + color + (breathe ? ' breathe' : '');
+    }
+ 
+    function outOfChina(lat, lng) {
+      return lng < 72.004 || lng > 137.8347 || lat < 0.8293 || lat > 55.8271;
+    }
+
+    function transformLat(x, y) {
+      return -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x))
+        + (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0
+        + (20.0 * Math.sin(y * Math.PI) + 40.0 * Math.sin(y / 3.0 * Math.PI)) * 2.0 / 3.0
+        + (160.0 * Math.sin(y / 12.0 * Math.PI) + 320 * Math.sin(y * Math.PI / 30.0)) * 2.0 / 3.0;
+    }
+
+    function transformLon(x, y) {
+      return 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x))
+        + (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0
+        + (20.0 * Math.sin(x * Math.PI) + 40.0 * Math.sin(x / 3.0 * Math.PI)) * 2.0 / 3.0
+        + (150.0 * Math.sin(x / 12.0 * Math.PI) + 300.0 * Math.sin(x * Math.PI / 30.0)) * 2.0 / 3.0;
+    }
+
+    function wgs84ToGcj02(lat, lng) {
+      if (outOfChina(lat, lng)) return [lat, lng];
+      const dLat = transformLat(lng - 105.0, lat - 35.0);
+      const dLng = transformLon(lng - 105.0, lat - 35.0);
+      const radLat = lat / 180.0 * Math.PI;
+      const magic = Math.sin(radLat);
+      const ee = 0.006693421622965943;
+      const a = 6378245.0;
+      let mm = 1 - ee * magic * magic;
+      const sqrtMm = Math.sqrt(mm);
+      const finalLat = lat + (dLat * 180.0) / ((a * (1 - ee)) / (mm * sqrtMm) * Math.PI);
+      const finalLng = lng + (dLng * 180.0) / (a / sqrtMm * Math.cos(radLat) * Math.PI);
+      return [finalLat, finalLng];
+    }
+
+    function gcj02ToBd09(lat, lng) {
+      const z = Math.sqrt(lng * lng + lat * lat)       + 0.00002 * Math.sin(lat * Math.PI * 3000.0 / 180.0);
+      const theta = Math.atan2(lat, lng) + 0.000003 * Math.cos(lng * Math.PI * 3000.0 / 180.0);      const bdLng = z * Math.cos(theta) + 0.0065;
+      const bdLat = z * Math.sin(theta) + 0.006;
+      return [bdLat, bdLng];
+    }
+
+    function wgs84ToBd09(lat, lng) {
+      const [gcjLat, gcjLng] = wgs84ToGcj02(lat, lng);
+      return gcj02ToBd09(gcjLat, gcjLng);
+    }
+ 
+    function addMessage(element, text) {
+      const row = document.createElement('div');
+      row.className = 'chatRow';
+      row.textContent = text;
+      element.appendChild(row);
+      element.scrollTop = element.scrollHeight;
+    }
+
+    // Lightweight toast notification (non-blocking)
+    function showToast(message, type = 'info', ttl = 4500) {
+      try {
+        const wrap = document.getElementById('toastWrap');
+        if (!wrap) return;
+        const t = document.createElement('div');
+        t.className = 'toast ' + (type === 'error' ? 'error' : 'info');
+        t.textContent = message;
+        wrap.appendChild(t);
+        // allow CSS transition
+        requestAnimationFrame(() => t.classList.add('show'));
+        setTimeout(() => {
+          t.classList.remove('show');
+          setTimeout(() => { try { wrap.removeChild(t); } catch(e){} }, 220);
+        }, ttl);
+      } catch (e) {
+        try { alert(message); } catch(e2){}
+      }
+    }
+
+    function updateUsers() {
+      // Only show currently online users in the "在线用户" panel.
+      usersEl.innerHTML = '';
+      const list = Object.values(users).filter(u => u && u.online).sort((a,b) => (a.nick || '').localeCompare(b.nick || ''));
+      if (!list.length) {
+        usersEl.textContent = 'No online users';
+        return;
+      }
+      list.forEach(user => {
+        const row = document.createElement('div');
+        row.style.padding = '10px 0';
+        row.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
+        row.innerHTML = `<strong style="color:#fff">${user.nick}</strong><div class="small">online${user.lastPos ? ' - ' + user.lastPos.lat.toFixed(5) + ', ' + user.lastPos.lng.toFixed(5) : ''}</div>`;
+        usersEl.appendChild(row);
+      });
+    }
+
+    function updateChat() {
+      chatEl.innerHTML = '';
+      chatHistory.slice(-200).forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'chatRow';
+
+        const name = document.createElement('strong');
+        name.textContent = item.nick + ':';
+
+        const body = document.createElement('div');
+        body.className = 'chatText';
+ 
+// if message was retracted, show a placeholder instead of original content for all users
+if (item.retracted) {
+  const placeholder = document.createElement('span');
+  placeholder.style.fontStyle = 'italic';
+  placeholder.style.color = 'var(--muted)';
+  placeholder.textContent = item.retractedBy ? `已撤回（${item.retractedBy}）` : '已撤回';
+  body.appendChild(placeholder);
+} else if (item.kind === 'image') {
+  const mediaSrc = item.data || item.url || '';
+  if (!mediaSrc) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'chatMedia';
+  const img = document.createElement('img');
+  img.src = mediaSrc;
+  img.alt = item.name || 'image';
+  img.addEventListener('click', () => {
+    imageModalImg.src = mediaSrc;
+    imageModal.style.display = 'flex';
+  });
+  wrap.appendChild(img);
+  body.appendChild(wrap);
+} else if (item.kind === 'video') {
+  const mediaSrc = item.data || item.url || '';
+  if (!mediaSrc) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'chatMedia';
+  const preview = document.createElement('div');
+  preview.className = 'videoPreview';
+  const vid = document.createElement('video');
+  vid.controls = false;
+  vid.muted = true;
+  vid.playsInline = true;
+  vid.setAttribute('playsinline', '');
+  vid.preload = 'metadata';
+  vid.src = mediaSrc;
+  vid.alt = item.name || 'video';
+  vid.className = 'preview';
+  preview.appendChild(vid);
+  const overlay = document.createElement('div');
+  overlay.className = 'playOverlay';
+  const playBtn = document.createElement('div');
+  playBtn.className = 'playBtnLarge';
+  playBtn.innerHTML = '<svg viewBox="0 0 64 64" width="48" height="48" aria-hidden="true" focusable="false"><circle cx="32" cy="32" r="30" fill="rgba(0,0,0,0.35)"/><polygon points="0,-12 0,12 18,0" transform="translate(32,32)" fill="#fff"/></svg>';
+  playBtn.addEventListener('click', (ev) => { ev.preventDefault(); ev.stopPropagation(); openVideoModal(mediaSrc); });
+  overlay.appendChild(playBtn);
+  preview.appendChild(overlay);
+  wrap.appendChild(preview);
+  body.appendChild(wrap);
+} else if (item.kind === 'file') {
+  const fileUrl = item.url || '';
+  const fileName = item.name || '文件';
+  const link = document.createElement('a');
+  link.href = fileUrl;
+  link.textContent = `下载文件：${fileName}`;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.style.color = 'var(--link)';
+  link.style.textDecoration = 'underline';
+  body.appendChild(link);
+} else if (item.kind === 'voice') {
+  // custom WeChat-like voice bubble player
+  const bubble = document.createElement('div');
+  bubble.className = 'voiceBubble';
+  const playBtn = document.createElement('button');
+  playBtn.className = 'playBtn';
+  playBtn.type = 'button';
+  playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7L8 5z" fill="currentColor"/></svg>';
+  const bars = document.createElement('span');
+  bars.className = 'voiceBars';
+  bars.innerHTML = '<i></i><i></i><i></i>';
+  const dur = document.createElement('div');
+  dur.className = 'duration';
+  dur.textContent = item.duration ? `${item.duration}s` : '';
+  bubble.appendChild(playBtn);
+  bubble.appendChild(bars);
+  bubble.appendChild(dur);
+  body.appendChild(bubble);
+
+  // audio playback handling
+  // ensure only one audio plays at a time
+  if (!window.__currentVoice) window.__currentVoice = { audio: null, bubble: null };
+  const audio = new Audio(item.data || item.url);
+  audio.preload = 'auto';
+  let isPlaying = false;
+  function stopCurrent() {
+    if (window.__currentVoice && window.__currentVoice.audio) {
+      try { window.__currentVoice.audio.pause(); } catch (e) {}
+      if (window.__currentVoice.bubble) window.__currentVoice.bubble.classList.remove('playing');
+      window.__currentVoice.audio = null;
+      window.__currentVoice.bubble = null;
+    }
+  }
+  playBtn.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (!isPlaying) {
+      // stop others
+      stopCurrent();
+      audio.currentTime = 0;
+      audio.play().then(() => {
+        isPlaying = true;
+        bubble.classList.add('playing');
+        bars.classList.add('playing');
+        window.__currentVoice.audio = audio;
+        window.__currentVoice.bubble = bubble;
+      }).catch(err => {
+        console.warn('Audio play failed', err);
+      });
+    } else {
+      audio.pause();
+    }
+  });
+  audio.addEventListener('pause', () => {
+    isPlaying = false;
+    bubble.classList.remove('playing');
+    bars.classList.remove('playing');
+    if (window.__currentVoice && window.__currentVoice.audio === audio) {
+      window.__currentVoice.audio = null;
+      window.__currentVoice.bubble = null;
+    }
+  });
+  audio.addEventListener('ended', () => {
+    isPlaying = false;
+    bubble.classList.remove('playing');
+    bars.classList.remove('playing');
+    if (window.__currentVoice && window.__currentVoice.audio === audio) {
+      window.__currentVoice.audio = null;
+      window.__currentVoice.bubble = null;
+    }
+  });
+  audio.addEventListener('play', () => {
+    isPlaying = true;
+    bubble.classList.add('playing');
+    bars.classList.add('playing');
+  });
+  audio.addEventListener('timeupdate', () => {
+    // optionally update UI progress in future
+  });
+
+} else {
+  const text = document.createElement('span');
+  text.textContent = item.text || '';
+  body.appendChild(text);
+}
+        const metaRow = document.createElement('div');
+        metaRow.className = 'chatMeta';
+        const time = document.createElement('span');
+        time.textContent = item.ts ? new Date(item.ts).toLocaleTimeString() : '';
+        const status = document.createElement('span');
+        status.className = 'chatStatus';
+        if (item.status === 'sending') {
+          status.textContent = 'sending';
+        } else if (item.status === 'error') {
+          status.textContent = 'failed';
+          status.classList.add('error');
+        } else {
+          status.textContent = 'sent';
+          status.classList.add('success');
+        }
+        metaRow.append(time, status);
+
+        // show retract button for own messages within 2 minutes
+        if (!item.retracted && item.id === userId && ((Date.now() - (item.ts || 0)) <= 2 * 60 * 1000)) {
+          const retractBtn = document.createElement('button');
+          retractBtn.className = 'retractBtn';
+          retractBtn.textContent = '撤回';
+          retractBtn.title = '撤回该消息 (2 分钟内)';
+          retractBtn.addEventListener('click', () => {
+            if (!item.requestId) return; // nothing to retract
+            // send retract request to server
+            safeSend({ type: 'retract', id: userId, requestId: item.requestId, ts: Date.now() });
+          });
+          metaRow.append(retractBtn);
+        }
+
+        row.append(name, body, metaRow);
+        chatEl.appendChild(row);
+      });
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function updateLocalHistory() {
+      localHistoryEl.innerHTML = '';
+      localHistory.slice(-100).reverse().forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'small';
+        row.textContent = new Date(item.ts).toLocaleTimeString() + ' - ' + item.label;
+        localHistoryEl.appendChild(row);
+      });
+    }
+
+    function updateGlobalHistory() {
+      globalHistoryEl.innerHTML = '';
+      let history = [];
+      if (Array.isArray(globalPositions) && globalPositions.length) {
+        // Use room-wide position history provided by server / accumulated locally
+        history = globalPositions.slice().sort((a,b) => b.ts - a.ts).slice(0, 100).map(p => {
+          const label = p.status === 'offline' ? '离线定位' : p.status === 'leave' ? '离开时定位' : '位置';
+          return { ts: p.ts, text: `${p.nick || 'User'} ${label} ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}` };
+        });
+      } else {
+        history = Object.values(users)
+          .filter(u => u.lastPos)
+          .map(u => ({ ts: u.lastPos.ts, text: u.nick + ' current position ' + u.lastPos.lat.toFixed(5) + ', ' + u.lastPos.lng.toFixed(5) }))
+          .sort((a,b) => b.ts - a.ts)
+          .slice(0, 100);
+      }
+      history.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'small';
+        row.textContent = new Date(item.ts).toLocaleTimeString() + ' - ' + item.text;
+        globalHistoryEl.appendChild(row);
+      });
+    }
+
+    function refreshUserNickname(id, nick) {
+      if (!id || !nick) return;
+      if (users[id]) {
+        users[id].nick = nick;
+      }
+      chatHistory.forEach(item => {
+        if (item.id === id) {
+          item.nick = nick;
+        }
+      });
+      if (users[id] && users[id].lastPos) {
+        updateMarker(id, nick, users[id].color || '#3aa0ff', users[id].lastPos.lat, users[id].lastPos.lng, false);
+      }
+    }
+
+    function ensureMap() {
+      const ak = BAIDU_AK.trim();
+      if (!ak || ak === 'YOUR_BAIDU_AK_HERE') {
+        mapHint.textContent = 'Please replace BAIDU_AK constant in code with your Baidu Maps AK.';
+        mapHint.style.display = 'block';
+        return;
+      }
+      if (window.BMap && window.BMap.Map) {
+        initMap();
+        return;
+      }
+      mapHint.textContent = 'Loading Baidu Maps SDK, please wait...';
+      mapHint.style.display = 'block';
+      const existing = document.getElementById('baiduMapScript');
+      if (existing) existing.remove();
+
+      window.__realtimeBaiduMapInit = () => {
+        if (window.BMap && window.BMap.Map) {
+          initMap();
+        } else {
+          console.error('Baidu Maps SDK callback fired but BMap is undefined.', window.BMap);
+          mapHint.textContent = 'Baidu Maps SDK loaded but BMap object not detected. Check extensions, proxy, or AK restrictions.';
+        }
+      };
+
+      const script = document.createElement('script');
+      script.id = 'baiduMapScript';
+      script.src = `https://api.map.baidu.com/api?v=3.0&ak=${encodeURIComponent(ak)}&s=1&callback=__realtimeBaiduMapInit`;
+      script.onerror = () => {
+        console.error('Baidu Maps SDK script load failed. src=', script.src);
+        mapHint.textContent = 'Baidu Maps SDK load failed. Check AK value, network, or browser blocking.';
+      };
+      document.head.appendChild(script);
+
+      setTimeout(() => {
+        if (!(window.BMap && window.BMap.Map)) {
+          console.warn('Baidu Maps SDK load timeout - BMap not detected.');
+          if (mapHint.textContent.indexOf('Loading') !== -1) {
+            mapHint.textContent = 'Baidu Maps SDK load timed out, possibly blocked by network or browser. Check console network requests and AK restrictions.';
+          }
+        }
+      }, 12000);
+    }
+
+    function initMap() {
+      if (!window.BMap) {
+        mapHint.textContent = 'Baidu Maps SDK not loaded correctly.';
+        return;
+      }
+      mapHint.style.display = 'none';
+      if (!map) {
+        map = new BMap.Map('map');
+        map.centerAndZoom(new BMap.Point(FALLBACK_CENTER.lng, FALLBACK_CENTER.lat), 12);
+        map.enableScrollWheelZoom(true);
+        map.addControl(new BMap.NavigationControl());
+        map.addControl(new BMap.ScaleControl());
+        map.addControl(new BMap.OverviewMapControl());
+        try { map.setCurrentCity('Beijing'); } catch (e) { }
+      }
+      if (currentPosition) {
+        updateMarker(userId, currentNick, currentColor, currentPosition.lat, currentPosition.lng);
+      }
+    }
+
+    function updateMarker(id, nick, color, lat, lng, center = true) {
+      if (!map) return;
+      const point = new BMap.Point(lng, lat);
+      // compute overlap index for label offsets to avoid overlapping labels when coords identical
+      function computeOverlapIndex(lat, lng, skipId) {
+        let idx = 0;
+        for (const k in markers) {
+          if (!markers[k] || k === skipId) continue;
+          const m = markers[k];
+          if (typeof m.lat === 'number' && typeof m.lng === 'number') {
+            if (Math.abs(m.lat - lat) < 0.000001 && Math.abs(m.lng - lng) < 0.000001) idx++;
+          }
+        }
+        return idx;
+      }
+      const offsets = [new BMap.Size(20, -10), new BMap.Size(50, -10), new BMap.Size(20, 10), new BMap.Size(50, 10), new BMap.Size(-20, -10), new BMap.Size(-50, -10)];
+      // remove the existing marker before recreating it to avoid stale label/overlay artifacts
+      if (markers[id]) {
+        removeMarker(id);
+      }
+      const marker = new BMap.Marker(point);
+      const overlap = computeOverlapIndex(lat, lng, id);
+      const off = offsets[overlap % offsets.length];
+      const label = new BMap.Label(nick, { offset: off });
+      label.setStyle({ color: '#fff', background: 'rgba(0,0,0,0.6)', border: 'none', padding: '4px 8px', borderRadius: '8px', fontSize: '12px' });
+      marker.setLabel(label);
+      map.addOverlay(marker);
+      markers[id] = { marker, lat, lng };
+      if (center && users[id] && users[id].online) {
+        map.centerAndZoom(point, Math.max(map.getZoom(), 12));
+      }
+    }
+
+    function removeMarker(id) {
+      if (markers[id] && map) {
+        try { map.removeOverlay(markers[id].marker); } catch (e) { }
+        delete markers[id];
+      }
+    }
+ 
+    function clearMarkers() {
+      Object.keys(markers).forEach(id => removeMarker(id));
+    }
+
+    function syncMarkers() {
+      if (!map) return;
+      clearMarkers();
+      Object.keys(users).forEach(id => {
+        const user = users[id];
+        // only display active markers for users who are currently sharing their position
+        if (user && user.lastPos && user.sharing) {
+          const isOnline = !!user.online;
+          const color = isOnline ? (user.color || '#3aa0ff') : '#777777';
+          updateMarker(id, user.nick, color, user.lastPos.lat, user.lastPos.lng, false);
+        }
+      });
+    }
+ 
+    function safeSend(payload) {
+      const outgoing = Object.assign({}, payload);
+      if (outgoing && typeof outgoing === 'object') {
+        delete outgoing.status;
+      }
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        try {
+          ws.send(JSON.stringify(outgoing));
+          return true;
+        } catch (e) {
+          console.warn('safeSend failed', e);
+        }
+      }
+      outQueue.push(outgoing);
+      saveState();
+      return false;
+    }
+
+    function startKeepAlive() {
+      stopKeepAlive();
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+      keepAliveTimer = setInterval(() => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'ping', ts: Date.now() }));
+        }
+      }, KEEPALIVE_INTERVAL_MS);
+    }
+
+    function stopKeepAlive() {
+      if (keepAliveTimer) {
+        clearInterval(keepAliveTimer);
+        keepAliveTimer = null;
+      }
+    }
+
+    function markPendingMessageStatus(requestId, status) {
+      if (!requestId) return;
+      const pending = pendingMessages.get(requestId);
+      if (pending && pending.timer) {
+        clearTimeout(pending.timer);
+      }
+      pendingMessages.delete(requestId);
+      const item = chatHistory.find(entry => entry.requestId === requestId);
+      if (item) {
+        item.status = status;
+        updateChat();
+        saveState();
+      }
+    }
+
+    function mergeChatHistories(serverChat, localChat) {
+      const localMap = new Map();
+      const localUnsent = [];
+      (localChat || []).forEach(item => {
+        if (!item || typeof item !== 'object') return;
+        if (item.requestId) {
+          localMap.set(item.requestId, item);
+        } else {
+          localUnsent.push(item);
+        }
+      });
+      const result = [];
+      const seenIds = new Set();
+      (serverChat || []).forEach(item => {
+        if (!item || typeof item !== 'object') return;
+        if (item.requestId && localMap.has(item.requestId)) {
+          const localItem = localMap.get(item.requestId);
+          localItem.status = 'sent';
+          localItem.ts = item.ts || localItem.ts;
+          localItem.kind = item.kind || localItem.kind;
+          localItem.text = item.text || localItem.text;
+          localItem.data = item.data || localItem.data;
+          localItem.mimeType = item.mimeType || localItem.mimeType;
+          localItem.name = item.name || localItem.name;
+          localItem.duration = item.duration || localItem.duration;
+          localItem.retracted = item.retracted || localItem.retracted;
+          localItem.retractedBy = item.retractedBy || localItem.retractedBy;
+          localItem.retractedAt = item.retractedAt || localItem.retractedAt;
+          localItem.nick = item.nick || localItem.nick;
+          localItem.color = item.color || localItem.color;
+          localItem.id = item.id || localItem.id;
+          result.push(localItem);
+          localMap.delete(item.requestId);
+        } else {
+          result.push(item);
+        }
+        if (item.requestId) {
+          seenIds.add(item.requestId);
+        }
+      });
+      Array.from(localMap.values()).forEach(item => {
+        if (!item || !item.requestId || seenIds.has(item.requestId)) return;
+        result.push(item);
+      });
+      localUnsent.forEach(item => {
+        result.push(item);
+      });
+      return result.slice(-200);
+    }
+
+    function enqueuePendingMessage(payload) {
+      const requestId = payload.requestId || ('msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8));
+      payload.requestId = requestId;
+      payload.status = 'sending';
+      chatHistory.push(payload);
+      updateChat();
+      saveState();
+      const timer = setTimeout(() => {
+        if (pendingMessages.has(requestId)) {
+          markPendingMessageStatus(requestId, 'error');
+        }
+      }, 6000);
+      pendingMessages.set(requestId, { timer });
+      return payload;
+    }
+
+    function flushQueue() {
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+      while (outQueue.length) {
+        ws.send(JSON.stringify(outQueue.shift()));
+      }
+      saveState();
+    }
+
+    function sendRoomRequest() {
+      const pub = getMyPublicKey();
+      safeSend({ type: 'room', action: roomAction, room: currentRoom, id: userId, nick: currentNick, color: currentColor, ts: Date.now(), lat: currentPosition ? currentPosition.lat : undefined, lng: currentPosition ? currentPosition.lng : undefined, publicKey: pub });
+    }
+
+    function sendPosition(lat, lng) {
+      const payload = { type: 'pos', id: userId, nick: currentNick, color: currentColor, lat, lng, ts: Date.now() };
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(payload));
+      } else {
+        // Do not queue stale location updates. Wait until reconnect and send current location again.
+        setRoomStatus('offline - waiting reconnect', 'red');
+      }
+    }
+    function sendStopPosition() {
+      const wasSharing = !!(users[userId] && users[userId].sharing);
+      if (!wasSharing) return;
+      // inform other room members that this user stopped sharing position
+      const payload = { type: 'pos_stop', id: userId, ts: Date.now() };
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(payload));
+      } else {
+        safeSend(payload);
+      }
+    }
+
+    function sendChat(text) {
+      if (!text || !text.trim()) return;
+      const trimmed = text.trim();
+      // Build a local visible entry for chatHistory (plaintext kept locally only)
+      const requestId = 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
+      const localEntry = { type: 'chat', id: userId, nick: currentNick, color: currentColor, text: trimmed, kind: 'text', ts: Date.now(), requestId, status: 'sending' };
+      chatHistory.push(localEntry);
+      if (chatHistory.length > 200) chatHistory.shift();
+      updateChat();
+      saveState();
+      const timer = setTimeout(() => { markPendingMessageStatus(requestId, 'error'); }, 6000);
+      pendingMessages.set(requestId, { timer });
+
+      // Direct send: do not attempt per-recipient encryption, send plaintext to server
+      const payload = { type: 'chat', id: userId, nick: currentNick, color: currentColor, text: trimmed, kind: 'text', ts: Date.now(), requestId };
+      safeSend(payload);
+    }
+
+    function canSendMedia() {
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        showToast('当前未连接服务器，媒体文件无法发送，请先连接后再发送。', 'error');
+        return false;
+      }
+      return true;
+    }
+
+    async function uploadFileToServer(dataOrBlob, name, mime) {
+      try {
+        const wsUrl = (wsUrlInput.value || '').trim();
+        const fallbackOrigin = wsUrl ? wsUrl.replace(/^ws:/, 'http:').replace(/^wss:/, 'https:').replace(/\/ws\/?$/, '') : 'http://localhost:3002';
+        const uploadEndpoint = (location && location.origin && location.origin !== 'null') ? (location.origin + '/upload-binary') : (fallbackOrigin + '/upload-binary');
+
+        // Normalize input to a Blob so we always use the binary upload endpoint.
+        let blobToSend;
+        const filename = name || 'upload.bin';
+        const contentType = mime || 'application/octet-stream';
+
+        if (dataOrBlob instanceof Blob) {
+          blobToSend = dataOrBlob;
+        } else if (typeof dataOrBlob === 'string') {
+          // Accept either a raw base64 string or a dataURL; extract base64 payload if needed
+          const raw = dataOrBlob.indexOf(',') !== -1 ? dataOrBlob.split(',')[1] : dataOrBlob;
+          // atob is available in browsers
+          try {
+            const binary = atob(raw);
+            const len = binary.length;
+            const arr = new Uint8Array(len);
+            for (let i = 0; i < len; i++) arr[i] = binary.charCodeAt(i);
+            blobToSend = new Blob([arr], { type: contentType });
+          } catch (err) {
+            // Fallback: send the raw string as UTF-8
+            const enc = new TextEncoder();
+            blobToSend = new Blob([enc.encode(raw)], { type: contentType });
+          }
+        } else {
+          // Unknown type: stringify and send
+          const enc = new TextEncoder();
+          blobToSend = new Blob([enc.encode(typeof dataOrBlob === 'object' ? JSON.stringify(dataOrBlob) : String(dataOrBlob))], { type: contentType });
+        }
+
+        const headers = {
+          'Content-Type': contentType,
+          'X-File-Name': encodeURIComponent(filename),
+          'X-Room-Name': encodeURIComponent(currentRoom || '')
+        };
+
+        const resp = await fetch(uploadEndpoint, { method: 'POST', headers, body: blobToSend });
+        const text = await resp.text();
+        let parsed = null;
+        if (text) {
+          try {
+            parsed = JSON.parse(text);
+          } catch (_) {
+            parsed = { success: false, error: text.slice(0, 200) || 'invalid_response' };
+          }
+        }
+        if (resp.ok && parsed && parsed.success && parsed.url) return parsed.url;
+        throw new Error((parsed && parsed.error) || resp.statusText || 'upload_failed');
+      } catch (e) {
+        console.error('uploadFileToServer failed', e);
+        showToast('上传失败：' + (e && e.message ? e.message : 'unknown_error'), 'error');
+        return null;
+      }
+    }
+
+    async function sendEncryptedPayload(obj, localDisplayEntry, attempt = 0, requestId = null) {
+      // Encryption disabled: always send payloads directly (plain relay via server)
+      const resolvedRequestId = requestId || ('msg-' + Date.now() + '-' + Math.random().toString(36).slice(2,8));
+      // show local entry immediately
+      if (localDisplayEntry) {
+        localDisplayEntry.requestId = resolvedRequestId;
+        localDisplayEntry.status = 'sending';
+        const existing = chatHistory.find(entry => entry.requestId === resolvedRequestId);
+        if (!existing) {
+          chatHistory.push(localDisplayEntry);
+          if (chatHistory.length > 200) chatHistory.shift();
+        }
+        updateChat();
+        saveState();
+        const timer = setTimeout(() => { markPendingMessageStatus(resolvedRequestId, 'error'); }, 6000);
+        pendingMessages.set(resolvedRequestId, { timer });
+      }
+
+      // Construct direct payload (no encryption)
+      const payload = {
+        type: 'chat',
+        id: userId,
+        nick: currentNick,
+        color: currentColor,
+        kind: obj && obj.kind ? obj.kind : 'text',
+        text: typeof obj === 'object' && typeof obj.text === 'string' ? obj.text : '',
+        url: typeof obj === 'object' && typeof obj.url === 'string' ? obj.url : '',
+        name: obj && obj.name ? obj.name : '',
+        mimeType: obj && obj.mimeType ? obj.mimeType : '',
+        duration: obj && typeof obj.duration === 'number' ? obj.duration : 0,
+        data: obj && obj.data ? obj.data : '',
+        ts: Date.now(),
+        requestId: resolvedRequestId
+      };
+      const sendOk = safeSend(payload);
+      const sentEntry = chatHistory.find(entry => entry.requestId === resolvedRequestId);
+      if (sentEntry) {
+        sentEntry.status = sendOk ? 'sending' : 'sending';
+        updateChat();
+        saveState();
+      }
+      // Direct-send complete
+    }
+
+    async function sendImage(file) {
+      if (!file) return;
+      if (!canSendMedia()) return;
+      const url = await uploadFileToServer(file, file.name || 'image.png', file.type || 'image/png');
+      if (!url) { showToast('图片上传失败', 'error'); return; }
+      const localEntry = { type: 'chat', id: userId, nick: currentNick, color: currentColor, kind: 'image', url, mimeType: file.type || 'image/png', name: file.name, ts: Date.now() };
+      await sendEncryptedPayload({ kind: 'image', url, name: file.name, mimeType: file.type }, localEntry);
+    }
+
+    async function sendVideo(file) {
+      if (!file) return;
+      if (!canSendMedia()) return;
+      const url = await uploadFileToServer(file, file.name || 'video.mp4', file.type || 'video/mp4');
+      if (!url) { showToast('视频上传失败', 'error'); return; }
+      const localEntry = { type: 'chat', id: userId, nick: currentNick, color: currentColor, kind: 'video', url, mimeType: file.type || 'video/mp4', name: file.name, ts: Date.now() };
+      await sendEncryptedPayload({ kind: 'video', url, name: file.name, mimeType: file.type }, localEntry);
+    }
+
+    async function sendFile(file) {
+      if (!file) return;
+      if (!canSendMedia()) return;
+      const url = await uploadFileToServer(file, file.name || 'file.bin', file.type || 'application/octet-stream');
+      if (!url) { showToast('文件上传失败', 'error'); return; }
+      const localEntry = { type: 'chat', id: userId, nick: currentNick, color: currentColor, kind: 'file', url, mimeType: file.type || 'application/octet-stream', name: file.name, ts: Date.now() };
+      await sendEncryptedPayload({ kind: 'file', url, name: file.name, mimeType: file.type }, localEntry);
+    }
+
+    function setVoiceButtonState(recording) {
+      isRecording = recording;
+      recordVoiceBtn.textContent = recording ? '停止录音' : '开始录音';
+      recordVoiceBtn.className = recording ? 'primary small' : 'secondary small';
+    }
+
+    async function sendVoice(blob) {
+      const duration = (mediaRecorder && typeof mediaRecorder.duration === 'number') ? Math.round(mediaRecorder.duration) : 0;
+      const url = await uploadFileToServer(blob, 'voice.webm', blob.type || 'audio/webm');
+      if (!url) { showToast('语音上传失败', 'error'); return; }
+      const localEntry = { type: 'chat', id: userId, nick: currentNick, color: currentColor, kind: 'voice', url, mimeType: blob.type || 'audio/webm', name: 'voice.webm', ts: Date.now(), duration };
+      await sendEncryptedPayload({ kind: 'voice', url, name: 'voice.webm', mimeType: blob.type || 'audio/webm', duration }, localEntry);
+    }
+
+    function stopVoiceRecording() {
+      if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
+      mediaRecorder.stop();
+    }
+
+    imageModal.addEventListener('click', () => {
+      imageModal.style.display = 'none';
+      imageModalImg.src = '';
+    });
+
+    // Video modal handlers with custom overlay controls
+    function closeVideoModal() {
+      try { videoModalPlayer.pause(); } catch (e) {}
+      videoModalPlayer.src = '';
+      if (videoModal) videoModal.style.display = 'none';
+      if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'none';
+    }
+
+    videoModal.addEventListener('click', (ev) => {
+      // close when clicking backdrop or close button
+      if (ev.target === videoModal || ev.target === videoModalClose) closeVideoModal();
+    });
+
+    if (videoModalClose) videoModalClose.addEventListener('click', (ev) => { ev.stopPropagation(); closeVideoModal(); });
+
+    // clicking the video toggles playback (prevent backdrop close)
+    if (videoModalPlayer) videoModalPlayer.addEventListener('click', (ev) => { ev.stopPropagation(); toggleModalPlayback(); });
+    if (videoModalCenterPlay) videoModalCenterPlay.addEventListener('click', (ev) => { ev.stopPropagation(); toggleModalPlayback(); });
+
+    function toggleModalPlayback() {
+      if (!videoModalPlayer) return;
+      if (videoModalPlayer.paused || videoModalPlayer.ended) {
+        videoModalPlayer.play().then(() => { if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'none'; }).catch(() => { if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'block'; });
+      } else {
+        videoModalPlayer.pause();
+        if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'block';
+      }
+    }
+
+    // wire up modal controls (progress, time display, volume)
+    const videoModalControls = document.getElementById('videoModalControls');
+    const videoModalProgress = document.getElementById('videoModalProgress');
+    const videoModalVolume = document.getElementById('videoModalVolume');
+    const videoModalPlayToggle = document.getElementById('videoModalPlayToggle');
+    const videoModalCurrentTime = document.getElementById('videoModalCurrentTime');
+    const videoModalTotalTime = document.getElementById('videoModalTotalTime');
+
+    function formatTime(s) {
+      if (!isFinite(s) || isNaN(s)) return '0:00';
+      s = Math.floor(s);
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      if (h > 0) return `${h}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+      return `${m}:${sec.toString().padStart(2,'0')}`;
+    }
+
+    function openVideoModal(src) {
+      if (!src) return;
+      try { videoModalPlayer.pause(); } catch (e) {}
+      videoModalPlayer.src = src;
+      if (videoModal) videoModal.style.display = 'flex';
+      if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'block';
+      if (videoModalControls) videoModalControls.style.display = 'flex';
+      videoModalPlayer.currentTime = 0;
+      // initialize time displays
+      try { if (videoModalCurrentTime) videoModalCurrentTime.textContent = '0:00'; } catch (e) {}
+      try { if (videoModalTotalTime) videoModalTotalTime.textContent = '0:00'; } catch (e) {}
+      // set default volume control value from player
+      try { if (videoModalVolume && typeof videoModalPlayer.volume === 'number') videoModalVolume.value = videoModalPlayer.volume; } catch (e) {}
+      videoModalPlayer.play().then(() => { if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'none'; }).catch(() => {});
+    }
+
+    // Playback toggle bound earlier
+    function toggleModalPlayback() {
+      if (!videoModalPlayer) return;
+      if (videoModalPlayer.paused || videoModalPlayer.ended) {
+        videoModalPlayer.play().then(() => { if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'none'; }).catch(() => { if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'block'; });
+      } else {
+        videoModalPlayer.pause();
+        if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'block';
+      }
+    }
+
+    // attach timeupdate and progress syncing
+    if (videoModalPlayer) {
+      videoModalPlayer.addEventListener('loadedmetadata', () => {
+        try { if (videoModalTotalTime) videoModalTotalTime.textContent = formatTime(videoModalPlayer.duration); } catch (e) {}
+      });
+      videoModalPlayer.addEventListener('timeupdate', () => {
+        if (videoModalProgress && videoModalPlayer.duration) {
+          const pct = (videoModalPlayer.currentTime / (videoModalPlayer.duration || 1)) * 100;
+          videoModalProgress.value = isFinite(pct) ? pct : 0;
+        }
+        try { if (videoModalCurrentTime) videoModalCurrentTime.textContent = formatTime(videoModalPlayer.currentTime); } catch (e) {}
+      });
+      videoModalPlayer.addEventListener('ended', () => { if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'block'; if (videoModalPlayToggle) videoModalPlayToggle.textContent = '▶'; });
+      videoModalPlayer.addEventListener('play', () => { if (videoModalPlayToggle) videoModalPlayToggle.textContent = '▌▌'; });
+      videoModalPlayer.addEventListener('pause', () => { if (videoModalPlayToggle) videoModalPlayToggle.textContent = '▶'; });
+    }
+
+    if (videoModalProgress) {
+      let isSeeking = false;
+      videoModalProgress.addEventListener('input', (e) => {
+        if (!videoModalPlayer || isNaN(videoModalPlayer.duration)) return;
+        const val = parseFloat(e.target.value);
+        const t = (val / 100) * videoModalPlayer.duration;
+        isSeeking = true;
+        try { videoModalPlayer.currentTime = t; } catch (err) {}
+        isSeeking = false;
+      });
+    }
+
+    if (videoModalVolume) {
+      videoModalVolume.addEventListener('input', (e) => {
+        try { videoModalPlayer.volume = parseFloat(e.target.value); } catch (err) {}
+      });
+    }
+
+    if (videoModalPlayToggle) {
+      videoModalPlayToggle.addEventListener('click', (ev) => { ev.stopPropagation(); toggleModalPlayback(); });
+    }
+
+    // ensure modal close hides controls
+    function closeVideoModalControls() {
+      if (videoModal) videoModal.style.display = 'none';
+      if (videoModalCenterPlay) videoModalCenterPlay.style.display = 'none';
+      if (videoModalControls) videoModalControls.style.display = 'none';
+      try { videoModalPlayer.pause(); } catch (e) {}
+      try { videoModalPlayer.src = ''; } catch (e) {}
+    }
+    // replace closeVideoModal with enhanced close
+    function closeVideoModal() { closeVideoModalControls(); }
+
+    videoInput.addEventListener('change', async event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        await sendVideo(file);
+      }
+      videoInput.value = '';
+    });
+
+    async function startVoiceRecording() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast('当前浏览器不支持录音功能。', 'error');
+        return;
+      }
+      if (isRecording) {
+        stopVoiceRecording();
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaStream = stream;
+        recordedChunks = [];
+        const options = MediaRecorder.isTypeSupported('audio/webm') ? { mimeType: 'audio/webm' } : {};
+        mediaRecorder = new MediaRecorder(stream, options);
+        mediaRecorder.ondataavailable = event => {
+          if (event.data && event.data.size) recordedChunks.push(event.data);
+        };
+        mediaRecorder.onstop = async () => {
+          const blob = new Blob(recordedChunks, { type: mediaRecorder && mediaRecorder.mimeType ? mediaRecorder.mimeType : 'audio/webm' });
+          if (mediaStream) {
+            mediaStream.getTracks().forEach(track => track.stop());
+            mediaStream = null;
+          }
+          if (blob.size) {
+            await sendVoice(blob);
+          }
+          setVoiceButtonState(false);
+        };
+        mediaRecorder.start();
+        setVoiceButtonState(true);
+      } catch (error) {
+        console.error('Failed to start voice recording', error);
+        showToast('无法访问麦克风，请检查浏览器权限。', 'error');
+      }
+    }
+
+    function handleWsMessage(event) {
+      let message;
+      try { message = JSON.parse(event.data); } catch (e) { return; }
+      if (!message || typeof message.type !== 'string') return;
+      if (message.type === 'init') {
+          if (message.room) {
+          currentRoom = message.room;
+          roomInput.value = currentRoom;
+          roomAction = 'join';
+          updateRoomLabel();
+          showRoomModal(false);
+          setRoomStatus('connected', 'green', true);
+        }
+        if (Array.isArray(message.users)) {
+          clearMarkers();
+          message.users.forEach(user => {
+            // treat sharing as explicit; if absent, default to false to avoid showing historical markers as active
+            users[user.id] = Object.assign({}, user, { online: !!user.online, sharing: !!user.sharing });
+            if (user.publicKey) peerPublicKeys[user.id] = user.publicKey;
+            if (user.lastPos && users[user.id].sharing) updateMarker(user.id, user.nick, user.color || '#3aa0ff', user.lastPos.lat, user.lastPos.lng);
+          });
+          updateUsers();
+          syncMarkers();
+        }
+        // load room position history if provided by server (global history)
+        if (Array.isArray(message.positions)) {
+          globalPositions = message.positions.slice(-2000);
+          updateGlobalHistory();
+        } else {
+          // fallback to derive from users' lastPos if positions not provided
+          updateGlobalHistory();
+        }
+        if (Array.isArray(message.chat)) {
+          chatHistory = mergeChatHistories(message.chat.slice(-200), chatHistory);
+          try {
+            const savedPendingChat = JSON.parse(localStorage.getItem(STORAGE_KEY + 'pending_chat') || '[]');
+            if (Array.isArray(savedPendingChat) && savedPendingChat.length) {
+              const pendingFromMemory = chatHistory.filter(item => item && item.requestId && item.status !== 'sent');
+              chatHistory = mergeChatHistories(message.chat.slice(-200), pendingFromMemory.concat(savedPendingChat));
+            }
+          } catch (e) {
+            // ignore invalid saved pending chat data
+          }
+          updateChat();
+          saveState();
+        }
+        flushQueue();
+      } else if (message.type === 'room_error') {
+        setRoomStatus('room error', 'red');
+        shouldReconnect = false;
+        showRoomModal(true, message.message || 'Room operation failed, please try again.');
+        if (ws) {
+          ws.close();
+          ws = null;
+        }
+      } else if (message.type === 'join') {
+        const prevOnline = users[message.id] && users[message.id].online;
+        users[message.id] = Object.assign(users[message.id] || {}, {
+          id: message.id,
+          nick: message.nick || 'Guest',
+          color: message.color || '#3aa0ff',
+          online: true,
+          sharing: false,
+          presenceToken: message.presenceToken || (users[message.id] && users[message.id].presenceToken) || null,
+          publicKey: message.publicKey || (users[message.id] && users[message.id].publicKey) || null,
+          lastPos: typeof message.lat === 'number' && typeof message.lng === 'number' ? { lat: message.lat, lng: message.lng, ts: message.ts || Date.now() } : (users[message.id] ? users[message.id].lastPos : null)
+        });
+        if (users[message.id].publicKey) peerPublicKeys[message.id] = users[message.id].publicKey;
+        if (users[message.id].lastPos) {
+          updateMarker(message.id, users[message.id].nick, users[message.id].color, users[message.id].lastPos.lat, users[message.id].lastPos.lng);
+        }
+        updateUsers();
+        // Only show a join system message if the user was previously not online locally
+        if (!prevOnline) {
+          addMessage(chatEl, `[System] ${message.nick || 'A user'} joined`);
+        }
+        updateGlobalHistory();
+      } else if (message.type === 'users') {
+        if (Array.isArray(message.users)) {
+          const onlineIds = new Set();
+          message.users.forEach(u => {
+            users[u.id] = Object.assign(users[u.id] || {}, u, { online: true, sharing: !!u.sharing, lastPos: u.lastPos || (users[u.id] && users[u.id].lastPos) || null });
+            if (u.publicKey) peerPublicKeys[u.id] = u.publicKey;
+            onlineIds.add(u.id);
+            if (users[u.id].lastPos && users[u.id].sharing) updateMarker(u.id, users[u.id].nick, users[u.id].color || '#3aa0ff', users[u.id].lastPos.lat, users[u.id].lastPos.lng);
+          });
+          // mark previously-known users who are not in the authoritative list as offline
+          Object.keys(users).forEach(id => {
+            if (!onlineIds.has(id)) {
+              users[id].online = false;
+              users[id].sharing = false;
+            }
+          });
+          updateUsers();
+          syncMarkers();
+          updateGlobalHistory();
+        }
+      } else if (message.type === 'pos') {
+        const user = users[message.id] = Object.assign(users[message.id] || {}, {
+          id: message.id,
+          nick: message.nick || 'Guest',
+          color: message.color || '#3aa0ff',
+          online: true,
+          sharing: true,
+          lastPos: { lat: message.lat, lng: message.lng, ts: message.ts || Date.now() }
+        });
+        updateMarker(message.id, user.nick, user.color, message.lat, message.lng);
+        updateUsers();
+        syncMarkers();
+        updateGlobalHistory();
+      } else if (message.type === 'chat_ack') {
+        if (message.requestId) {
+          if (message.success === false) {
+            markPendingMessageStatus(message.requestId, 'error');
+            const idx = chatHistory.findIndex(entry => entry.requestId === message.requestId);
+            if (idx !== -1) {
+              chatHistory[idx].errorDetail = message.detail || message.error || 'unknown';
+              updateChat();
+              // Show a system notice with a clear message based on server detail
+              const maxBytes = message.maxBytes || 0;
+              const maxMb = maxBytes ? Math.round((maxBytes / (1024*1024)) * 100) / 100 : null;
+              if (message.detail === 'image_too_large') {
+                addMessage(chatEl, `[System] 图片过大，服务器允许最大 ${maxMb !== null ? maxMb + ' MB' : 'N/A'}`);
+              } else if (message.detail === 'video_too_large') {
+                addMessage(chatEl, `[System] 视频过大，服务器允许最大 ${maxMb !== null ? maxMb + ' MB' : 'N/A'}`);
+              } else {
+                addMessage(chatEl, `[System] 发送失败：${message.error || message.detail || '文件过大或未知错误'}`);
+              }
+            }
+          } else {
+            markPendingMessageStatus(message.requestId, 'sent');
+          }
+        }
+      } else if (message.type === 'retract_ack') {
+        // server acknowledges retract request (this client may have been excluded from the broadcast)
+        if (message.requestId) {
+          const idx = chatHistory.findIndex(entry => entry.requestId === message.requestId);
+          if (idx !== -1) {
+            // mark as retracted locally so the requester sees the same placeholder as others
+            chatHistory[idx].retracted = true;
+            chatHistory[idx].retractedBy = message.retractedBy || currentNick;
+            chatHistory[idx].retractedAt = message.ts || Date.now();
+            // clear any pending timer/status
+            markPendingMessageStatus(message.requestId, 'sent');
+            updateChat();
+            // Do not broadcast a system-style retract notice to the retractor (others receive chat_retract).
+            // Show a subtle confirmation to the requester instead.
+            showToast('已撤回', 'info');
+          }
+        }
+      } else if (message.type === 'chat') {
+        // Decrypt encrypted messages targeted to this client when possible
+        try {
+          if (message.kind === 'enc' && message.data) {
+            let payload = message.data;
+            if (typeof payload === 'string') {
+              try { payload = JSON.parse(payload); } catch (e) { payload = { encryptedFor: [] }; }
+            }
+            if (payload && Array.isArray(payload.encryptedFor)) {
+              const target = payload.encryptedFor.find(e => e && e.to === userId);
+              if (target) {
+                // attempt decrypt using sender public key included in the envelope
+                const fromPk = target.fromPk || (message.fromPk || (users[message.id] && users[message.id].publicKey));
+                if (fromPk) {
+                  const opened = decryptMessageFromSender(fromPk, target.nonce, target.cipher);
+                  if (opened) {
+                    try {
+                      const parsed = JSON.parse(opened);
+                      if (parsed && typeof parsed === 'object') {
+                        message.kind = parsed.kind || 'text';
+                        message.text = typeof parsed.text === 'string' ? parsed.text : '';
+                        message.url = parsed.url || '';
+                        message.name = parsed.name || '';
+                        message.mimeType = parsed.mimeType || '';
+                        message.duration = parsed.duration || 0;
+                        message.data = parsed.data || '';
+                      } else {
+                        message.text = opened;
+                        message.kind = 'text';
+                      }
+                    } catch (e) {
+                      message.text = opened;
+                      message.kind = 'text';
+                    }
+                  } else {
+                    message.text = '[加密消息]';
+                  }
+                } else {
+                  message.text = '[Encrypted message - missing sender public key]';
+                }
+              } else {
+                // message not intended for this client (or encrypted for others) - display placeholder
+                message.text = '[Encrypted message]';
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to process encrypted chat message', e);
+        }
+
+        if (message.requestId) {
+          markPendingMessageStatus(message.requestId, 'sent');
+        }
+        const existing = message.requestId && chatHistory.some(entry => entry.requestId === message.requestId);
+        if (!existing) {
+          chatHistory.push(message);
+          if (chatHistory.length > 200) chatHistory.shift();
+          saveState();
+        }
+        updateChat();
+      } else if (message.type === 'rename') {
+        if (message.id && message.nick) {
+          const oldNick = users[message.id] ? users[message.id].nick : message.oldNick || 'Guest';
+          refreshUserNickname(message.id, message.nick);
+          updateUsers();
+          updateChat();
+          updateGlobalHistory();
+          addMessage(chatEl, `[System] ${oldNick} changed nickname to ${message.nick}`);
+        }
+      } else if (message.type === 'leave') {
+        // If presenceToken is provided, ignore leave events that don't match current presence (stale)
+        const incomingToken = message.presenceToken || null;
+          // Deduplicate leave notices: use presenceToken if available, otherwise fall back to timestamp
+          const leaveKey = (message.id || '') + ':' + (incomingToken ? ('pt:' + incomingToken) : ('ts:' + (message.ts || '0')));
+          if (processedLeaveTokens.has(leaveKey)) {
+            // already processed this leave event
+            return;
+          }
+          processedLeaveTokens.add(leaveKey);
+          if (users[message.id]) {
+            // if tokens mismatch, this leave is stale for an earlier session — ignore
+            if (incomingToken && users[message.id].presenceToken && users[message.id].presenceToken !== incomingToken) {
+              // stale leave for an earlier connection — ignore
+              return;
+            }
+            const nick = users[message.id].nick;
+            if (message.lastPos && typeof message.lastPos.lat === 'number' && typeof message.lastPos.lng === 'number') {
+              globalPositions.push({ id: message.id, nick: nick || 'User', lat: message.lastPos.lat, lng: message.lastPos.lng, ts: message.lastPos.ts || Date.now(), status: message.lastPosStatus || 'offline' });
+              if (globalPositions.length > 50000) globalPositions.shift();
+            }
+            // mark user as offline and keep their lastPos so others can see the offline marker and nick consistently
+            users[message.id].online = false;
+            if (message.lastPos && typeof message.lastPos.lat === 'number' && typeof message.lastPos.lng === 'number') {
+              users[message.id].lastPos = message.lastPos;
+            }
+            updateUsers();
+            syncMarkers();
+            let leaveNotice = '';
+            if (message.lastPosStatus === 'offline') {
+              leaveNotice = '，已记录离线定位信息';
+            } else if (message.lastPosStatus === 'leave') {
+              leaveNotice = '，已记录离开时定位信息';
+            } else if (message.lastPos) {
+              leaveNotice = '，已记录离线定位信息';
+            }
+            addMessage(chatEl, `[System] ${nick || 'A user'} left the room${leaveNotice}`);
+            updateGlobalHistory();
+          } else {
+            // no local record — if incomingToken present, likely stale; ignore.
+            if (incomingToken) return;
+          }
+      } else if (message.type === 'pos_stop') {
+        // other user stopped sharing position — keep lastPos in history but remove marker from map
+        if (users[message.id]) {
+          const wasSharing = !!users[message.id].sharing;
+          users[message.id].sharing = false;
+          if (message.lastPos && typeof message.lastPos.lat === 'number' && typeof message.lastPos.lng === 'number') {
+            // preserve lastPos for history but remove active marker
+            users[message.id].lastPos = message.lastPos;
+            globalPositions.push({ id: message.id, nick: users[message.id].nick || 'User', lat: message.lastPos.lat, lng: message.lastPos.lng, ts: message.lastPos.ts || Date.now(), status: message.lastPosStatus || 'stopped' });
+            if (globalPositions.length > 50000) globalPositions.shift();
+          }
+          // only remove active marker and show a notice when the user was actually sharing before
+          if (wasSharing) {
+            removeMarker(message.id);
+            updateUsers();
+            syncMarkers();
+            updateGlobalHistory();
+            addMessage(chatEl, `[System] ${users[message.id].nick || 'A user'} stopped sharing location`);
+          }
+        }
+      } else if (message.type === 'pos_remove') {
+        // other user removed their position (explicit remove) - remove their marker and lastPos
+        if (users[message.id]) {
+          users[message.id].lastPos = null;
+          removeMarker(message.id);
+        }
+        updateUsers();
+        syncMarkers();
+        updateGlobalHistory();
+      } else if (message.type === 'chat_retract') {
+        if (message.requestId) {
+          // mark the corresponding local message as retracted so all clients show a placeholder
+          const idx = chatHistory.findIndex(entry => entry.requestId === message.requestId);
+          if (idx !== -1) {
+            chatHistory[idx].retracted = true;
+            chatHistory[idx].retractedBy = message.retractedBy || 'Someone';
+            chatHistory[idx].retractedAt = message.ts || Date.now();
+          }
+          // also append a system notice for visibility
+          addMessage(chatEl, `[System] ${message.retractedBy || 'Someone'} 撤回了一条消息`);
+          updateChat();
+        }
+      } else if (message.type === 'pong') {
+        // keep-alive reply
+      }
+    }
+
+    function connect() {
+      const url = wsUrlInput.value.trim() || DEFAULT_WS;
+      if (!currentRoom || !roomAction) {
+        showRoomModal(true, 'Please create or join a room first.');
+        setRoomStatus('not in room', 'red');
+        return;
+      }
+      if (networkOffline) {
+        setRoomStatus('offline', 'red');
+        return;
+      }
+      shouldReconnect = true;
+      reconnectAttempts = 0;
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
+      saveState();
+      ensureMap();
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        ws.close();
+      }
+      const socket = new WebSocket(url);
+      ws = socket;
+      setRoomStatus('connecting...', 'blue');
+      socket.onopen = () => {
+        reconnectAttempts = 0;
+        setRoomStatus('connected', 'green', true);
+        if (chatHistory.length) {
+          updateChat();
+        }
+        if (currentRoom && roomAction) {
+          sendRoomRequest();
+        }
+        startKeepAlive();
+      };
+      socket.onmessage = handleWsMessage;
+      socket.onclose = () => {
+        stopKeepAlive();
+        setRoomStatus('disconnected', 'red');
+        if (currentPosition) {
+          localHistory.push({ ts: Date.now(), label: 'Offline pos: ' + currentPosition.lat.toFixed(5) + ', ' + currentPosition.lng.toFixed(5) });
+          if (localHistory.length > 200) localHistory.shift();
+          updateLocalHistory();
+          saveState();
+        }
+        if (shouldReconnect && ws === socket && ws.readyState !== WebSocket.OPEN) {
+          reconnectAttempts += 1;
+          if (reconnectAttempts <= MAX_RECONNECT_ATTEMPTS) {
+            setRoomStatus(`reconnecting (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`, 'blue', true);
+            reconnectTimer = setTimeout(() => {
+              if (ws === socket && ws.readyState !== WebSocket.OPEN) {
+                connect();
+              }
+            }, RECONNECT_INTERVAL_MS);
+          } else {
+            shouldReconnect = false;
+            setRoomStatus('network unavailable', 'red');
+            if (watchId != null) {
+              addMessage(chatEl, '[System] 网络多次断开，已停止实时定位。');
+              stopGeolocation(false);
+            }
+          }
+        }
+      };
+      socket.onerror = () => {
+        stopKeepAlive();
+        setRoomStatus('connection failed', 'red');
+      };
+    }
+
+    function disconnect() {
+      // This was the old disconnect: now used for stopping geolocation only
+      stopGeolocation();
+      setGeoStatus('disconnected', 'red');
+    }
+
+    function disconnectRoom() {
+      // explicit room disconnect (if needed) - stop auto-reconnect and leave
+      shouldReconnect = false;
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
+      stopKeepAlive();
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        try { ws.send(JSON.stringify({ type: 'leave', id: userId, ts: Date.now() })); } catch (e) {}
+      }
+      if (ws) { ws.close(); ws = null; }
+      setRoomStatus('disconnected', 'red');
+    }
+  
+    function leaveAndClose() {
+      // close geolocation and room on unload
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
+      stopGeolocation();
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        stopKeepAlive();
+        try {
+          ws.send(JSON.stringify({ type: 'leave', id: userId, ts: Date.now() }));
+        } catch (e) {
+          // ignore send errors during unload
+        }
+        ws.close();
+      }
+    }
+
+    window.addEventListener('beforeunload', leaveAndClose);
+    window.addEventListener('pagehide', leaveAndClose);
+    window.addEventListener('offline', handleNetworkStateChange);
+    window.addEventListener('online', handleNetworkStateChange);
+    handleNetworkStateChange();
+
+    function startGeolocation() {
+      if (!navigator.geolocation) {
+        mapHint.textContent = 'Geolocation not supported by this browser; showing default position.';
+        mapHint.style.display = 'block';
+        setGeoStatus('unsupported', 'red');
+        return;
+      }
+      if (watchId != null) return; // already running
+      watchId = navigator.geolocation.watchPosition(position => {
+        const rawLat = position.coords.latitude;
+        const rawLng = position.coords.longitude;
+        const [bdLat, bdLng] = wgs84ToBd09(rawLat, rawLng);
+        currentPosition = { lat: bdLat, lng: bdLng, accuracy: position.coords.accuracy };
+        localHistory.push({ ts: Date.now(), label: 'Pos: ' + currentPosition.lat.toFixed(5) + ', ' + currentPosition.lng.toFixed(5) + ' (accuracy ' + Math.round(position.coords.accuracy || 0) + 'm)' });
+        if (localHistory.length > 200) localHistory.shift();
+        updateLocalHistory();
+        if (map) updateMarker(userId, currentNick, currentColor, currentPosition.lat, currentPosition.lng);
+        sendPosition(currentPosition.lat, currentPosition.lng);
+        if (position.coords.accuracy !== undefined) {
+          const accuracy = Math.round(position.coords.accuracy);
+          if (accuracy <= 3) {
+            mapHint.textContent = '当前定位误差 ' + accuracy + ' 米，精度非常高。';
+          } else if (accuracy <= 20) {
+            mapHint.textContent = '当前定位误差 ' + accuracy + ' 米。';
+          } else {
+            mapHint.textContent = '当前定位误差 ' + accuracy + ' 米，建议移至开阔区域提高精度。';
+          }
+          mapHint.style.display = 'block';
+        } else {
+          mapHint.textContent = '当前定位已获取，精度未知。';
+          mapHint.style.display = 'block';
+        }
+      }, error => {
+        mapHint.textContent = (error && error.message) ? ('Geolocation failed: ' + error.message) : 'Geolocation failed: permission denied.';
+        mapHint.style.display = 'block';
+        setGeoStatus('geo failed', 'red');
+      }, { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 });
+      // mark local user as sharing so UI and syncMarkers treat marker as active
+      users[userId] = Object.assign(users[userId] || {}, { id: userId, nick: currentNick, color: currentColor, sharing: true, online: !!users[userId] ? users[userId].online : true });
+      if (currentPosition && map) updateMarker(userId, currentNick, currentColor, currentPosition.lat, currentPosition.lng);
+      updateUsers();
+      syncMarkers();
+      setGeoStatus('geo connected', 'green', true);
+      // enable disconnect button when geolocation is active
+      if (typeof disconnectBtn !== 'undefined' && disconnectBtn) { disconnectBtn.disabled = false; }
+    }
+
+    function stopGeolocation(queueStop = true) {
+      if (watchId != null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+      // notify others that this user stopped sharing position
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        try { sendStopPosition(); } catch (e) { }
+      } else if (queueStop) {
+        try { sendStopPosition(); } catch (e) { }
+      }
+      // remove our local marker immediately
+      if (users[userId]) {
+        users[userId].lastPos = null;
+        users[userId].sharing = false;
+      }
+      removeMarker(userId);
+      updateUsers();
+      updateGlobalHistory();
+      setGeoStatus('not connected', 'red');
+      // disable disconnect button when geolocation is not active
+      if (typeof disconnectBtn !== 'undefined' && disconnectBtn) { disconnectBtn.disabled = true; }
+    }
+
+    connectBtn.addEventListener('click', () => {
+      throttleGeoAction(() => {
+        // Real-time geolocation connect (separate from room connection)
+        startGeolocation();
+      });
+    });
+ 
+    disconnectBtn.addEventListener('click', () => {
+      throttleGeoAction(() => {
+        // Geolocation disconnect (manual disconnect should not trigger room reconnect)
+        if (watchId == null) return; // no-op when not connected
+        stopGeolocation();
+      });
+    });
+
+    nickInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.keyCode === 13) {
+        event.preventDefault();
+        event.stopPropagation();
+        const newNick = nickInput.value.trim() || currentNick;
+        if (newNick === currentNick) return;
+        currentNick = newNick;
+        sessionStorage.setItem(STORAGE_KEY + 'nick', currentNick);
+        refreshUserNickname(userId, currentNick);
+        updateUsers();
+        updateChat();
+        updateGlobalHistory();
+        nickInput.blur();
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          safeSend({ type: 'rename', id: userId, nick: currentNick, ts: Date.now() });
+          addMessage(chatEl, `[System] You changed nickname to ${currentNick}`);
+        }
+      }
+    });
+
+    chatInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        sendChat(chatInput.value);
+        chatInput.value = '';
+      }
+    });
+
+    imageBtn.addEventListener('click', () => {
+      imageInput.click();
+    });
+    videoBtn.addEventListener('click', () => {
+      videoInput.click();
+    });
+    fileBtn.addEventListener('click', () => {
+      fileInput.click();
+    });
+  
+    // Emoji panel and button behavior
+    const emojis = ['😀','😃','😄','😁','😆','😂','🤣','😊','😇','🙂','😉','😍','😘','😗','😚','😙','😋','😜','🤪','😝','🤗','🤩','🤔','🤨','😐','😑','😶','🙄','😏','😣','😥','😮','🤐','😯','😪','😴','😌','🤤','😓','😓','😢','😭','😤','😠','😡','🤬','🤯','😳','🥲','🥰','🫠','👍','👎','🙏','👏','🙌','💪','👌','🔥','💖','✨','🎉','😎'];
+    function renderEmojiPanel() {
+      const inner = emojiPanel.querySelector('.emojiPanel');
+      inner.innerHTML = '';
+      emojis.forEach(e => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = e;
+        b.addEventListener('click', () => {
+          // insert emoji at caret or append
+          const start = chatInput.selectionStart || chatInput.value.length;
+          const end = chatInput.selectionEnd || start;
+          chatInput.value = chatInput.value.slice(0, start) + e + chatInput.value.slice(end);
+          chatInput.focus();
+          // close panel after selection
+          emojiPanel.style.display = 'none';
+        });
+        inner.appendChild(b);
+      });
+    }
+    renderEmojiPanel();
+    emojiBtn.addEventListener('click', () => {
+      const isOpen = emojiPanel.style.display !== 'block' && emojiPanel.style.display !== 'flex';
+      emojiPanel.style.display = isOpen ? 'block' : 'none';
+      if (emojiPanel.style.display !== 'none') {
+        // Align emoji panel width with chat content area and keep it within viewport height.
+        // Compute available space below and above the controls and choose the larger area.
+        const chatContentRect = chatEl.getBoundingClientRect();
+        const controlsRect = document.querySelector('.chatBox .chatControls').getBoundingClientRect();
+        const margin = 8;
+        const viewportW = window.innerWidth || document.documentElement.clientWidth;
+        const viewportH = window.innerHeight || document.documentElement.clientHeight;
+        // space below controls
+        const spaceBelow = Math.max(0, viewportH - (controlsRect.bottom + margin));
+        // space above controls
+        const spaceAbove = Math.max(0, controlsRect.top - margin);
+        // prefer below if it fits at least 160px, otherwise show above
+        const placeBelow = spaceBelow >= 160 || spaceBelow >= spaceAbove;
+        const width = Math.max(200, chatContentRect.width || Math.min(viewportW - margin*2, 300));
+        let top;
+        if (placeBelow) {
+          top = Math.min(viewportH - margin - 40, controlsRect.bottom + margin);
+        } else {
+          // place above the controls, anchor to bottom
+          top = Math.max(margin, controlsRect.top - Math.min(360, spaceAbove));
+        }
+        // left align to chat content, but keep within viewport bounds
+        let left = Math.max(margin, chatContentRect.left || margin);
+        if (left + width > viewportW - margin) left = Math.max(margin, viewportW - margin - width);
+        emojiPanel.style.left = left + 'px';
+        emojiPanel.style.width = width + 'px';
+        // compute maxHeight based on chosen placement
+        const maxH = placeBelow ? Math.max(120, spaceBelow - 16) : Math.max(120, spaceAbove - 16);
+        emojiPanel.style.maxHeight = maxH + 'px';
+        // position top/bottom using fixed coords; if placed above, ensure it doesn't overflow top
+        emojiPanel.style.top = Math.max(margin, top) + 'px';
+        // show inner emojis in responsive grid
+        const inner = emojiPanel.querySelector('.emojiPanel');
+        inner.style.display = 'grid';
+        inner.style.gridTemplateColumns = 'repeat(auto-fill, minmax(40px, 1fr))';
+        inner.style.gap = '8px';
+        // ensure scrolling for tall panels
+        emojiPanel.style.overflowY = 'auto';
+        emojiPanel.style.overflowX = 'hidden';
+      }
+    });
+
+    imageInput.addEventListener('change', async event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        await sendImage(file);
+      }
+      event.target.value = '';
+    });
+
+    fileInput.addEventListener('change', async event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        await sendFile(file);
+      }
+      event.target.value = '';
+    });
+
+    recordVoiceBtn.addEventListener('click', () => {
+      startVoiceRecording();
+    });
+
+    document.getElementById('sendBtn').addEventListener('click', () => {
+      sendChat(chatInput.value);
+      chatInput.value = '';
+    });
+
+    createRoomBtn.addEventListener('click', () => {
+      const roomName = roomInput.value.trim();
+      if (!roomName) {
+        showRoomModal(true, 'Please enter the room name.');
+        return;
+      }
+      roomAction = 'create';
+      currentRoom = roomName;
+      roomError.textContent = '';
+      connect();
+    });
+
+    joinRoomBtn.addEventListener('click', () => {
+      const roomName = roomInput.value.trim();
+      if (!roomName) {
+        showRoomModal(true, 'Please enter the room name.');
+        return;
+      }
+      roomAction = 'join';
+      currentRoom = roomName;
+      roomError.textContent = '';
+      connect();
+    });
+
+    function initPage() {
+      nickInput.value = currentNick;
+      wsUrlInput.value = localStorage.getItem(STORAGE_KEY + 'ws_url') || DEFAULT_WS;
+      updateLocalHistory();
+      updateGlobalHistory();
+      updateUsers();
+      updateChat();
+      ensureMap();
+    }
+
+    initPage();
+  </script>
+</body>
+</html>
