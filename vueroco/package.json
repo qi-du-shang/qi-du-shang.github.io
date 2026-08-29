@@ -1,0 +1,12 @@
+{
+  "name": "roco-world-card",
+  "version": "1.0.0",
+  "private": true,
+  "description": "洛克王国世界名片 Vue 3 + Node.js 应用",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
