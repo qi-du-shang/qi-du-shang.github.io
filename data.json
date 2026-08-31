@@ -1,97 +1,97 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-08-31T01:20:58.111Z",
+  "fetchedAt": "2026-08-31T04:20:58.016Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 1,
-  "startedAtBeijing": "2026-08-31 08:00:00",
-  "nextRefreshBeijing": "2026-08-31 12:00:00",
-  "nextActiveBeijing": "2026-08-31 12:00:00",
+  "round": 2,
+  "startedAtBeijing": "2026-08-31 12:00:00",
+  "nextRefreshBeijing": "2026-08-31 16:00:00",
+  "nextActiveBeijing": "2026-08-31 16:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "蓝晶碧玺",
+      "name": "黑晶琉璃",
       "price": "1000",
       "priceRaw": "1000",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
       "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
       "rounds": [
-        1
+        2
       ]
     },
     {
-      "name": "地系血脉秘药",
+      "name": "奇异血脉秘药",
       "price": "160000",
       "priceRaw": "16w",
       "limit": "3",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/17/808i7ggttfttqexttmvtmdknqszrb7t.png/100px-Xuemai_yanshi.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ab/eg7zj03u487p1l3f91z499w1nxdzac1.png/100px-Xuemai_qiyixuemai.png",
       "category": "血脉修改道具",
-      "description": "能唤醒血脉力量的远古秘药，使精灵获得地系血脉。 “一段失落的秘密将被重拾。”",
+      "description": "修改血脉的秘药，使精灵获得“奇异血脉”。",
       "rounds": [
-        1
+        2
       ]
     },
     {
-      "name": "魔力果",
-      "price": "6000",
-      "priceRaw": "6000",
-      "limit": "20",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
-      "category": "精灵喂养材料",
-      "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+      "name": "水系粉尘",
+      "price": "500",
+      "priceRaw": "500",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c7/4fxef31uslze9psd9375td9zbqtbllv.png/100px-100123.png",
+      "category": "炼金材料",
+      "description": "常见的炼金材料，蕴含少量水系魔法，是合成技能石的主要触媒。",
       "rounds": [
-        1
+        2
       ]
     }
   ],
   "rounds": {
-    "1": [
+    "1": [],
+    "2": [
       {
-        "name": "蓝晶碧玺",
+        "name": "黑晶琉璃",
         "price": "1000",
         "priceRaw": "1000",
         "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
         "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
         "rounds": [
-          1
+          2
         ]
       },
       {
-        "name": "地系血脉秘药",
+        "name": "奇异血脉秘药",
         "price": "160000",
         "priceRaw": "16w",
         "limit": "3",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/17/808i7ggttfttqexttmvtmdknqszrb7t.png/100px-Xuemai_yanshi.png",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ab/eg7zj03u487p1l3f91z499w1nxdzac1.png/100px-Xuemai_qiyixuemai.png",
         "category": "血脉修改道具",
-        "description": "能唤醒血脉力量的远古秘药，使精灵获得地系血脉。 “一段失落的秘密将被重拾。”",
+        "description": "修改血脉的秘药，使精灵获得“奇异血脉”。",
         "rounds": [
-          1
+          2
         ]
       },
       {
-        "name": "魔力果",
-        "price": "6000",
-        "priceRaw": "6000",
-        "limit": "20",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
-        "category": "精灵喂养材料",
-        "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+        "name": "水系粉尘",
+        "price": "500",
+        "priceRaw": "500",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c7/4fxef31uslze9psd9375td9zbqtbllv.png/100px-100123.png",
+        "category": "炼金材料",
+        "description": "常见的炼金材料，蕴含少量水系魔法，是合成技能石的主要触媒。",
         "rounds": [
-          1
+          2
         ]
       }
     ],
-    "2": [],
     "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 1,
+  "expectedRound": 2,
   "lastFetchError": "",
   "live": true
 }
