@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="王者荣耀英雄区榜、市榜、省榜及国标最低战力查询">
+  <title>王者战力 · 最低上榜战力查询</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="王者战力查询首页">
+        <span class="brand-mark">W</span>
+        <span>王者战力 <b>查询</b></span>
+      </a>
+      <div class="live-status"><i></i> 数据实时同步</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow"><span>01</span> RANKING INTELLIGENCE</div>
+        <h1>找到你的<br><em>上榜分数线</em></h1>
+        <p class="hero-copy">输入英雄名称，查看全国各省、市、区的最低上榜战力。<br>数据来自公开接口，仅供上分参考。</p>
+      </section>
+
+      <section class="search-panel" aria-label="查询条件">
+        <div class="field-group">
+          <label for="hero-name">英雄名称</label>
+          <div class="hero-input">
+            <span class="search-icon" aria-hidden="true"></span>
+            <input id="hero-name" type="text" value="孙悟空" maxlength="20" placeholder="例如：孙悟空" autocomplete="off">
+            <button id="clear-button" class="clear-button" type="button" aria-label="清空英雄名称">×</button>
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="platform">游戏平台</label>
+          <select id="platform">
+            <option value="1">安卓 · QQ</option>
+            <option value="2" selected>安卓 · 微信</option>
+            <option value="3">苹果 · QQ</option>
+            <option value="4">苹果 · 微信</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="area-type">榜单级别</label>
+          <select id="area-type">
+            <option value="1" selected>省榜</option>
+            <option value="2">市榜</option>
+            <option value="3">区榜</option>
+          </select>
+        </div>
+        <button id="search-button" class="search-button" type="button">
+          <span>开始查询</span><strong>↗</strong>
+        </button>
+      </section>
+
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+
+      <section id="results-section" class="results-section" aria-live="polite">
+        <div class="results-heading">
+          <div>
+            <div class="eyebrow"><span>02</span> CURRENT SNAPSHOT</div>
+            <h2><span id="result-hero">孙悟空</span> · <span id="result-level">省榜</span>排名</h2>
+          </div>
+          <div class="updated">更新于 <time id="updated-time">等待查询</time></div>
+        </div>
+
+        <div class="result-layout">
+          <article class="featured-card">
+            <div class="featured-top">
+              <span class="pill">全国省榜最低</span>
+              <span id="featured-platform">安卓微信</span>
+            </div>
+            <div class="featured-content">
+              <div class="portrait-wrap">
+                <img id="hero-portrait" alt="英雄头像" src="https://game.gtimg.cn/images/yxzj/img201606/heroimg/167/167.jpg">
+              </div>
+              <div>
+                <p class="muted">最低上榜省份</p>
+                <h3 id="featured-region">—</h3>
+                <div class="featured-score"><span id="featured-score">—</span><small> 战力</small></div>
+              </div>
+            </div>
+            <div class="featured-foot"><span>省榜 TOP 1 分数线</span><span>↗</span></div>
+          </article>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <div class="card-label"><span class="dot blue"></span> 最低市榜</div>
+              <div class="stat-value" id="city-score">—</div>
+              <div class="stat-place" id="city-region">等待数据</div>
+              <div class="card-arrow">↗</div>
+            </article>
+            <article class="stat-card">
+              <div class="card-label"><span class="dot orange"></span> 最低区榜</div>
+              <div class="stat-value" id="district-score">—</div>
+              <div class="stat-place" id="district-region">等待数据</div>
+              <div class="card-arrow">↗</div>
+            </article>
+            <article class="stat-card national-card">
+              <div class="card-label"><span class="dot violet"></span> 国标参考</div>
+              <div class="stat-value" id="national-score">—</div>
+              <div class="stat-place" id="national-region">接口暂不提供国标榜单</div>
+              <div class="card-arrow">↗</div>
+            </article>
+          </div>
+        </div>
+
+        <div class="table-heading">
+          <h2><span id="table-level">省榜</span>分数线分布</h2>
+          <span id="result-count">—</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>排名</th><th>地区</th><th>最低战力</th><th>更新时间</th></tr></thead>
+            <tbody id="ranking-body">
+              <tr><td colspan="4" class="empty-row">填写英雄并点击查询，查看最新榜单</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer><span>© 2026 王者战力查询</span><span>接口由 <a href="https://api.aa1.cn/doc/new.html?id=3148" target="_blank" rel="noreferrer">AA1 API</a> 提供</span></footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
