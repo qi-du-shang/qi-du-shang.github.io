@@ -1,0 +1,4382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洛克王国世界 - RoCom API名片</title>
+    <style>
+        @font-face {
+            font-family: "MianFeiFont";
+            src: url("./fonts/MIANFEIZITI.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: url('./icon.cur'), auto;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: #154b86;
+            background-image: radial-gradient(#2372b8 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: "MianFeiFont", sans-serif;
+        }
+        .input-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: #fff;
+            padding: 12px 16px;
+            border-radius: 99px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+        }
+        .input-bar input {
+            border: none;
+            outline: none;
+            font-size: 18px;
+            width: 160px;
+        }
+        .input-bar button {
+            border: none;
+            background: #7048b8;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 99px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .loading-tip {
+            color: #fff;
+            font-size: 16px;
+        }
+        .error-tip {
+            color: #ff7875;
+        }
+        /* ========== 底层纸板容器（固定尺寸，11.png背景，不会随卡片缩放） ========== */
+        .card-wrapper {
+            width: 920px;
+            height: 521px;
+            background: url("./11.png") no-repeat center;
+            background-size: 100% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        /* 白色翻面卡片容器，自由调整宽高不影响底层纸板 */
+        .lkw-card-wrap {
+            width: 707px;
+            height: 487px;
+            perspective: 1200px;
+            display: none;
+            position: relative;
+            margin: 0;
+            margin-top: 15px;
+            margin-left: 0px;
+        }
+        .lkw-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 1);
+        }
+        .lkw-card.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            border: 4px solid #d6b88f;
+        }
+        /* =========正面布局重新比例校准========= */
+        .card-front {
+            background: #f8f3e8;
+        }
+        /* 头部固定高度100px，适配520总高 */
+        .card-header-front {
+            height: 40px;
+            background: url("./8.png") no-repeat;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            padding: 0 22px;
+            gap: 14px;
+            position: relative;
+        }
+        .back-groud {
+            height: 127px;
+            width: 110%;
+            background: url("./15.png") no-repeat;
+            background-position: -17px -20px;
+            /* 图片位置：靠上居中 */
+            background-size: cover;
+        }
+        .card-header-back {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 22px;
+            gap: 14px;
+            position: relative;
+        }
+        .avatar-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #000;
+            margin-top: 78px;
+            margin-left: 20px;
+        }
+        .avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-left: 17px;
+            flex-shrink: 0;
+            margin-top: 137px;
+            gap: 8px;
+        }
+        .user-info #playerName {
+            font-size: 32px;
+            width: 100px;
+            display: flex;
+            align-items: center;
+            margin-top: -37px;
+            color: rgba(41, 36, 31, 1);
+        }
+        .user-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 3px;
+            flex-wrap: wrap;
+        }
+        .rank-badge {
+            background: #7048b8;
+            color: #fff;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 14px;
+        }
+        .rank-badge span {
+            background: #fff;
+            color: #3b2b4f;
+            padding: 0 5px;
+            border-radius: 4px;
+            margin-left: 3px;
+        }
+        .tag-badge {
+            background: #cbb8a0;
+            color: #222;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .sign-text {
+            color: rgba(155, 149, 137, 1);
+            font-size: 14px;
+            width: 100%;
+            margin-top: 27px;
+            margin-left: -108px;
+        }
+        .uid-show-wrap {
+            display: flex;
+            align-items: center;
+            margin-left: 167px;
+            flex-shrink: 0;
+            margin-top: 157px;
+            gap: 8px;
+        }
+        .uid-show {
+            font-size: 22px;
+            color: rgba(41, 36, 31, 1);
+        }
+        .uid-copy-icon {
+            width: 70px;
+            height: 70px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-left: -10px;
+        }
+        .state-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .state-tag {
+            color: #fff;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .state-tag.online {
+            background: #36c668;
+        }
+        .state-tag.offline {
+            background: #999;
+        }
+        .state-tag.no-friend {
+            background: #666;
+        }
+        .state-tag.black {
+            background: #f54242;
+        }
+        /* 预览大图区域重新计算高度：总高520 - 头部100 - 底部留白 = 260px */
+        .preview-area {
+            width: calc(100% - 44px);
+            height: 300px;
+            margin: 85px 22px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            background: #91c7e8;
+        }
+        .preview-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /*星光动画*/
+        @keyframes sparkle {
+            0%,
+            100% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .spark {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: sparkle 2.2s infinite ease-in-out;
+        }
+        .spark.s1 {
+            top: 50px;
+            left: 30px;
+            animation-delay: 0s
+        }
+        .spark.s2 {
+            top: 100px;
+            left: 240px;
+            animation-delay: 0.4s
+        }
+        .spark.s3 {
+            top: 30px;
+            left: 420px;
+            animation-delay: 0.8s
+        }
+        .spark.s4 {
+            top: 80px;
+            left: 640px;
+            animation-delay: 1.2s
+        }
+        .stamp-mark {
+            position: absolute;
+            bottom: -10px;
+            left: 5px;
+            width: 30%;
+            height: 27%;
+            background-image: url("./2.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .stamp-mark svg {
+            display: none;
+        }
+        /* 实名标识 移入card-wrapper内部，不会飘出卡片 */
+        .real-name-tag {
+            position: absolute;
+            left: 100px;
+            bottom: -60px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: rgba(236, 243, 245, 1);
+        }
+        .real-name-tag img {
+            width: 88px;
+            height: 88px;
+            object-fit: contain;
+        }
+        .bottom-quick {
+            position: absolute;
+            bottom: 5px;
+            right: 22px;
+            display: flex;
+            gap: 12px;
+        }
+        .quick-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: rgba(145, 139, 127, 1);
+            font-size: 12px;
+        }
+        .quick-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .quick-icon.share-icon {
+            background-image: url('./3.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .quick-icon.edit-icon {
+            background-image: url('./4.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        /* =========背面比例修复========= */
+        .card-back {
+            background: #fcf4ec;
+            transform: rotateY(180deg);
+            padding: 0;
+            height: 100%;
+        }
+        /* 限制背面滚动区域最大高度，防止溢出卡片 */
+        .card-back>div {
+            max-height: calc(100% - 10px);
+        }
+        .back-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: -77px;
+            position: relative;
+        }
+        .back-title {
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 5px;
+            width: 325px;
+            height: 77px;
+            background: url("./24.png") no-repeat;
+            background-size: contain;
+        }
+        /* ========== 修改后的tab切换拟态胶囊样式 ========== */
+        .tab-switch {
+            margin-left: auto;
+            display: flex;
+            background: #e9e3d9;
+            border-radius: 99px;
+            overflow: hidden;
+            position: absolute;
+            top: 26px;
+            right:22px;
+            z-index: 99;
+            padding: 4px;
+        }
+        /* 滑动白色滑块（拟态凸起） */
+        .tab-slider-block {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 66px; /* 和tab-item固定宽度统一 */
+            height: calc(100% - 8px);
+            background: #f5ede2;
+            border-radius: 99px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            z-index: 1;
+        }
+        .tab-item {
+            padding: 3px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            z-index: 2;
+            background: transparent;
+            border: none;
+            width: 66px; /* 新增，两个tab宽度完全一致 */
+    justify-content: center;
+        }
+        .tab-item .tab-icon {
+            width: 23px;
+            height: 23px;
+            object-fit: contain;
+        }
+        /* 固定高度容器，解决高度坍塌，不遮挡tab按钮 */
+        .tab-container {
+            position: relative;
+            height: 220px;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .tab-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .tab-panel.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        /*宠物网格6列，单元格尺寸缩小适配卡片宽度 */
+        .pet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+        .pet-item {
+            text-align: center;
+        }
+        .pet-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 2px solid #cbb8a0;
+            overflow: hidden;
+            background: #fff;
+            margin: 0 auto 3px;
+        }
+        .pet-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .pet-desc {
+            font-size: 11px;
+            color: #555;
+            line-height: 1.2;
+        }
+        /* 宠物占位（未解锁位置） */
+        .pet-avatar-empty {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #e8e2d8;
+            margin: 0 auto 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .pet-avatar-empty svg {
+            width: 36px;
+            height: 36px;
+            fill: #c8c0b4;
+        }
+        /*装扮面板*/
+        .fashion-title {
+            font-size: 16px;
+            color: #3b2b4f;
+            margin: 10px 0 6px;
+        }
+        .fashion-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+            background: url("./36.png") no-repeat;
+            background-size: contain;
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: 60px;
+            left: 40px;
+        }
+        .fashion-badge{
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+            background: url("./40.png") no-repeat;
+            background-size: contain;
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -57px;
+            left: 143px;
+        }
+                .fashion-badge1{
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+            background: url("./40.png") no-repeat;
+            background-size: contain;
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -170px;
+            left: 246px;
+        }
+                .fashion-badge2{
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+            background: url("./40.png") no-repeat;
+            background-size: contain;
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -282px;
+            left: 349px;
+        }
+                .fashion-badge3{
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+            background: url("./40.png") no-repeat;
+            background-size: contain;
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -393px;
+            left: 452px;
+        }
+                .fashion-badge4{
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+            background: url("./40.png") no-repeat;
+            background-size: contain;
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -503px;
+            left: 555px;
+        }
+        .fashion-item {
+            background: #e9e3d9;
+            padding: 4px 3px;
+            border-radius: 5px;
+            font-size: 11px;
+            text-align: center;
+        }
+        .salon-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .salon-item {
+            background: #e2d9cc;
+            padding: 4px;
+            border-radius: 5px;
+            font-size: 11px;
+            text-align: center;
+        }
+        .card-img-group {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0 16px;
+        }
+        .card-img-box {
+            width: 110px;
+            height: 64px;
+            border: 2px solid #cbb8a0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .card-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-img-desc {
+            font-size: 11px;
+            color: #555;
+            text-align: center;
+            margin-top: 3px;
+        }
+        .stat-title {
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom:-25px;
+            margin-top: -67px;
+            width: 325px;
+            height: 77px;
+            background: url("./24.png") no-repeat;
+            background-size: contain;
+        }
+        .stat-row {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            color: #444;
+        }
+        .stat-num {
+            font-weight: bold;
+            font-size: 24px;
+            color: #222;
+        }
+        .extra-stat {
+            font-size: 14px;
+            color: #555;
+            margin-top: 90px;
+        }
+        /* 翻面按钮定位修正，不挤压卡片 */
+        .flip-btn {
+            position: absolute;
+            right: -125px;
+            top: 82%;
+            transform: translateY(-50%);
+            width: 115px;
+            height: 115px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .flip-btn:hover {
+            transform: translateY(-50%) scale(1.06);
+        }
+        .flip-btn .arrow {
+            width: 100%;
+            height: 100%;
+            background-image: url("./1.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            clip-path: none;
+        }
+        .flip-txt {
+            position: absolute;
+            right: -70px;
+            top: calc(50% + 185px);
+            font-size: 13px;
+            color: #fff;
+            white-space: nowrap;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px -1px 0 #000, 0px 1px 0 #000, -1px 0px 0 #000, 1px 0px 0 #000, 0 0 2px rgba(0, 0, 0, 0.7);
+        }
+        .card-download-actions {
+            position: absolute;
+            right: -125px;
+            top: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 5;
+        }
+        .card-download-btn {
+            width: 58px;
+            height: 58px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        .card-download-btn:hover:not(:disabled) {
+            transform: scale(1.06);
+        }
+        .card-download-btn:disabled {
+            cursor: wait;
+            opacity: 0.5;
+        }
+        .card-download-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .card-download-label {
+            color: #fff;
+            font-size: 13px;
+            white-space: nowrap;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,
+                -1px 1px 0 #000, 1px 1px 0 #000, 0 0 2px rgba(0, 0, 0, 0.7);
+        }
+        .avatar-frame {
+            position: absolute;
+            left: -10px;
+            top: 57px;
+        }
+        .avatar-frame img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+        }
+        .huizang {
+            position: absolute;
+            width: 88px;
+            height: 88px;
+            right: 7px;
+            top: -5px;
+        }
+        .huizang img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .game-text {
+            text-shadow:
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000,
+                0px -1px 0 #000,
+                0px 1px 0 #000,
+                -1px 0px 0 #000,
+                1px 0px 0 #000,
+                0 0 2px rgba(0, 0, 0, 0.7);
+        }
+        .marktext {
+            position: absolute;
+            bottom: 45px;
+            left: 5%;
+            transform: translateX(-50%);
+            font-size: 25px;
+            color: #f8f3e8;
+            transform: rotate(8deg);
+        }
+        .sidebar img {
+            width: 100%;
+            height: 370px;
+            object-fit: contain;
+        }
+        .sidebar {
+            position: absolute;
+            right: 88px;
+            top: 77px;
+        }
+        .avatar-title {
+            position: absolute;
+            width: 100px;
+            top: 39px;
+            left: 55px;
+            font-size: 16px;
+            color: rgba(181, 162, 122, 1);
+        }
+        .avatar-level {
+            position: absolute;
+            width: 50px;
+            top: 37px;
+            left: 147px;
+            font-size: 16px;
+            color: #fff;
+        }
+        .back-title-text {
+            position: absolute;
+            top: 30px;
+            left: 105px;
+            font-size: 25px;
+            color: rgba(241, 239, 240, 1);
+                        text-shadow:
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000,
+                0px -1px 0 #000,
+                0px 1px 0 #000,
+                -1px 0px 0 #000,
+                1px 0px 0 #000,
+                0 0 2px rgba(0, 0, 0, 0.7);
+        }
+        .stat-title-text {
+            position: absolute;
+            top:318px;
+            left: 105px;
+            font-size: 25px;
+            color: rgba(241, 239, 240, 1);
+                        text-shadow:
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000,
+                0px -1px 0 #000,
+                0px 1px 0 #000,
+                -1px 0px 0 #000,
+                1px 0px 0 #000,
+                0 0 2px rgba(0, 0, 0, 0.7);
+        }
+        /*==== 修复滚动模块 start ====*/
+        .scroll-box{
+            width: calc(100% - 70px);
+            margin:0 auto;
+            height:90px;
+            overflow-x: auto;
+            overflow-y:hidden;
+            scroll-behavior: smooth;
+            white-space: nowrap;
+            position:relative;
+        }
+        .scroll-box::-webkit-scrollbar{
+            display: none;
+        }
+        .scroll-wrap{
+            display:flex;
+            width:200%;
+            height:100%;
+            align-items:center;
+        }
+        .scroll-page{
+            width:50%;
+            display:flex;
+            gap:40px;
+            align-items:center;
+        }
+        .studytime{
+            width: 70px;
+            height: 50px;
+            background: url("./25.png") no-repeat;
+            background-size: cover;
+            flex-shrink:0;
+        }
+        .keti{
+            width: 70px;
+            height: 50px;
+            background: url("./28.png") no-repeat;
+            background-size: contain;
+            flex-shrink:0;
+        }
+        .timestudy{
+            flex-shrink:0;
+            position: relative;
+            left: -35px;
+        }
+        .tike{
+            flex-shrink:0;
+            position: relative;
+            left: -50px;
+        }
+        .huinum{
+            width: 90px;
+            height: 70px;
+            background: url("./26.png") no-repeat;
+            background-size: contain;
+            flex-shrink:0;
+            position: relative;
+            left: -35px;
+        }
+        .yise{
+            width: 70px;
+            height: 50px;
+            background: url("./29.png") no-repeat;
+            background-size: contain;
+            flex-shrink:0;
+            position: relative;
+            left: -45px;
+        }
+        .numhui{
+            flex-shrink:0;
+            position: relative;
+            left: -90px;
+        }
+        .seyi{
+            flex-shrink:0;
+            position: relative;
+            left: -90px;
+        }
+        .tujian{
+            width: 62px;
+            height: 62px;
+            background: url("./27.png") no-repeat;
+            background-size: contain;
+            flex-shrink:0;
+            position: relative;
+            left: -90px;
+        }
+        .xuancai{
+            width: 70px;
+            height: 50px;
+            background: url("./30.png") no-repeat;
+            background-size: contain;
+            flex-shrink:0;
+            position: relative;
+            left: -90px;
+        }
+        .jiantu{
+            flex-shrink:0;
+            position: relative;
+            left: -120px;
+        }
+        .caixuan{
+            flex-shrink:0;
+            position: relative;
+            left: -137px;
+        }
+        /*箭头修复：相对滚动容器定位，提高z-index，不再超大top负值*/
+        .arrow-container{
+            position:relative;
+            width:100%;
+        }
+        .goright{
+            width: 30px;
+            height: 30px;
+            background: url("./37.png") no-repeat;
+            background-size: contain;
+            position:absolute;
+            right:8px;
+            top:30px;
+            cursor: pointer;
+            z-index:20;
+        }
+        .goleft{
+            width: 30px;
+            height: 30px;
+            background: url("./38.png") no-repeat;
+            background-size: contain;
+            position:absolute;
+            left:8px;
+            top:30px;
+            cursor: pointer;
+            z-index:20;
+            display: none;
+        }
+        /*==== 修复滚动模块 end ====*/
+        .bottom-quick {
+            position: absolute;
+            bottom: 5px;
+            right: 22px;
+            display: flex;
+            gap: 12px;
+        }
+             .badge-wrap {
+            width: 90px;
+            height: 90px;
+            position: relative;
+            top: 17px;
+            left: 20px;
+        }
+                     .badge-wrap1 {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -70px;
+            left: 120px;
+            background: url("./44.png") no-repeat;
+            background-size: contain;
+        }
+                     .badge-wrap2 {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -170px;
+            left: 220px;
+            background: url("./44.png") no-repeat;
+            background-size: contain;
+        }
+                     .badge-wrap3 {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -270px;
+            left: 320px;
+            background: url("./44.png") no-repeat;
+            background-size: contain;
+        }
+                     .badge-wrap4 {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -370px;
+            left: 420px;
+            background: url("./44.png") no-repeat;
+            background-size: contain;
+        }
+                     .badge-wrap5 {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            top: -470px;
+            left: 520px;
+            background: url("./44.png") no-repeat;
+            background-size: contain;
+        }
+        .badge {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #ffffff;
+            /* 贴纸右下柔和阴影，还原原图效果 */
+            box-shadow: 0px 6px 10px 2px rgba(0, 0, 0, 0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .badge-inner {
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            /* ✅ 图片居中关键 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            /* 超出圆形部分裁掉 */
+        }
+        .badge-inner img {
+            /* 控制图标大小，根据你的图标微调这个值 */
+            width: 120px;
+            height: auto;
+            object-fit: contain;
+        }
+        /* 复制成功卡片内提示 */
+.copy-tip {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    padding: 6px 30px;
+    border-radius: 999px;
+    font-size: 16px;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+.copy-tip.show {
+    opacity: 1;
+    visibility: visible;
+}
+/* 正反面头部已加position:relative，无需额外修改 */
+        /* ========== 宠物装扮模块左右滚动 ========== */
+        .pet-scroll-area {
+            position: relative;
+            width: 100%;
+            top: 30px;
+        }
+        .pet-scroll-box {
+            width: calc(100% - 70px);
+            margin: 0 auto;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            min-height: 100px;
+            height: 120px;
+        }
+        .pet-scroll-box::-webkit-scrollbar {
+            display: none;
+        }
+        .pet-scroll-track {
+            display: flex;
+            width: 300%;
+            min-height: 100px;
+            height: 100%;
+        }
+        .pet-scroll-page {
+            width: 33.333%;
+            flex-shrink: 0;
+            min-height: 100px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .pet-scroll-page .pet-grid {
+            margin-bottom: 0;
+        }
+        .pet-arrow-left,
+        .pet-arrow-right {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            top: 60px;
+            cursor: pointer;
+            z-index: 30;
+            display: none !important;
+        }
+        .pet-arrow-left {
+            background: url("./38.png") no-repeat center;
+            background-size: contain;
+            left: 5px;
+            display: none;
+        }
+        .pet-arrow-right {
+            background: url("./37.png") no-repeat center;
+            background-size: contain;
+            right: 5px;
+            display: block;
+        }
+        .pet-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 37px;
+            margin-bottom: 18px;
+        }
+        .pet-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #c0b8a8;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .pet-dot.active {
+            background: #f5b84a;
+        }
+
+            /* ========== 洛克王国世界 名片分享预览界面 ========== */
+        .rocom-share-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 30, 35, 0.85);
+            display: none;
+            z-index: 99999;
+            overflow: hidden;
+            font-family: "MianFeiFont", sans-serif;
+        }
+        .rocom-share-mask.show {
+            display: block;
+        }
+        /* 左上角标题 */
+        .rocom-share-header {
+            position: absolute;
+            top: 24px;
+            left: 32px;
+            z-index: 10;
+        }
+        .rocom-share-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .rocom-share-title-icon {
+            width: 170px;
+            height: 50px;
+        }
+        .rocom-share-title-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .rocom-share-title-main {
+            font-size: 22px;
+            font-weight: bold;
+            color: #f5b84a;
+        }
+        .rocom-share-title-sub {
+            font-size: 18px;
+            color: #fff;
+            font-weight: bold;
+        }
+        /* 右上角关闭按钮 */
+        .rocom-share-close {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+        .rocom-share-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        .rocom-share-close svg {
+            width: 20px;
+            height: 20px;
+        }
+        /* 中间预览区域 */
+        .rocom-share-preview-area {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-45%, -41%);
+            width: 1000px;
+            height: 540px;
+        }
+        .ditu{
+            background: url("./47.png") no-repeat;
+            background-size: contain;
+            width: 790px;
+            height: 500px;
+            margin-top: 40px;
+            margin-left: 40px;
+        }
+        /* 名片主体 */
+        .rocom-share-card {
+            position: absolute;
+            top: 45px;
+            left: 70px;
+            width: 730px;
+            height: 350px;
+            background: linear-gradient(180deg, #fdf6e8 0%, #f8edd8 100%);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            padding: 0;
+            overflow: hidden;
+        }
+        /* 名片内容区域（头部以下） */
+        .rocom-share-card .rocom-share-section {
+            padding: 0 20px;
+        }
+        /* 名片头部（带15.png横幅背景） */
+        .rocom-share-card-header {
+            position: relative;
+            height: 82px;
+            margin-bottom: 10px;
+            overflow: visible;
+        }
+        .rocom-share-header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 82px;
+            background: url("./15.png") no-repeat center/cover;
+            z-index: 0;
+        }
+        .rocom-share-avatar-box {
+            position: relative;
+            z-index: 2;
+            float: left;
+            margin-left: 10px;
+            margin-top: 6px;
+        }
+        .rocom-share-avatar-frame {
+            position: relative;
+            width: 76px;
+            height: 76px;
+            background: url("./14.png") no-repeat center/contain;
+        }
+        .rocom-share-avatar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            background: #4a90d9 url("./33620277.png") center/cover;
+            overflow: hidden;
+        }
+        .rocom-share-avatar-title {
+            position: absolute;
+            bottom: 6px;
+            left: 26px;
+            font-size: 9px;
+            color: #b5a27a;
+            white-space: nowrap;
+            z-index: 3;
+        }
+        .rocom-share-avatar-level {
+            position: absolute;
+            bottom: 6px;
+            right: 12px;
+            font-size: 11px;
+            color: #fff;
+            font-weight: bold;
+            z-index: 3;
+        }
+        .rocom-share-card-info {
+            position: relative;
+            z-index: 2;
+            float: left;
+            margin-left: 10px;
+            margin-top: 30px;
+        }
+        .rocom-share-card-name {
+            font-size: 19px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 1px;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+        .rocom-share-card-uid {
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 2px;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+        .rocom-share-card-sign {
+            font-size: 11px;
+            color: #fff;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+        /* 分区 */
+        .rocom-share-section {
+            margin-bottom: 10px;
+        }
+        .rocom-share-section-title {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            background: url("./24.png") no-repeat;
+            background-size: contain;
+            padding: 3px 12px 3px 6px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            width: 170px;
+            height: 35px;
+            position: relative;
+            left: -20px;
+        }
+        .rocom-share-section-star {
+            width: 18px;
+            height: 18px;
+        }
+        .rocom-share-pet-filter {
+            position: absolute;
+    right: -120px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #222222;  /*黑色底色*/
+    color: #e6e6e6; /*浅灰白文字*/
+    font-size: 11px;
+    /* 修改padding，胶囊按钮上下要留足空间 */
+    padding: 6px 16px;
+    border-radius: 999px; /* 胶囊圆角核心 */
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    gap:10px; /*文字和三角之间间距*/
+        }
+        .rocom-share-pet-filter::after{
+            content: '';
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top:7px solid #e6e6e6;
+        }
+        /* 收藏筛选下拉按钮 */
+        .rocom-share-pet-filter {
+            cursor: pointer;
+            user-select: none;
+        }
+        /* 下拉列表 */
+        .rocom-share-filter-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 6px;
+            background: #1e1e1e;
+            border-radius: 8px;
+            min-width: 110px;
+            padding: 6px 0;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .rocom-share-filter-dropdown.show {
+            display: block;
+        }
+        .rocom-share-filter-option {
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .rocom-share-filter-option:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .rocom-share-filter-option.active {
+            color: #f5b84a;
+        }
+        .rocom-share-filter-option + .rocom-share-filter-option {
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* 统计网格 */
+        .rocom-share-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px 12px;
+        }
+        .rocom-share-stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .rocom-share-stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .rocom-share-stat-icon svg {
+            width: 17px;
+            height: 17px;
+        }
+        .rocom-stat-school { 
+            background:url("./25.png") no-repeat;
+            background-size: contain; 
+        }
+        .rocom-stat-fashion { 
+            background: url("./46.png") no-repeat;
+            background-size: contain; 
+        }
+        .rocom-stat-badge { 
+            background: url("./26.png") no-repeat; 
+            background-size: contain;
+        }
+        .rocom-stat-book { 
+            background: url("./27.png") no-repeat; 
+            background-size: contain;
+         }
+        .rocom-stat-shining { 
+            background: url("./29.png") no-repeat; 
+            background-size: contain;
+        }
+        .rocom-stat-glass { 
+            background: url("./30.png") no-repeat;
+            background-size: contain; 
+        }
+        .rocom-share-stat-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .rocom-share-stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 1px;
+        }
+        .rocom-share-stat-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        .rocom-share-stat-percent {
+            display: inline-block;
+            background: #f5b84a;
+            color: #000;
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: 3px;
+            font-weight: normal;
+        }
+        /* 宠物行 */
+        .rocom-share-pets-row {
+            display: flex;
+            gap: 12px;
+            padding-left: 4px;
+            margin-top: 4px;
+        }
+        .rocom-share-pet-item {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            overflow: hidden;
+            background: #e8e2d8;
+            flex-shrink: 0;
+        }
+        .rocom-share-pet-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* 右侧倾斜照片 */
+        .rocom-share-photo {
+            position: absolute;
+            top: 45px;
+            right: 177px;
+            width: 275px;
+            height: 215px;
+            background: #fff;
+            padding: 8px 8px 38px 8px;
+            border-radius: 7px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            transform: rotate(2deg);
+            z-index: 5;
+        }
+        .rocom-share-photo-clip {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #ccc;
+            border-radius: 50%;
+            border: 2px solid #999;
+            z-index: 2;
+        }
+        .rocom-share-photo-inner {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 4px;
+            background: #87ceeb;
+        }
+        .rocom-share-photo-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .rocom-share-photo-lines {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .rocom-share-photo-line {
+            width: 80px;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+        }
+        .rocom-share-photo-line.short {
+            width: 50px;
+        }
+        .rocom-share-stamp {
+            position: absolute;
+            bottom: 30px;
+            right: 16px;
+            font-size: 13px;
+            color: #8b7355;
+            border: 2px solid #8b7355;
+            padding: 3px 8px;
+            border-radius: 50%;
+            transform: rotate(-8deg);
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+        /* 右下角二维码 */
+        .rocom-share-qrcode {
+            position: absolute;
+            bottom: 170px;
+            right: 180px;
+            width: 110px;
+            height: 120px;
+            /* background: linear-gradient(180deg, #f5b84a 0%, #f0a830 100%); */
+            background:url("./45.png") no-repeat;
+            background-size: contain;
+            /* border-radius: 6px; */
+            padding: 6px;
+            /* box-shadow: 0 4px 16px rgba(0,0,0,0.25); */
+            z-index: 6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .rocom-share-qrcode-pattern {
+            width: 72px;
+            height: 72px;
+            background: #fff;
+            border-radius: 3px;
+            background-image:
+                linear-gradient(45deg, #333 25%, transparent 25%),
+                linear-gradient(-45deg, #333 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #333 75%),
+                linear-gradient(-45deg, transparent 75%, #333 75%);
+            background-size: 10px 10px;
+            background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+            position: relative;
+        }
+        .rocom-share-qrcode-pattern::before,
+        .rocom-share-qrcode-pattern::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 4px solid #333;
+            background: #fff;
+        }
+        .rocom-share-qrcode-pattern::before {
+            top: 4px;
+            left: 4px;
+        }
+        .rocom-share-qrcode-pattern::after {
+            top: 4px;
+            right: 4px;
+        }
+        .rocom-share-qrcode-label {
+            margin-top: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #5a3a1a;
+            letter-spacing: 1px;
+        }
+        /* 底部按钮栏 */
+        .rocom-share-bottom-bar {
+            position: absolute;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 60px;
+            z-index: 10;
+        }
+        .rocom-share-bottom-left,
+        .rocom-share-bottom-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .rocom-share-circle-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: all 0.2s;
+        }
+        .rocom-share-circle-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        .rocom-share-circle-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        .rocom-share-qq-btn { color: #12b7f5; }
+        .rocom-share-zone-btn { color: #ffce00; }
+        /* 右下角UID */
+        .rocom-share-uid-corner {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            z-index: 10;
+        }
+        /* 编辑弹出菜单 */
+        .rocom-edit-menu {
+            position: absolute;
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 6px 0;
+            min-width: 120px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            left: 0px; 
+            top: 0px;
+        }
+        .rocom-edit-menu.show {
+            display: block;
+        }
+        .rocom-edit-menu-item {
+            padding: 10px 20px;
+            color: #aaa59a;
+            font-size: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+        .rocom-edit-menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        /* .rocom-edit-menu-item + .rocom-edit-menu-item {
+            border-top: 1px solid rgba(255,255,255,0.1);
+        } */
+        /* 菜单小三角 */
+        /* .rocom-edit-menu::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #1e1e1e;
+        } */
+         .rocom-share-section-label{
+            position: relative;
+            left: 35px;
+            top: 2px;
+         }
+         .ssder{
+            position: relative;
+            top: 42px;
+            left: -15px;
+            width: 100px;
+            height: 35px;
+            background: url("./14.png") no-repeat;
+            background-size: contain;
+         }
+    
+        /* ========== 编辑功能界面 ========== */
+        .rocom-edit-mask {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            display: none;
+            overflow: hidden;
+        }
+        .rocom-edit-mask.show { display: block; }
+        .rocom-edit-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        /* 左上角标题 */
+        .rocom-edit-title {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: url(./53.png) no-repeat;
+    background-size: contain;
+    width: 217px;
+    height: 55px;
+    padding: 8px 20px 8px 12px;
+    border-radius: 30px;
+    z-index: 10;
+        }
+        .rocom-edit-title-icon {
+            width: 36px; height: 36px;
+            background: #f5b84a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .rocom-edit-title-text {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.3;
+    position: relative;
+    left: 97px;
+        }
+        .rocom-edit-title-text small {
+            display: block;
+            font-size: 13px;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+        /* 右上角关闭按钮 */
+        .rocom-edit-close {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            width: 44px; height: 44px;
+            background: rgba(30,30,30,0.85);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            color: #fff;
+            font-size: 24px;
+            transition: background 0.2s;
+        }
+        .rocom-edit-close:hover { background: rgba(50,50,50,0.95); }
+        /* 右下角UID */
+        .rocom-edit-uid {
+            position: absolute;
+            bottom: 15px;
+            right: 30px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            z-index: 10;
+        }
+        /* 右侧操作按钮 */
+        .rocom-edit-actions {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+        }
+        .rocom-edit-action-btn {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-size: 22px;
+        }
+        .rocom-edit-action-btn:hover { transform: scale(1.1); }
+        .rocom-edit-action-btn.rotate {
+            background: rgba(30,30,30,0.7);
+            color: #fff;
+        }
+        .rocom-edit-action-btn.confirm {
+            /* background: #5cb85c; */
+            color: #fff;
+        }
+        /* ========== 修改信息模块 ========== */
+        .rocom-edit-info-panel {
+            position: absolute;
+            top: 0; right: 0;
+            width: 38%;
+            height: 100%;
+            background: rgba(30,30,30,0.92);
+            padding: 20px 40px 40px;
+            box-sizing: border-box;
+            z-index: 5;
+        }
+        .rocom-edit-info-panel-title {
+            color: #fff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        /* 头像选择 */
+        .rocom-edit-avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .rocom-edit-avatar-item {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            /* overflow: hidden; */
+            transition: border-color 0.2s, transform 0.2s;
+            position: relative;
+        }
+        .rocom-edit-avatar-item:hover { transform: scale(1.05); }
+        .rocom-edit-avatar-item.selected {
+            border-color: #f5b84a;
+        }
+        .rocom-edit-avatar-item.selected::after {
+    content: '';
+    position: absolute;
+    top: 2px; right: 2px;
+    width: 20px; height: 20px;
+    background: url('./69.png') no-repeat center/contain;
+        }
+        .rocom-edit-avatar-item img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        /* 称号选择 */
+        .rocom-edit-title-picker {
+            display: flex;
+            gap: 12px;
+            height: 240px;
+            position: relative;
+        }
+        /* 中间选中指示器 */
+        .rocom-edit-title-picker::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 48px;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        /* 上下渐变遮罩 */
+        .rocom-edit-title-picker::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(30,30,30,0.9) 0%, transparent 25%, transparent 75%, rgba(30,30,30,0.9) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .title-picker-col {
+            flex: 1;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            position: relative;
+            height: 100%;
+            z-index: 0;
+        }
+        .title-picker-col::-webkit-scrollbar {
+            display: none;
+        }
+        .title-picker-spacer {
+            height: 96px;
+        }
+        .title-picker-item {
+            height: 48px;
+            line-height: 48px;
+            text-align: center;
+            color: rgba(255,255,255,0.35);
+            font-size: 16px;
+            transition: color 0.15s;
+            position: relative;
+            cursor: pointer;
+        }
+        .title-picker-item.selected {
+            color: #fff;
+            font-weight: 500;
+        }
+        /* 第一栏箭头在左边指向右边 */
+        #titlePickerCol1 .title-picker-item.selected::before {
+            content: '▶';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: #fff;
+        }
+        /* 第二栏箭头在右边指向左边 */
+        #titlePickerCol2 .title-picker-item.selected::before {
+            content: '◀';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: #fff;
+        }
+        /* 绿色对勾：保存称号的标记，在称号右边，跟着item滚动 */
+        .title-picker-item .saved-check-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            /* font-size: 14px;
+            color: #5cb85c;
+            font-weight: bold; */
+            display: none;
+        }
+        .title-picker-item.is-saved .saved-check-icon {
+            display: block;
+        }
+        /* 输入框 */
+        .rocom-edit-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .rocom-edit-input:focus { border-color: #f5b84a; }
+        .rocom-edit-input::placeholder { color: rgba(255,255,255,0.4); }
+        textarea.rocom-edit-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+        /* 保存按钮 */
+        .rocom-edit-save-btn {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            right: 40px;
+            padding: 15px;
+            background: #f5e6c8;
+            color: #333;
+            border: none;
+            border-radius: 25px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .rocom-edit-save-btn:hover { background: #f0d9a8; }
+        .rocom-edit-save-btn:disabled {
+            background: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.4);
+            cursor: not-allowed;
+        }
+        /* 左侧导航 */
+        .rocom-edit-nav {
+            position: absolute;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+        }
+        .rocom-edit-nav-item {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: rgba(30,30,30,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: rgba(255,255,255,0.6);
+            font-size: 24px;
+            transition: all 0.2s;
+        }
+        .rocom-edit-nav-item:hover {
+            background: rgba(50,50,50,0.9);
+            color: #fff;
+        }
+        .rocom-edit-nav-item.active {
+            background: #fff;
+            color: #333;
+            transform: scale(1.1);
+        }
+        /* 中间角色+气泡 */
+        .rocom-edit-character {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            text-align: center;
+        }
+        .rocom-edit-bubble {
+            background: #fdf6e8;
+            padding: 20px 30px;
+            border-radius: 20px;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            min-width: 150px;
+            position: relative;
+        }
+        /* .rocom-edit-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 15px solid #fdf6e8;
+        } */
+        /* ========== 上传照片/编辑组件/背景更换 名片预览 ========== */
+        .rocom-edit-card-preview {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 655px;
+            height: 420px;
+            z-index: 3;
+        }
+        /* 编辑组件模块：名片预览往上移，给底部列表留出空间 */
+        #rocomEditComponentPreview {
+            top: 43%;
+            width: 760px;
+            pointer-events: auto;
+            perspective: 1200px;
+        }
+        #rocomEditComponentPreview .lkw-card-wrap {
+            display: block !important;
+            margin: 0 auto;
+        }
+        #rocomEditComponentPreview .card-front {
+            pointer-events: auto;
+        }
+        /* 隐藏克隆卡片的翻面按钮和文字 */
+#rocomEditComponentPreview .flip-btn,
+#rocomEditComponentPreview .flip-txt {
+    display: none !important;
+}
+
+        /* 裁剪框 */
+        .rocom-edit-crop-box {
+            position: absolute;
+            left: 50%;
+            top: 36%;
+            transform: translate(-50%, -50%);
+            width: 655px;
+            height: 300px;
+            border: 3px solid #fff;
+            border-radius: 12px;
+            z-index: 6;
+            pointer-events: none;
+        }
+        .rocom-edit-crop-grid {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+        }
+        .rocom-edit-crop-grid div {
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        /* 底部列表 */
+        .rocom-edit-bottom-list {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 130px;
+            background: rgba(30,30,30,0.9);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            gap: 15px;
+            overflow-x: auto;
+            z-index: 8;
+        }
+        .rocom-edit-bottom-item {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .rocom-edit-bottom-item:hover { transform: translateY(-5px); }
+        .rocom-edit-bottom-item.selected {
+            border-color: #f5b84a;
+            background: rgba(245,184,74,0.15);
+        }
+        /* .rocom-edit-bottom-item.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 5px; right: 5px;
+            width: 22px; height: 22px;
+            background: #5cb85c;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        } */
+        .rocom-edit-bottom-item img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .rocom-edit-bottom-item-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            font-size: 12px;
+            padding: 3px;
+            text-align: center;
+        }
+        /* 编辑组件减号按钮 */
+        .rocom-edit-component-remove {
+            position: absolute;
+            top: -5px; left: -5px;
+            width: 24px; height: 24px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 5;
+        }
+        .rocom-edit-component-remove:hover { background: #e74c3c; }
+</style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="input-bar">
+        <input type="text" id="uidInput" placeholder="输入玩家UID" value="8833235">
+        <button id="fetchBtn">加载名片</button>
+    </div>
+    <div class="loading-tip" id="tipBox"></div>
+    <!-- 底层纸板容器 -->
+    <div class="card-wrapper">
+        <!-- 实名标签移进纸板容器内 -->
+        <div class="real-name-tag">
+            <img src="./6.png" alt="实名图标">
+            <span class="game-text">已在本游戏实名</span>
+        </div>
+        <div class="sidebar">
+            <img src="./13.png" alt="">
+        </div>
+        <!-- 白色翻面卡片 -->
+        <div class="lkw-card-wrap" id="cardWrap">
+            <div class="lkw-card" id="card">
+                <!-- 正面 -->
+                <div class="card-face card-front">
+                    <div class="card-header-front">
+                        <div class="copy-tip copy-tip-front">复制成功</div>
+                        <div class="avatar-box">
+                            <img src="./33620277.png" id="avatarImg" alt="头像">
+                        </div>
+                        <div class="avatar-frame">
+                            <div class="avatar-title">精灵魔法师</div>
+                            <img src="./14.png" alt="头像框">
+                            <div class="avatar-level">66</div>
+                        </div>
+                        <div class="user-info">
+                            <div id="playerName">蛇瞳</div>
+                            <div class="sign-text" id="signText">这个人很神秘，什么也没有留下~</div>
+                        </div>
+                        <div class="huizang"><img src="./7.png" alt=""></div>
+                        <div class="uid-show-wrap">
+                            <div class="uid-show" id="uidShow">0000000</div>
+                            <div class="uid-copy-icon uid-copy-icon-front"><img src="./5.png" class="uid-copy-icon" alt="复制UID"></div>
+                        </div>
+                    </div>
+                    <div class="preview-area">
+                        <img id="previewImg" alt="名片大图">
+                        <!-- <div class="spark s1"></div>
+                        <div class="spark s2"></div>
+                        <div class="spark s3"></div>
+                        <div class="spark s4"></div> -->
+                    </div>
+                    <div class="stamp-mark">
+                        <svg viewBox="0 0 180 100">
+                            <circle cx="90" cy="50" r="42" fill="none" stroke="#665440" stroke-width="3" />
+                        </svg>
+                    </div>
+                    <div class="marktext">等等鸭大块头</div>
+                    <div class="bottom-quick">
+                        <div class="quick-item">
+                            <div class="quick-icon share-icon"></div><span>分享</span>
+                        </div>
+                        <div class="quick-item">
+                            <div class="quick-icon edit-icon"></div><span>编辑</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 背面 -->
+                <div class="card-face card-back">
+                    <div class="back-groud">
+                        <div class="card-header-back">
+                            <div class="copy-tip copy-tip-back">复制成功</div>
+                            <div class="avatar-box">
+                                <img src="./33620277.png" id="avatarImgBack" alt="头像">
+                            </div>
+                            <div class="avatar-frame">
+                                <div class="avatar-title">精灵魔法师</div>
+                                <img src="./14.png" alt="头像框">
+                                <div class="avatar-level">66</div>
+                            </div>
+                            <div class="user-info">
+                                <div id="playerName" style="color: rgba(250, 253, 248, 1);text-shadow:
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000,
+                0px -1px 0 #000,
+                0px 1px 0 #000,
+                -1px 0px 0 #000,
+                1px 0px 0 #000,
+                0 0 2px rgba(0, 0, 0, 0.7);">蛇瞳</div>
+                                <div class="sign-text" id="signText" style="color: rgba(218, 237, 242, 1);text-shadow:
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000,
+                0px -1px 0 #000,
+                0px 1px 0 #000,
+                -1px 0px 0 #000,
+                1px 0px 0 #000,
+                0 0 2px rgba(0, 0, 0, 0.7);">这个人很神秘，什么也没有留下~</div>
+                            </div>
+                            <div class="uid-show-wrap">
+                                <div class="uid-show" id="uidShowBack" style="color: rgba(250, 253, 248, 1);text-shadow:
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000,
+                0px -1px 0 #000,
+                0px 1px 0 #000,
+                -1px 0px 0 #000,
+                1px 0px 0 #000,
+                0 0 2px rgba(0, 0, 0, 0.7);">0000000</div>
+                                <div class="uid-copy-icon uid-copy-icon-back"><img src="./39.png" class="uid-copy-icon" alt="复制UID"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="back-header">
+                        <div class="back-title">
+                            <div class="back-title-text">我的收藏</div>
+                        </div>
+                        <!-- 改造后的tab切换HTML结构，新增滑块与图标容器 -->
+                        <div class="tab-switch">
+                            <div class="tab-slider-block"></div>
+                            <div class="tab-item active" data-tab="pet" data-icon-brown="./33.png" data-icon-black="./32.png">
+                                <img class="tab-icon" src="./32.png" alt="宠物图标">
+                            </div>
+                            <div class="tab-item" data-tab="fashion" data-icon-brown="./35.png" data-icon-black="./34.png">
+                                <img class="tab-icon" src="./34.png" alt="装扮图标">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 固定高度tab容器 -->
+                    <div class="tab-container">
+                        <!-- 宠物面板 -->
+                        <div class="tab-panel active" id="petPanel">
+                            <div class="pet-scroll-area">
+                                <div class="pet-arrow-left" id="petArrowLeft"></div>
+                                <div class="pet-arrow-right" id="petArrowRight"></div>
+                                <div class="pet-scroll-box" id="petScrollBox">
+                                    <div class="pet-scroll-track" id="petScrollTrack">
+                                        <div class="pet-scroll-page">
+                                            <div class="pet-grid" id="petGrid"></div>
+                                            <div class="badge-wrap">
+                                                <div class="badge">
+                                                    <div class="badge-inner">
+                                                        <img src="./31.png" alt="icon">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="badge-wrap1"></div>
+                                            <div class="badge-wrap2"></div>
+                                            <div class="badge-wrap3"></div>
+                                            <div class="badge-wrap4"></div>
+                                            <div class="badge-wrap5"></div>
+                                        </div>
+                                        <div class="pet-scroll-page">
+                                            <div class="pet-grid"></div>
+                                        </div>
+                                        <div class="pet-scroll-page">
+                                            <div class="pet-grid"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="pet-dots" id="petDots">
+                                <span class="pet-dot active"></span>
+                                <span class="pet-dot"></span>
+                                <span class="pet-dot"></span>
+                            </div> -->
+                        </div>
+                        <!-- 装扮面板 -->
+                        <div class="tab-panel" id="fashionPanel">
+                            <div class="fashion-grid" id="fashionGrid">
+                            </div>
+                            <div class="fashion-badge"></div>
+                            <div class="fashion-badge1"></div>
+                            <div class="fashion-badge2"></div>
+                            <div class="fashion-badge3"></div>
+                            <div class="fashion-badge4"></div>
+                        </div>
+                    </div>
+                    <div class="stat-title">
+                        <div class="stat-title-text">冒险记录</div>
+                    </div>
+                    <!-- 箭头容器包裹滚动盒子 -->
+                    <div class="arrow-container">
+                        <!-- 横向滚动容器 -->
+                        <div class="scroll-box" id="scrollMain">
+                            <div class="scroll-wrap">
+                                <!-- 第一页：初始展示（入学时间、华丽徽章、图鉴已填好） -->
+                                <div class="scroll-page page1">
+                                    <div class="studytime"></div>
+                                    <div class="timestudy"><p>入学时间</p><span id="regTime">--</span></div>
+                                    <div class="huinum"></div>
+                                    <div class="numhui"><p>华丽徽章数</p><span id="fashionBondNum">0</span></div>
+                                    <div class="tujian"></div>
+                                    <div class="jiantu"><p id="rankText">已收集图鉴</p><span id="handbookNum">0</span></div>
+                                </div>
+                                <!-- 第二页：滚动后显示，空白区域你自行填充 -->
+                                <div class="scroll-page page2">
+                                    <div class="keti"></div>
+                                    <div class="tike"><p>课题研究点</p><span id="topicPoint">0</span></div>
+                                    <div class="yise"></div>
+                                    <div class="seyi"><p>异色精灵数</p><span id="shiningNum">0</span></div>
+                                    <div class="xuancai"></div>
+                                    <div class="caixuan"><p>炫彩精灵数</p><span id="glassNum">0</span></div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 左右切换箭头 -->
+                        <div class="goleft" id="btnLeft"></div>
+                        <div class="goright" id="btnRight"></div>
+                    </div>
+                    <div class="bottom-quick">
+                        <div class="quick-item">
+                            <div class="quick-icon share-icon"></div><span>分享</span>
+                        </div>
+                        <div class="quick-item">
+                            <div class="quick-icon edit-icon"></div><span>编辑</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flip-btn" id="flipBtn">
+                <div class="arrow"></div>
+            </div>
+            <div class="flip-txt">翻面</div>
+            <div class="card-download-actions" aria-label="下载名片">
+                <button class="card-download-btn" id="downloadFrontBtn" type="button" title="下载正面名片">
+                    <img src="./56.png" alt="下载正面名片">
+                </button>
+                <div class="card-download-label">下载正面</div>
+                <button class="card-download-btn" id="downloadBackBtn" type="button" title="下载反面名片">
+                    <img src="./56.png" alt="下载反面名片">
+                </button>
+                <div class="card-download-label">下载反面</div>
+            </div>
+        </div>
+    </div>
+    <div class="extra-stat">展示羁绊ID：<span id="bondId">0</span></div>
+    <div class="user-tag">
+        
+        <span class="tag-badge">首标签ID:<span id="firstLabel">0</span></span>
+        <span class="tag-badge">尾标签ID:<span id="lastLabel">0</span></span>
+    </div>
+    <div class="state-row">
+        <span class="state-tag" id="onlineTag">离线</span>
+        <span class="state-tag" id="friendTag">非好友</span>
+        <span class="state-tag" id="blackTag">未拉黑</span>
+    </div>
+    <div class="fashion-title">全套穿戴装扮（7件）</div>
+    <div class="fashion-title">沙龙物品（6件）</div>
+    <div class="salon-grid" id="salonGrid"></div>
+    <div class="fashion-title">自定义名片历史</div>
+    <div class="card-img-group">
+        <div>
+            <div class="card-img-box"><img id="curCardImg" alt="当前名片"></div>
+            <div class="card-img-desc">当前名片</div>
+        </div>
+        <div>
+            <div class="card-img-box"><img id="lastCardImg" alt="上次名片"></div>
+            <div class="card-img-desc">上次名片</div>
+        </div>
+    </div>
+    <div class="extra-stat">今日名片修改次数：<span id="dailyChange">0</span> | 累计上传照片：<span id="uploadCount">0</span></div>
+    <script>
+        // 显示卡片内复制提示
+function showCopyTip(type) {
+    // type: front / back
+    let tipDom;
+    if(type === 'front') {
+        tipDom = document.querySelector('.copy-tip-front');
+    }else{
+        tipDom = document.querySelector('.copy-tip-back');
+    }
+    // 先清除动画
+    tipDom.classList.remove('show');
+    void tipDom.offsetWidth; // 强制重绘
+    tipDom.classList.add('show');
+    // 1.5秒自动消失
+    setTimeout(()=>{
+        tipDom.classList.remove('show');
+    },1500);
+}
+
+        // ===================== 配置区 =====================
+        const PET_ICON_PREFIX = "https://wegame.shallow.ink/api/v1/resources/rocom/pet/";
+        const AVATAR_PREFIX = "https://wegame.shallow.ink/api/v1/resources/rocom/avatar/";
+        // =========================================================
+        const card = document.getElementById('card');
+        const flipBtn = document.getElementById('flipBtn');
+        const downloadFrontBtn = document.getElementById('downloadFrontBtn');
+        const downloadBackBtn = document.getElementById('downloadBackBtn');
+        const flipSidebar = document.querySelector('.sidebar');
+        const fetchBtn = document.getElementById('fetchBtn');
+        const uidInput = document.getElementById('uidInput');
+        function syncEditUid(uid) {
+            document.querySelectorAll('.rocom-edit-uid').forEach(function(element) {
+                element.textContent = String(uid);
+            });
+        }
+        const cardWrap = document.getElementById('cardWrap');
+        const tipBox = document.getElementById('tipBox');
+        const tabItems = document.querySelectorAll('.tab-item');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+        const tabSlider = document.querySelector('.tab-slider-block');
+        // 新增：记录旋转角度，每次+180，全程向右旋转
+        let rotateDeg = 0;
+        // 翻面交互：翻转开始隐藏侧边条，翻转结束恢复显示
+        flipBtn.addEventListener('click', () => {
+            // 翻转开始 立即隐藏sidebar
+            flipSidebar.style.visibility = 'hidden';
+            rotateDeg += 180;
+            card.style.transform = `rotateY(${rotateDeg}deg)`;
+        });
+        // 监听卡片过渡完成事件，动画结束后显示sidebar
+        card.addEventListener('transitionend', function(e) {
+            // 只监听transform过渡，避免其他样式触发
+            if(e.propertyName === 'transform'){
+                flipSidebar.style.visibility = 'visible';
+            }
+        });
+
+        async function downloadCardFace(faceSelector, side, button) {
+            const face = document.querySelector(faceSelector);
+            if (!face) {
+                alert('未找到名片' + side + '面');
+                return;
+            }
+
+            button.disabled = true;
+            const exportHost = document.createElement('div');
+            exportHost.style.cssText = 'position:fixed;left:-10000px;top:0;z-index:-1;overflow:hidden;';
+            exportHost.style.width = face.offsetWidth + 'px';
+            exportHost.style.height = face.offsetHeight + 'px';
+            const faceClone = face.cloneNode(true);
+            faceClone.style.position = 'absolute';
+            faceClone.style.left = '0';
+            faceClone.style.top = '0';
+            faceClone.style.width = face.offsetWidth + 'px';
+            faceClone.style.height = face.offsetHeight + 'px';
+            faceClone.style.transform = 'none';
+            faceClone.style.backfaceVisibility = 'visible';
+            exportHost.appendChild(faceClone);
+            document.body.appendChild(exportHost);
+
+            try {
+                const canvas = await html2canvas(exportHost, {
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false
+                });
+                const uid = document.getElementById('uidShow').textContent.trim() || 'card';
+                const link = document.createElement('a');
+                link.download = '洛克王国世界名片_' + uid + '_' + side + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (err) {
+                console.error('名片' + side + '面截图失败:', err);
+                alert('下载名片' + side + '面失败，请重试或使用截图工具');
+            } finally {
+                exportHost.remove();
+                button.disabled = false;
+            }
+        }
+
+        downloadFrontBtn.addEventListener('click', function() {
+            downloadCardFace('.card-front', '正面', downloadFrontBtn);
+        });
+        downloadBackBtn.addEventListener('click', function() {
+            downloadCardFace('.card-back', '反面', downloadBackBtn);
+        });
+
+ 
+        //正面
+const frontBtn = document.querySelector('.uid-copy-icon-front');
+if(frontBtn){
+  frontBtn.onclick = null;
+  frontBtn.onclick = async () => {
+    const val = document.getElementById('uidShow').textContent.trim();
+    await navigator.clipboard.writeText(val);
+    showCopyTip('front');
+  }
+}
+
+//背面
+const backBtn = document.querySelector('.uid-copy-icon-back');
+if(backBtn){
+  backBtn.onclick = null;
+  backBtn.onclick = async () => {
+    const val = document.getElementById('uidShowBack').textContent.trim();
+    await navigator.clipboard.writeText(val);
+    showCopyTip('back');
+  }
+}
+
+
+
+        // 封装更新滑块位置函数
+        function updateSliderPos(activeTabEl) {
+            const wrapRect = document.querySelector('.tab-switch').getBoundingClientRect();
+            const tabRect = activeTabEl.getBoundingClientRect();
+            tabSlider.style.left = (tabRect.left - wrapRect.left + 4) + 'px';
+            tabSlider.style.width = tabRect.width + 'px';
+        }
+        // 背面标签切换（改造：切换图标src + 滑块动画）
+        tabItems.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.dataset.tab;
+                // 清除所有active
+                tabItems.forEach(item => {
+                    item.classList.remove('active');
+                    const iconImg = item.querySelector('.tab-icon');
+                    iconImg.src = item.dataset.iconBrown;
+                })
+                // 当前tab激活
+                tab.classList.add('active');
+                const curIcon = tab.querySelector('.tab-icon');
+                curIcon.src = tab.dataset.iconBlack;
+                updateSliderPos(tab);
+                tabPanels.forEach(p => p.classList.remove('active'));
+                document.getElementById(`${targetTab}Panel`).classList.add('active');
+            })
+        })
+        // window.addEventListener('load', () => {
+        //     const activeTab = document.querySelector('.tab-item.active');
+        //     if(activeTab) updateSliderPos(activeTab);
+        // })
+        window.addEventListener('resize', () => {
+            const activeTab = document.querySelector('.tab-item.active');
+            if(activeTab) updateSliderPos(activeTab);
+        })
+        // 平铺rows数据解析函数
+        function parseFlatRows(rows) {
+            const map = {};
+            rows.forEach(item => {
+                map[item.field] = item.value;
+            })
+            return map;
+        }
+        // 兼容两种格式：1774480328 或 "1774480328 (2026-03-26 07:12:08 CST)"
+        function getOnlyYMD(rawStr) {
+            if (!rawStr || rawStr === '' || rawStr === '0') return '--';
+            const str = String(rawStr);
+            const bracketMatch = str.match(/\((\d{4}-\d{2}-\d{2})/);
+            if (bracketMatch && bracketMatch[1]) {
+                return bracketMatch[1].replaceAll('-', '.');
+            }
+            const tsMatch = str.match(/^\d+/);
+            if (tsMatch) {
+                const ts = Number(tsMatch[0]);
+                if (!isNaN(ts)) {
+                    const date = new Date(ts * 1000);
+                    const y = date.getFullYear();
+                    const m = String(date.getMonth() + 1).padStart(2, '0');
+                    const d = String(date.getDate()).padStart(2, '0');
+                    return `${y}.${m}.${d}`;
+                }
+            }
+            const dateMatch = str.match(/(\d{4}-\d{2}-\d{2})/);
+            if (dateMatch) return dateMatch[1].replaceAll('-', '.');
+            return '--';
+        }
+        // 请求名片接口，POST请求
+        async function fetchPlayerCard(uid) {
+            tipBox.textContent = "正在请求RoCom名片接口...";
+            tipBox.className = "loading-tip";
+            cardWrap.style.display = "none";
+            syncEditUid(uid);
+            const payload = {
+                uid: Number(uid),
+                source: "friend",
+                wait_ms: 5000
+            };
+            try {
+                const res = await fetch("/api/fetch-card", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ uid: payload.uid })
+                });
+                const resJson = await res.json();
+                if (resJson.code !== 0) {
+                    throw new Error(`接口返回异常 code:${resJson.code}, msg:${resJson.message || "无提示"}`);
+                }
+                if (!resJson.data?.rows || !Array.isArray(resJson.data.rows)) {
+                    throw new Error("未获取到玩家名片数据，玩家未开启RoCom数据同步");
+                }
+                const fieldMap = parseFlatRows(resJson.data.rows);
+                const originData = resJson.data;
+                // ========== 正面渲染 ==========
+                const avatarId = fieldMap['player_card_brief_info.card_icon_selected'];
+                // document.getElementById('avatarImg').src = `${AVATAR_PREFIX}${avatarId}`;
+                // document.getElementById('avatarImgBack').src = `${AVATAR_PREFIX}${avatarId}`;
+                document.getElementById('firstLabel').innerText = fieldMap['player_card_brief_info.card_label_first_selected'];
+                document.getElementById('lastLabel').innerText = fieldMap['player_card_brief_info.card_label_last_selected'];
+                document.getElementById('handbookNum').innerText = fieldMap['player_card_brief_info.card_handbook_collect_num'];
+                document.getElementById('uidShow').innerText = uid;
+                document.getElementById('uidShowBack').innerText = uid;
+                syncEditUid(uid);
+                document.getElementById('topicPoint').innerText = fieldMap['topic_point'];
+                const regRaw = fieldMap['register_timestamp'];
+                document.getElementById('regTime').innerText = getOnlyYMD(regRaw);
+                const onlineStatus = fieldMap['online'];
+                const onlineTag = document.getElementById('onlineTag');
+                onlineTag.innerText = onlineStatus === "是" ? "在线" : "离线";
+                onlineTag.className = onlineStatus === "是" ? "state-tag online" : "state-tag offline";
+                const friendStatus = fieldMap['is_friend'];
+                document.getElementById('friendTag').innerText = friendStatus === "是" ? "互为好友" : "非好友";
+                const blackStatus = fieldMap['is_black_role'];
+                const blackTag = document.getElementById('blackTag');
+                blackTag.innerText = blackStatus === "是" ? "已拉黑" : "未拉黑";
+                blackTag.className = blackStatus === "是" ? "state-tag black" : "state-tag no-friend";
+                const curCardImgUrl = fieldMap['player_card_brief_info.business_card_info.cur_card_url'];
+                document.getElementById('previewImg').src = curCardImgUrl;
+                // ========== 背面宠物面板 ==========
+                const petGrid = document.getElementById("petGrid");
+                petGrid.innerHTML = "";
+                const petList = originData.player_card_brief_info?.card_collect_info?.card_module_pet_infos || [];
+                petList.slice(0, 6).forEach(petItem => {
+                    const pid = petItem.pet_base_id;
+                    if (!pid) return;
+                    const div = document.createElement("div");
+                    div.className = "pet-item";
+                    div.innerHTML = `
+                <div class="pet-avatar">
+                    <img src="${PET_ICON_PREFIX}${pid}" alt="宠物头像" loading="lazy">
+                </div>
+                <div class="pet-desc">ID:${pid}<br>伤型${petItem.skill_dam_type} 变异${petItem.mutation_diff_type}</div>
+            `;
+                    petGrid.appendChild(div);
+                })
+                document.getElementById('shiningNum').innerText = fieldMap['player_card_brief_info.card_pet_info.collected_shining_pet_count'];
+                document.getElementById('glassNum').innerText = fieldMap['player_card_brief_info.card_pet_info.collected_glass_pet_count'];
+                document.getElementById('fashionBondNum').innerText = fieldMap['player_card_brief_info.card_fashion_bond_collect_num'];
+                document.getElementById('bondId').innerText = originData.player_card_brief_info?.card_module_fashion_infos[0]?.fashion_bond_id || 0;
+                // ========== 背面装扮面板 ==========
+                const fashionGrid = document.getElementById("fashionGrid");
+                fashionGrid.innerHTML = "";
+                const fashionList = originData.player_card_brief_info?.card_appearance_info?.fashion_wear_id || [];
+                fashionList.forEach(fid => {
+                    const div = document.createElement("div");
+                    div.className = "fashion-item";
+                    div.innerText = fid;
+                    fashionGrid.appendChild(div);
+                })
+                const salonGrid = document.getElementById("salonGrid");
+                salonGrid.innerHTML = "";
+                const salonList = originData.player_card_brief_info?.card_appearance_info?.salon_item_data || [];
+                salonList.forEach(sid => {
+                    const div = document.createElement("div");
+                    div.className = "salon-item";
+                    div.innerText = sid;
+                    salonGrid.appendChild(div);
+                })
+                document.getElementById('curCardImg').src = curCardImgUrl;
+                document.getElementById('lastCardImg').src = fieldMap['player_card_brief_info.business_card_info.last_card_url'];
+                document.getElementById('dailyChange').innerText = fieldMap['player_card_brief_info.business_card_info.apply_daily_changes'];
+                document.getElementById('uploadCount').innerText = fieldMap['player_card_brief_info.business_card_info.photo_upload_counts'];
+                tipBox.textContent = "✅ 名片数据加载完成，所有字段已渲染";
+                cardWrap.style.display = "block";
+
+                // 【修复代码：名片渲染完成后延时初始化tab滑块】
+                // setTimeout(()=>{
+                //     const activeTab = document.querySelector('.tab-item.active');
+                //     if(activeTab) updateSliderPos(activeTab);
+                // },50);
+            } catch (err) {
+                tipBox.className = "error-tip";
+                tipBox.textContent = "❌ 请求失败：" + err.message;
+                console.error("接口请求错误：", err);
+            }
+        }
+        // 按钮点击事件
+        fetchBtn.addEventListener("click", () => {
+            const uid = uidInput.value.trim();
+            if (!uid) {
+                tipBox.className = "error-tip";
+                tipBox.textContent = "请输入有效的玩家UID";
+                return;
+            }
+            fetchPlayerCard(uid);
+        })
+        // 回车触发加载
+        uidInput.addEventListener("keydown", e => {
+            if (e.key === 'Enter') fetchBtn.click();
+        })
+        // 页面加载自动查询8833235
+        window.onload = () => {
+            fetchBtn.click();
+        }
+        // 滚动箭头逻辑
+        const scrollMain = document.getElementById('scrollMain');
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        function updateArrowState(){
+            let leftVal = scrollMain.scrollLeft;
+            if(leftVal <= 10){
+                btnLeft.style.display = 'none';
+                btnRight.style.display = 'block';
+            }else{
+                btnLeft.style.display = 'block';
+                btnRight.style.display = 'none';
+            }
+        }
+        btnRight.addEventListener('click',()=>{
+            scrollMain.scrollBy({left:scrollMain.clientWidth,behavior:"smooth"});
+        })
+        btnLeft.addEventListener('click',()=>{
+            scrollMain.scrollBy({left:-scrollMain.clientWidth,behavior:"smooth"});
+        })
+        scrollMain.addEventListener('scroll',updateArrowState);
+        updateArrowState();
+
+        // ========== 宠物装扮模块左右滚动 ==========
+        const petScrollBox = document.getElementById('petScrollBox');
+        const petArrowLeft = document.getElementById('petArrowLeft');
+        const petArrowRight = document.getElementById('petArrowRight');
+        const petDots = document.querySelectorAll('.pet-dot');
+
+        function updatePetScrollState() {
+            const scrollLeft = petScrollBox.scrollLeft;
+            const maxScroll = petScrollBox.scrollWidth - petScrollBox.clientWidth;
+            // 最左边：左键消失，右键显示
+            if (scrollLeft <= 10) {
+                petArrowLeft.style.display = 'none';
+                petArrowRight.style.display = 'block';
+            }
+            // 最右边：左键显示，右键消失
+            else if (scrollLeft >= maxScroll - 10) {
+                petArrowLeft.style.display = 'block';
+                petArrowRight.style.display = 'none';
+            }
+            // 中间：左右键都显示
+            else {
+                petArrowLeft.style.display = 'block';
+                petArrowRight.style.display = 'block';
+            }
+            // 更新圆点高亮
+            const pageWidth = petScrollBox.clientWidth;
+            const currentPage = Math.round(scrollLeft / pageWidth);
+            petDots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === currentPage);
+            });
+        }
+
+        petArrowRight.addEventListener('click', () => {
+            petScrollBox.scrollBy({ left: petScrollBox.clientWidth, behavior: 'smooth' });
+        });
+        petArrowLeft.addEventListener('click', () => {
+            petScrollBox.scrollBy({ left: -petScrollBox.clientWidth, behavior: 'smooth' });
+        });
+        petDots.forEach((dot, idx) => {
+            dot.addEventListener('click', () => {
+                petScrollBox.scrollTo({ left: idx * petScrollBox.clientWidth, behavior: 'smooth' });
+            });
+        });
+        petScrollBox.addEventListener('scroll', updatePetScrollState);
+        updatePetScrollState();
+    
+        // ========== 洛克王国世界 名片分享预览功能 ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            const rocomShareMask = document.getElementById('rocomShareMask');
+            const rocomShareClose = document.getElementById('rocomShareClose');
+            const rocomShareSaveBtn = document.getElementById('rocomShareSaveBtn');
+            const rocomShareQQBtn = document.getElementById('rocomShareQQBtn');
+            const rocomShareZoneBtn = document.getElementById('rocomShareZoneBtn');
+            const rocomShareMoreBtn = document.getElementById('rocomShareMoreBtn');
+
+            // 获取所有分享按钮（正面和背面右下角）
+            const rocomShareTriggers = document.querySelectorAll('.quick-icon.share-icon');
+
+            // 打开分享预览
+            function openRocomShare() {
+                // 先同步宠物头像（独立调用，不依赖其他数据）
+                try { syncSharePets(); } catch(e) { console.error('同步宠物失败:', e); }
+                // 同步玩家数据到分享预览
+                try { syncShareData(); } catch(e) { console.error('同步数据失败:', e); }
+                rocomShareMask.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // 关闭分享预览
+            function closeRocomShare() {
+                rocomShareMask.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+
+            // 同步玩家数据
+            function syncShareData() {
+                // 昵称
+                const nameEl = document.getElementById('playerName');
+                if (nameEl) document.getElementById('rocomShareName').textContent = nameEl.textContent.trim();
+                // UID
+                const uidEl = document.getElementById('uidShow');
+                if (uidEl) {
+                    const uid = uidEl.textContent.trim();
+                    document.getElementById('rocomShareUid').textContent = uid;
+                    document.getElementById('rocomShareUidCorner').textContent = uid;
+                }
+                // 签名
+                const signEl = document.getElementById('signText');
+                if (signEl) document.getElementById('rocomShareSign').textContent = signEl.textContent.trim();
+                // 头像
+                const avatarImg = document.getElementById('avatarImg');
+                if (avatarImg && avatarImg.src) {
+                    document.getElementById('rocomShareAvatar').style.backgroundImage = 'url(' + avatarImg.src + ')';
+                }
+                // 名片大图（右侧倾斜照片）
+                const previewImg = document.getElementById('previewImg');
+                if (previewImg && previewImg.src) {
+                    document.getElementById('rocomSharePhotoImg').src = previewImg.src;
+                }
+                // 冒险记录数据
+                const regTime = document.getElementById('regTime');
+                if (regTime) document.getElementById('rocomShareRegTime').textContent = regTime.textContent.trim();
+                const fashionNum = document.getElementById('fashionBondNum');
+                if (fashionNum) document.getElementById('rocomShareFashionNum').textContent = fashionNum.textContent.trim();
+                const handbookNum = document.getElementById('handbookNum');
+                if (handbookNum) document.getElementById('rocomShareHandbookNum').textContent = handbookNum.textContent.trim();
+                const shiningNum = document.getElementById('shiningNum');
+                if (shiningNum) document.getElementById('rocomShareShiningNum').textContent = shiningNum.textContent.trim();
+                const glassNum = document.getElementById('glassNum');
+                if (glassNum) document.getElementById('rocomShareGlassNum').textContent = glassNum.textContent.trim();
+            }
+
+            // 同步宠物收藏到分享预览（从写死的.badge-wrap系列元素获取）
+            function syncSharePets() {
+                const petsRow = document.getElementById('rocomSharePetsRow');
+                if (!petsRow) return;
+                petsRow.innerHTML = '';
+                // 从写死的.badge-wrap系列元素中获取宠物头像
+                const petSelectors = ['#petPanel .badge-wrap', '#petPanel .badge-wrap1', '#petPanel .badge-wrap2', '#petPanel .badge-wrap3', '#petPanel .badge-wrap4', '#petPanel .badge-wrap5'];
+                const petImgSrcs = [];
+                petSelectors.forEach(function(selector) {
+                    const el = document.querySelector(selector);
+                    if (!el) return;
+                    // 方式1：从内部<img>获取
+                    const img = el.querySelector('img');
+                    if (img && img.src) {
+                        petImgSrcs.push(img.src);
+                        return;
+                    }
+                    // 方式2：从CSS background-image获取
+                    const bgImage = window.getComputedStyle(el).backgroundImage;
+                    if (bgImage && bgImage !== 'none') {
+                        const match = bgImage.match(/url\(["']?(.+?)["']?\)/);
+                        if (match && match[1]) {
+                            petImgSrcs.push(match[1]);
+                        }
+                    }
+                });
+                // 生成宠物头像
+                petImgSrcs.slice(0, 6).forEach(function(src) {
+                    const petDiv = document.createElement('div');
+                    petDiv.className = 'rocom-share-pet-item';
+                    petDiv.innerHTML = '<img src="' + src + '" alt="宠物" style="display:block;width:100%;height:100%;object-fit:cover;">';
+                    petsRow.appendChild(petDiv);
+                });
+                // 不足6个补充空占位
+                while (petsRow.children.length < 6) {
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.className = 'rocom-share-pet-item';
+                    emptyDiv.style.background = '#e8e2d8';
+                    petsRow.appendChild(emptyDiv);
+                }
+            }
+            // 切换收藏类型（精灵收藏/徽章收藏）
+            function switchShareCollection(type) {
+                const petsRow = document.getElementById('rocomSharePetsRow');
+                const filterBtn = document.getElementById('rocomSharePetFilter');
+                const dropdown = document.getElementById('rocomShareFilterDropdown');
+                if (!petsRow || !filterBtn) return;
+                petsRow.innerHTML = '';
+                if (type === 'pet') {
+                    filterBtn.textContent = '精灵收藏';
+                    // 精灵收藏：从写死的.badge-wrap系列获取
+                    syncSharePets();
+                } else if (type === 'badge') {
+                    filterBtn.textContent = '徽章收藏';
+                    // 徽章收藏：从写死的 #fashionPanel .fashion-badge 系列元素获取
+                    const badgeSelectors = ['#fashionPanel .fashion-grid', '#fashionPanel .fashion-badge', '#fashionPanel .fashion-badge1', '#fashionPanel .fashion-badge2', '#fashionPanel .fashion-badge3', '#fashionPanel .fashion-badge4'];
+                    const badgeImgSrcs = [];
+                    badgeSelectors.forEach(function(selector) {
+                        const el = document.querySelector(selector);
+                        if (!el) return;
+                        // 从内部<img>获取
+                        const img = el.querySelector('img');
+                        if (img && img.src) {
+                            badgeImgSrcs.push(img.src);
+                            return;
+                        }
+                        // 从CSS background-image获取
+                        const bgImage = window.getComputedStyle(el).backgroundImage;
+                        if (bgImage && bgImage !== 'none') {
+                            const match = bgImage.match(/url\(["']?(.+?)["']?\)/);
+                            if (match && match[1]) badgeImgSrcs.push(match[1]);
+                        }
+                    });
+                    // 生成徽章头像
+                    for (let i = 0; i < 6; i++) {
+                        const badgeDiv = document.createElement('div');
+                        badgeDiv.className = 'rocom-share-pet-item';
+                        if (i < badgeImgSrcs.length) {
+                            badgeDiv.innerHTML = '<img src="' + badgeImgSrcs[i] + '" alt="徽章" style="display:block;width:100%;height:100%;object-fit:cover;">';
+                        } else {
+                            // 灰色占位
+                            badgeDiv.style.background = '#e8e2d8';
+                            badgeDiv.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#c0b8a8;font-size:20px;font-weight:bold;">?</div>';
+                        }
+                        petsRow.appendChild(badgeDiv);
+                    }
+                }
+                // 更新下拉列表选中状态
+                document.querySelectorAll('.rocom-share-filter-option').forEach(function(opt) {
+                    opt.classList.toggle('active', opt.getAttribute('data-type') === type);
+                });
+                dropdown.classList.remove('show');
+            }
+
+            // 绑定筛选下拉按钮事件
+            const rocomSharePetFilter = document.getElementById('rocomSharePetFilter');
+            const rocomShareFilterDropdown = document.getElementById('rocomShareFilterDropdown');
+            if (rocomSharePetFilter && rocomShareFilterDropdown) {
+                rocomSharePetFilter.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    rocomShareFilterDropdown.classList.toggle('show');
+                });
+                document.querySelectorAll('.rocom-share-filter-option').forEach(function(opt) {
+                    opt.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const type = this.getAttribute('data-type');
+                        switchShareCollection(type);
+                    });
+                });
+                // 点击其他区域关闭下拉
+                document.addEventListener('click', function() {
+                    rocomShareFilterDropdown.classList.remove('show');
+                });
+            }
+
+
+            // 复制文本到剪贴板
+            async function copyShareText(text) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (e) {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        return true;
+                    } catch (err) {
+                        document.body.removeChild(textarea);
+                        return false;
+                    }
+                }
+            }
+
+            // 绑定分享按钮点击事件（绑定到整个.quick-item）
+            rocomShareTriggers.forEach(btn => {
+                const quickItem = btn.closest('.quick-item');
+                const target = quickItem || btn;
+                target.style.cursor = 'pointer';
+                target.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openRocomShare();
+                });
+            });
+
+            // 关闭按钮
+            rocomShareClose.addEventListener('click', closeRocomShare);
+
+            // 点击遮罩空白区域关闭
+            rocomShareMask.addEventListener('click', function(e) {
+                if (e.target === rocomShareMask) {
+                    closeRocomShare();
+                }
+            });
+
+
+            // 绑定编辑按钮点击事件（弹出菜单）
+            const editTriggers = document.querySelectorAll('.edit-icon');
+            const rocomEditMenu = document.getElementById('rocomEditMenu');
+            editTriggers.forEach(icon => {
+                const quickItem = icon.closest('.quick-item');
+                const target = quickItem || icon;
+                target.style.cursor = 'pointer';
+                target.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const rect = target.getBoundingClientRect();
+                    const menuWidth = 120;
+                    const menuLeft = rect.right - menuWidth + 127;
+                    const menuTop = rect.top + 32;
+                    rocomEditMenu.style.left = menuLeft + 'px';
+                    rocomEditMenu.style.top = menuTop + 'px';
+                    rocomEditMenu.classList.toggle('show');
+                });
+            });
+
+            // 点击菜单外区域关闭菜单
+            document.addEventListener('click', function(e) {
+                if (!rocomEditMenu.contains(e.target) && !e.target.closest('.edit-icon') && !e.target.closest('.quick-item')) {
+                    rocomEditMenu.classList.remove('show');
+                }
+            });
+
+            // 菜单项点击 - 打开对应编辑模块
+            document.querySelectorAll('.rocom-edit-menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const moduleMap = { info: 'info', photo: 'photo', component: 'component', background: 'bg' };
+                    rocomEditMenu.classList.remove('show');
+                    if (typeof openRocomEdit === 'function') {
+                        openRocomEdit(moduleMap[action] || 'info');
+                    }
+                });
+            });
+
+
+            // ========== 编辑功能 ==========
+            const rocomEditMask = document.getElementById('rocomEditMask');
+            const rocomEditClose = document.getElementById('rocomEditClose');
+            const rocomEditTitle = document.getElementById('rocomEditTitle');
+            const rocomEditSubtitle = document.getElementById('rocomEditSubtitle');
+            const rocomEditBubble = document.getElementById('rocomEditBubble');
+            const editModules = {
+                info: document.getElementById('editModuleInfo'),
+                photo: document.getElementById('editModulePhoto'),
+                component: document.getElementById('editModuleComponent'),
+                bg: document.getElementById('editModuleBg')
+            };
+
+            // 打开编辑界面（指定模块）
+            function openRocomEdit(module) {
+                module = module || 'info';
+                syncEditUid(uidInput.value.trim());
+                // 隐藏所有模块
+                Object.values(editModules).forEach(function(m) { if(m) m.style.display = 'none'; });
+                // 显示指定模块
+                if (editModules[module]) editModules[module].style.display = 'block';
+                // 设置标题
+                const titles = {
+                    info: { main: '修改信息', sub: '头像', icon: '✏️' },
+                    photo: { main: '名片系统', sub: '上传照片', icon: '📷' },
+                    component: { main: '名片系统', sub: '编辑组件', icon: '🧩' },
+                    bg: { main: '名片系统', sub: '背景更换', icon: '🎨' }
+                };
+                if (titles[module]) {
+                    // 左上角图标固定为53.png，不随模块切换
+                    rocomEditTitle.querySelector('.rocom-edit-title-text').childNodes[0].textContent = titles[module].main + '\n';
+                    rocomEditSubtitle.textContent = titles[module].sub;
+                }
+                rocomEditMask.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                // 初始化模块内容
+                if (module === 'info') initEditInfo();
+                if (module === 'component') initEditComponent();
+                if (module === 'bg') initEditBg();
+            }
+
+            // 关闭编辑界面
+            function closeRocomEdit() {
+                rocomEditMask.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+            rocomEditClose.addEventListener('click', closeRocomEdit);
+            rocomEditMask.addEventListener('click', function(e) {
+                if (e.target === rocomEditMask) closeRocomEdit();
+            });
+
+            // ========== 修改信息模块 ==========
+            let currentInfoTab = 'avatar';
+            const avatarList = [
+                { id: 1, color: '#f5a623', name: '火焰' },
+                { id: 2, color: '#8b7355', name: '白虎' },
+                { id: 3, color: '#5dade2', name: '水蓝' },
+                { id: 4, color: '#f1948a', name: '兔子' },
+                { id: 5, color: '#3498db', name: '蓝鸟' },
+                { id: 6, img: './33620404.png', name: './33620404.png' },
+            ];
+            let selectedAvatar = 7;
+            const titleList = [
+                '逐风的', '医师', '大大的', '救星', '小小的', '见闻录',
+                '等等鸭', '大块头', '我有我的', '小不点', '相伴同行', '顶呱呱',
+                '玩闹', '三小只', '路过马戏团', '大冒险', '探险家', '收藏家'
+            ];
+            let selectedTitles = ['等等鸭', '大块头'];
+
+            function initEditInfo() {
+                // 生成头像列表
+                const avatarGrid = document.getElementById('rocomEditAvatarGrid');
+                avatarGrid.innerHTML = '';
+                avatarList.forEach(function(av) {
+                    const div = document.createElement('div');
+                    div.className = 'rocom-edit-avatar-item' + (av.id === selectedAvatar ? ' selected' : '');
+                    if (av.img) {
+                        div.innerHTML = '<img src="' + av.img + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+                    } else {
+                        div.innerHTML = '<div style="width:100%;height:100%;background:' + av.color + ';border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;">😊</div>';
+                    }
+                    div.addEventListener('click', function() {
+                        selectedAvatar = av.id;
+                        document.querySelectorAll('.rocom-edit-avatar-item').forEach(function(el) { el.classList.remove('selected'); });
+                        div.classList.add('selected');
+                        rocomEditBubble.innerHTML = '<img src="' + av.name + '" style="width:60px;height:60px;border-radius:50%;object-fit:cover;display:block;margin:0 auto;">';
+                    });
+                    avatarGrid.appendChild(div);
+                });
+                // 生成称号滚轮选择器（两栏独立滚动）
+                const col1Titles = titleList.filter(function(_, i) { return i % 2 === 0; });
+                const col2Titles = titleList.filter(function(_, i) { return i % 2 === 1; });
+                let col1Selected = selectedTitles[0] || col1Titles[0];
+                let col2Selected = selectedTitles[1] || col2Titles[0];
+                // 保存的称号（绿色对勾指示）
+                let savedCol1 = selectedTitles[0] || '';
+                let savedCol2 = selectedTitles[1] || '';
+                // 绿色对勾在renderPickerCol中根据savedTitle设置，保存时更新is-saved类
+
+                function renderPickerCol(colId, titles, selectedTitle, savedTitle) {
+                    const col = document.getElementById(colId);
+                    col.innerHTML = '';
+                    const topSpacer = document.createElement('div');
+                    topSpacer.className = 'title-picker-spacer';
+                    col.appendChild(topSpacer);
+                    titles.forEach(function(t) {
+                        const item = document.createElement('div');
+                        item.className = 'title-picker-item' + (t === selectedTitle ? ' selected' : '') + (t === savedTitle ? ' is-saved' : '');
+                        item.textContent = t;
+                        item.dataset.title = t;
+                        // 添加绿色对勾元素
+                        const checkIcon = document.createElement('span');
+                        checkIcon.className = 'saved-check-icon';
+                        // checkIcon.textContent = '✓';
+                        checkIcon.innerHTML = '<img src="./69.png" style="width:32px;height:32px;object-fit:contain;display:block;">';
+                        item.appendChild(checkIcon);
+                        item.addEventListener('click', function() {
+                            const itemTop = item.offsetTop - col.offsetHeight / 2 + item.offsetHeight / 2;
+                            col.scrollTo({ top: itemTop, behavior: 'smooth' });
+                        });
+                        col.appendChild(item);
+                    });
+                    const bottomSpacer = document.createElement('div');
+                    bottomSpacer.className = 'title-picker-spacer';
+                    col.appendChild(bottomSpacer);
+                    const selectedItem = col.querySelector('.title-picker-item.selected');
+                    if (selectedItem) {
+                        const itemTop = selectedItem.offsetTop - col.offsetHeight / 2 + selectedItem.offsetHeight / 2;
+                        col.scrollTop = itemTop;
+                    }
+                }
+
+                function setupPickerScroll(colId, colIndex) {
+                    const col = document.getElementById(colId);
+                    let scrollTimeout;
+                    col.addEventListener('scroll', function() {
+                        clearTimeout(scrollTimeout);
+                        const items = col.querySelectorAll('.title-picker-item');
+                        const centerY = col.scrollTop + col.offsetHeight / 2;
+                        let closestItem = null;
+                        let closestDist = Infinity;
+                        items.forEach(function(item) {
+                            const itemCenter = item.offsetTop + item.offsetHeight / 2;
+                            const dist = Math.abs(itemCenter - centerY);
+                            if (dist < closestDist) {
+                                closestDist = dist;
+                                closestItem = item;
+                            }
+                        });
+                        if (closestItem && !closestItem.classList.contains('selected')) {
+                            items.forEach(function(item) { item.classList.remove('selected'); });
+                            closestItem.classList.add('selected');
+                            if (colIndex === 1) col1Selected = closestItem.dataset.title;
+                            else col2Selected = closestItem.dataset.title;
+                            selectedTitles = [col1Selected, col2Selected].filter(Boolean);
+                            rocomEditBubble.textContent = selectedTitles.join('') || '无称号';
+                            // 实时更新称号界面图章文字
+                            const stampTextClick = document.getElementById('titleStampText');
+                            if (stampTextClick) stampTextClick.textContent = selectedTitles.join('') || '等等鸭大块头';
+                            // 绿色对勾不随滚动更新，只在保存时更新
+                        }
+                    });
+                    col.addEventListener('scroll', function() {
+                        clearTimeout(scrollTimeout);
+                        scrollTimeout = setTimeout(function() {
+                            const selectedItem = col.querySelector('.title-picker-item.selected');
+                            if (selectedItem) {
+                                const itemTop = selectedItem.offsetTop - col.offsetHeight / 2 + selectedItem.offsetHeight / 2;
+                                col.scrollTo({ top: itemTop, behavior: 'smooth' });
+                            }
+                        }, 120);
+                    });
+                }
+
+                renderPickerCol('titlePickerCol1', col1Titles, col1Selected, savedCol1);
+                renderPickerCol('titlePickerCol2', col2Titles, col2Selected, savedCol2);
+                setupPickerScroll('titlePickerCol1', 1);
+                setupPickerScroll('titlePickerCol2', 2);
+                // 绿色对勾在renderPickerCol中已根据savedTitle设置
+                // 初始化输入框
+                const nameEl = document.getElementById('playerName');
+                if (nameEl) document.getElementById('rocomEditNicknameInput').value = nameEl.textContent.trim();
+                const signEl = document.getElementById('signText');
+                if (signEl) document.getElementById('rocomEditSignInput').value = signEl.textContent.trim();
+                switchInfoTab('avatar');
+            }
+
+            function switchInfoTab(tab) {
+                currentInfoTab = tab;
+                document.querySelectorAll('.rocom-edit-nav-item').forEach(function(item) {
+                    item.classList.toggle('active', item.getAttribute('data-info-tab') === tab);
+                });
+                document.querySelectorAll('.rocom-edit-info-content').forEach(function(c) { c.style.display = 'none'; });
+                const contentMap = { avatar: 'infoContentAvatar', title: 'infoContentTitle', nickname: 'infoContentNickname', sign: 'infoContentSign' };
+                const subMap = { avatar: '头像', title: '称号', nickname: '昵称', sign: '签名' };
+                document.getElementById(contentMap[tab]).style.display = 'block';
+                rocomEditSubtitle.textContent = subMap[tab];
+                // 切换冒泡框背景：头像/昵称用61.png，签名用60.png
+                const bubbleBg = (tab === 'sign') ? './60.png' : './61.png';
+                rocomEditBubble.style.background = 'url(' + bubbleBg + ') no-repeat center/contain';
+                rocomEditBubble.style.border = 'none';
+                rocomEditBubble.style.color = '#333';
+                // ===== 新增：称号界面隐藏气泡框 =====
+                rocomEditBubble.style.display = (tab === 'title') ? 'none' : 'block';
+                // 切换称号图章显示：称号界面显示，其他隐藏
+                const stampWrap = document.getElementById('titleStampWrap');
+                if (stampWrap) {
+                    stampWrap.style.display = (tab === 'title') ? 'flex' : 'none';
+                }
+                // 先恢复人物默认位置
+                const charImgDefault = document.getElementById('rocomEditCharacterImg');
+                if (charImgDefault) charImgDefault.style.marginTop = '0';
+                // 更新气泡文字
+                if (tab === 'nickname') rocomEditBubble.textContent = document.getElementById('rocomEditNicknameInput').value || '昵称';
+                if (tab === 'sign') rocomEditBubble.textContent = document.getElementById('rocomEditSignInput').value || '签名';
+                if (tab === 'avatar') {
+    const currentAv = avatarList.find(function(a) { return a.id === selectedAvatar; });
+    rocomEditBubble.innerHTML = '<img src="' + currentAv.name + '" style="width:60px;height:60px;border-radius:50%;object-fit:cover;display:block;margin:0 auto;">';
+}
+
+                if (tab === 'title') {
+                    rocomEditBubble.textContent = selectedTitles.join('') || '无称号';
+                    // 实时更新称号界面图章文字
+                    const stampText = document.getElementById('titleStampText');
+                    if (stampText) stampText.textContent = selectedTitles.join('') || '等等鸭大块头';
+                    // 单独修改称号界面人物距离顶部的位置
+                    const charImg = document.getElementById('rocomEditCharacterImg');
+                    if (charImg) charImg.style.marginTop = '130px';  // ← 调整这个值
+                }
+            }
+
+            document.querySelectorAll('.rocom-edit-nav-item').forEach(function(item) {
+                item.addEventListener('click', function() {
+                    switchInfoTab(this.getAttribute('data-info-tab'));
+                });
+            });
+
+            // 输入框实时更新气泡
+            document.getElementById('rocomEditNicknameInput').addEventListener('input', function() {
+                if (currentInfoTab === 'nickname') rocomEditBubble.textContent = this.value || '昵称';
+            });
+            document.getElementById('rocomEditSignInput').addEventListener('input', function() {
+                if (currentInfoTab === 'sign') rocomEditBubble.textContent = this.value || '签名';
+            });
+
+            // 保存修改信息
+            document.getElementById('rocomEditInfoSave').addEventListener('click', function() {
+                // 应用到名片
+                const nickname = document.getElementById('rocomEditNicknameInput').value;
+                const sign = document.getElementById('rocomEditSignInput').value;
+                if (nickname) {
+                    document.querySelectorAll('#playerName').forEach(function(el) {
+                        el.textContent = nickname;
+                    });
+                    document.getElementById('rocomShareName').textContent = nickname;
+                }
+                if (sign !== undefined) {
+                    document.querySelectorAll('#signText').forEach(function(el) {
+                        el.textContent = sign;
+                    });
+                    document.getElementById('rocomShareSign').textContent = sign;
+                }
+                // 更新头像（正面、背面、分享界面）
+                const selectedAv = avatarList.find(function(a) { return a.id === selectedAvatar; });
+                if (selectedAv) {
+                    let avatarSrc = '';
+                    if (selectedAv.img) {
+                        avatarSrc = selectedAv.img;
+                    } else {
+                        // 颜色头像转成data URL
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 100; canvas.height = 100;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = selectedAv.color;
+                        ctx.beginPath(); ctx.arc(50, 50, 50, 0, Math.PI * 2); ctx.fill();
+                        avatarSrc = canvas.toDataURL();
+                    }
+                    // 正面头像
+                    const avatarImg = document.getElementById('avatarImg');
+                    if (avatarImg) avatarImg.src = avatarSrc;
+                    // 背面头像
+                    const avatarImgBack = document.getElementById('avatarImgBack');
+                    if (avatarImgBack) avatarImgBack.src = avatarSrc;
+                    // 分享界面头像
+                    const rocomShareAvatar = document.getElementById('rocomShareAvatar');
+                    if (rocomShareAvatar) rocomShareAvatar.style.backgroundImage = 'url(' + avatarSrc + ')';
+                }
+                // 更新称号（名片图章文字 + 分享界面图章文字）
+                const titleText = selectedTitles.join('') || '';
+                document.querySelectorAll('.marktext').forEach(function(el) {
+                    el.textContent = titleText;
+                });
+// 更新保存的称号（绿色对勾）—— 用全局变量 selectedTitles
+savedCol1 = selectedTitles[0] || '';
+savedCol2 = selectedTitles[1] || '';
+                // 更新绿色对勾位置：移除旧的is-saved，给新保存的item添加is-saved
+                document.querySelectorAll('#titlePickerCol1 .title-picker-item').forEach(function(item) {
+                    item.classList.toggle('is-saved', item.dataset.title === savedCol1);
+                });
+                document.querySelectorAll('#titlePickerCol2 .title-picker-item').forEach(function(item) {
+                    item.classList.toggle('is-saved', item.dataset.title === savedCol2);
+                });
+                closeRocomEdit();
+            });
+
+            // ========== 上传照片模块 ==========
+            let photoRotation = 0;
+            let photoScale = 1;
+            let photoX = 0;
+            let photoY = 0;
+            let isDragging = false;
+            let dragStartX = 0;
+            let dragStartY = 0;
+            let currentPhotoType = 'image';
+
+            function updatePhotoTransform() {
+                const img = document.getElementById('rocomEditPhotoPreview');
+                const video = document.getElementById('rocomEditVideoPreview');
+                const transform = 'translate(calc(-50% + ' + photoX + 'px), calc(-50% + ' + photoY + 'px)) scale(' + photoScale + ') rotate(' + photoRotation + 'deg)';
+                if (img) img.style.transform = transform;
+                if (video) video.style.transform = transform;
+            }
+
+            document.getElementById('rocomEditPhotoUpload').addEventListener('click', function() {
+                document.getElementById('rocomEditPhotoInput').click();
+            });
+            document.getElementById('rocomEditPhotoInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const img = document.getElementById('rocomEditPhotoPreview');
+                const video = document.getElementById('rocomEditVideoPreview');
+                photoRotation = 0;
+                photoX = 0;
+                photoY = 0;
+                photoScale = 1;
+                if (file.type.startsWith('video/')) {
+                    currentPhotoType = 'video';
+                    img.style.display = 'none';
+                    video.style.display = 'block';
+                    video.src = URL.createObjectURL(file);
+                    video.onloadedmetadata = function() {
+                        const cropBox = document.querySelector('.rocom-edit-crop-box');
+                        const cropW = cropBox ? cropBox.offsetWidth : 600;
+                        const cropH = cropBox ? cropBox.offsetHeight : 340;
+                        const videoW = video.videoWidth || cropW;
+                        const videoH = video.videoHeight || cropH;
+                        const scaleX = cropW / videoW;
+                        const scaleY = cropH / videoH;
+                        photoScale = Math.max(scaleX, scaleY) * 1.05;
+                        video.style.width = videoW + 'px';
+                        video.style.height = videoH + 'px';
+                        updatePhotoTransform();
+                        video.play();
+                    };
+                } else {
+                    currentPhotoType = 'image';
+                    video.style.display = 'none';
+                    video.pause();
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        img.src = ev.target.result;
+                        img.style.display = 'block';
+                        img.onload = function() {
+                            const cropBox = document.querySelector('.rocom-edit-crop-box');
+                            const cropW = cropBox ? cropBox.offsetWidth : 600;
+                            const cropH = cropBox ? cropBox.offsetHeight : 340;
+                            const imgW = img.naturalWidth || cropW;
+                            const imgH = img.naturalHeight || cropH;
+                            const scaleX = cropW / imgW;
+                            const scaleY = cropH / imgH;
+                            photoScale = Math.max(scaleX, scaleY) * 1.05;
+                            img.style.width = imgW + 'px';
+                            img.style.height = imgH + 'px';
+                            updatePhotoTransform();
+                        };
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            // 旋转
+            document.getElementById('rocomEditPhotoRotate').addEventListener('click', function() {
+                if (currentPhotoType === 'video') {
+                    alert('视频不支持旋转');
+                    return;
+                }
+                photoRotation = (photoRotation + 90) % 360;
+                updatePhotoTransform();
+            });
+            // 拖动移动
+            const photoPreviewEl = document.getElementById('rocomEditPhotoPreview');
+            const videoPreviewEl = document.getElementById('rocomEditVideoPreview');
+            [photoPreviewEl, videoPreviewEl].forEach(function(el) {
+                el.addEventListener('mousedown', function(e) {
+                    if (this.style.display === 'none') return;
+                    isDragging = true;
+                    dragStartX = e.clientX - photoX;
+                    dragStartY = e.clientY - photoY;
+                    e.preventDefault();
+                });
+                el.addEventListener('wheel', function(e) {
+                    if (this.style.display === 'none') return;
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? -0.08 : 0.08;
+                    photoScale = Math.max(0.3, Math.min(5, photoScale + delta));
+                    updatePhotoTransform();
+                }, { passive: false });
+                el.addEventListener('touchstart', function(e) {
+                    if (this.style.display === 'none') return;
+                    if (e.touches.length === 1) {
+                        isDragging = true;
+                        dragStartX = e.touches[0].clientX - photoX;
+                        dragStartY = e.touches[0].clientY - photoY;
+                    }
+                }, { passive: true });
+                el.addEventListener('touchmove', function(e) {
+                    if (!isDragging || e.touches.length !== 1) return;
+                    photoX = e.touches[0].clientX - dragStartX;
+                    photoY = e.touches[0].clientY - dragStartY;
+                    updatePhotoTransform();
+                }, { passive: true });
+                el.addEventListener('touchend', function() {
+                    isDragging = false;
+                });
+            });
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                photoX = e.clientX - dragStartX;
+                photoY = e.clientY - dragStartY;
+                updatePhotoTransform();
+            });
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+            });
+            // 确认：用canvas实际裁剪网格范围内的图片
+            document.getElementById('rocomEditPhotoConfirm').addEventListener('click', function() {
+                const img = document.getElementById('rocomEditPhotoPreview');
+                const video = document.getElementById('rocomEditVideoPreview');
+                if (currentPhotoType === 'video') {
+                    if (!video.src || video.style.display === 'none') {
+                        closeRocomEdit();
+                        return;
+                    }
+                    const videoUrl = video.src;
+                    const previewImg = document.getElementById('previewImg');
+                    if (previewImg) {
+                        previewImg.style.display = 'none';
+                        let previewVideo = document.getElementById('previewVideo');
+                        if (!previewVideo) {
+                            previewVideo = document.createElement('video');
+                            previewVideo.id = 'previewVideo';
+                            previewVideo.autoplay = true;
+                            previewVideo.loop = true;
+                            previewVideo.muted = true;
+                            previewVideo.playsInline = true;
+                            previewVideo.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                            previewImg.parentNode.insertBefore(previewVideo, previewImg.nextSibling);
+                        }
+                        previewVideo.src = videoUrl;
+                        previewVideo.style.display = 'block';
+                    }
+                    const sharePhotoImg = document.getElementById('rocomSharePhotoImg');
+                    if (sharePhotoImg) {
+                        sharePhotoImg.style.display = 'none';
+                        let shareVideo = document.getElementById('rocomShareVideo');
+                        if (!shareVideo) {
+                            shareVideo = document.createElement('video');
+                            shareVideo.id = 'rocomShareVideo';
+                            shareVideo.autoplay = true;
+                            shareVideo.loop = true;
+                            shareVideo.muted = true;
+                            shareVideo.playsInline = true;
+                            shareVideo.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                            sharePhotoImg.parentNode.insertBefore(shareVideo, sharePhotoImg.nextSibling);
+                        }
+                        shareVideo.src = videoUrl;
+                        shareVideo.style.display = 'block';
+                    }
+                    closeRocomEdit();
+                } else {
+                    if (!img.src || img.style.display === 'none') {
+                        closeRocomEdit();
+                        return;
+                    }
+                    const cropBox = document.querySelector('.rocom-edit-crop-box');
+                    const cropWidth = cropBox ? cropBox.offsetWidth : 600;
+                    const cropHeight = cropBox ? cropBox.offsetHeight : 340;
+                    const imgW = img.naturalWidth || cropWidth;
+                    const imgH = img.naturalHeight || cropHeight;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = cropWidth;
+                    canvas.height = cropHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.translate(cropWidth / 2, cropHeight / 2);
+                    ctx.translate(photoX, photoY);
+                    ctx.rotate(photoRotation * Math.PI / 180);
+                    ctx.scale(photoScale, photoScale);
+                    ctx.drawImage(img, -imgW / 2, -imgH / 2);
+                    const croppedDataUrl = canvas.toDataURL('image/png');
+                    const previewImg = document.getElementById('previewImg');
+                    if (previewImg) {
+                        previewImg.src = croppedDataUrl;
+                        previewImg.style.display = 'block';
+                        const previewVideo = document.getElementById('previewVideo');
+                        if (previewVideo) previewVideo.style.display = 'none';
+                    }
+                    const sharePhotoImg = document.getElementById('rocomSharePhotoImg');
+                    if (sharePhotoImg) {
+                        sharePhotoImg.src = croppedDataUrl;
+                        sharePhotoImg.style.display = 'block';
+                        const shareVideo = document.getElementById('rocomShareVideo');
+                        if (shareVideo) shareVideo.style.display = 'none';
+                    }
+                    closeRocomEdit();
+                }
+            });
+
+            // ========== 编辑组件模块 ==========
+            function initEditComponent() {
+                const preview = document.getElementById('rocomEditComponentPreview');
+                const lkwCardWrap = document.querySelector('.lkw-card-wrap');
+                let currentComponentTab = 'pet';
+                let isCardFlipped = true; // 默认显示背面
+                if (lkwCardWrap) {
+                    preview.innerHTML = '';
+                    const clone = lkwCardWrap.cloneNode(true);
+                    clone.style.display = 'block';
+                    clone.style.margin = '0 auto';
+                    const lkwCard = clone.querySelector('.lkw-card');
+                    if (lkwCard) {
+                        lkwCard.style.transform = 'scale(0.75)';
+                        lkwCard.style.transformOrigin = 'top center';
+                        lkwCard.style.transition = 'transform 0.6s';
+                        lkwCard.style.transformStyle = 'preserve-3d';
+                        // 默认翻转到背面（添加flipped类）
+                        if (isCardFlipped) {
+                            lkwCard.classList.add('flipped');
+                            lkwCard.style.transform = 'scale(0.75) rotateY(180deg)';
+                        }
+                    }
+                    preview.appendChild(clone);
+                    // 添加翻转按钮
+                    // const flipBtn = document.createElement('div');
+                    // flipBtn.className = 'rocom-edit-flip-btn';
+                    // flipBtn.textContent = '🔄';
+                    // flipBtn.title = '翻转卡片';
+                    // flipBtn.style.cssText = 'position:absolute;left:40px;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(30,30,30,0.7);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:20px;z-index:10;';
+                    // flipBtn.addEventListener('click', function() {
+                    //     isCardFlipped = !isCardFlipped;
+                    //     const cardEl = clone.querySelector('.lkw-card');
+                    //     if (cardEl) {
+                    //         if (isCardFlipped) {
+                    //             cardEl.classList.add('flipped');
+                    //             cardEl.style.transform = 'scale(0.75) rotateY(180deg)';
+                    //         } else {
+                    //             cardEl.classList.remove('flipped');
+                    //             cardEl.style.transform = 'scale(0.75) rotateY(0deg)';
+                    //         }
+                    //     }
+                    // });
+                    // preview.appendChild(flipBtn);
+                    // 给已添加的宠物/装扮添加减号按钮
+                    const cardBack = clone.querySelector('.card-back');
+                    function addRemoveBtn(el, type) {
+                        el.style.position = 'relative';
+                        const removeBtn = document.createElement('div');
+                        removeBtn.className = 'rocom-edit-component-remove';
+                        removeBtn.textContent = '−';
+                        removeBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            // 清除内容
+                            el.innerHTML = '';
+                            el.classList.remove('has-component');
+                            // 显示底图占位
+                            if (type === 'pet') {
+                                // 宠物底图是44.png，首位和其他位置统一用背景图
+                                el.style.background = 'url("./44.png") no-repeat';
+                                el.style.backgroundSize = 'contain';
+                            } else {
+                                // 装扮底图是40.png
+                                el.style.background = 'url("./40.png") no-repeat';
+                                el.style.backgroundSize = 'contain';
+                            }
+                        });
+                        el.appendChild(removeBtn);
+                    }
+                    if (cardBack) {
+                        // 宠物：所有槽位，有img或背景的是已添加
+                        cardBack.querySelectorAll('.badge-wrap, .badge-wrap1, .badge-wrap2, .badge-wrap3, .badge-wrap4, .badge-wrap5').forEach(function(el) {
+                            const hasImg = el.querySelector('img');
+                            const hasBg = el.style.background || el.classList.contains('has-component');
+                            if (hasImg || hasBg) {
+                                el.classList.add('has-component');
+                                addRemoveBtn(el, 'pet');
+                            }
+                        });
+                        // 装扮：只有fashion-grid（默认有真实背景）和有has-component类的添加减号，灰色占位不加
+                        cardBack.querySelectorAll('.fashion-grid, .fashion-badge, .fashion-badge1, .fashion-badge2, .fashion-badge3, .fashion-badge4').forEach(function(el) {
+                            const isFashionGrid = el.classList.contains('fashion-grid');
+                            const hasComponent = el.classList.contains('has-component');
+                            const hasInlineBg = el.style.background && el.style.background !== '';
+                            if (isFashionGrid || hasComponent || hasInlineBg) {
+                                el.classList.add('has-component');
+                                addRemoveBtn(el, 'fashion');
+                            }
+                        });
+                        // 监听tab切换：同时切换名片面板和底部列表
+                        cardBack.querySelectorAll('.tab-item').forEach(function(tab) {
+                            tab.addEventListener('click', function() {
+                                currentComponentTab = this.getAttribute('data-tab');
+                                // 切换tab-item的active类
+                                cardBack.querySelectorAll('.tab-item').forEach(function(t) {
+                                    t.classList.remove('active');
+                                });
+                                this.classList.add('active');
+                                // 切换tab-panel的active类
+                                cardBack.querySelectorAll('.tab-panel').forEach(function(p) {
+                                    p.classList.remove('active');
+                                });
+                                const targetPanel = cardBack.querySelector('#' + currentComponentTab + 'Panel');
+                                if (targetPanel) targetPanel.classList.add('active');
+                                // 切换底部组件列表
+                                renderComponentList(currentComponentTab);
+                            });
+                        });
+                    }
+                }
+                // 生成底部组件列表
+                function renderComponentList(type) {
+                    const list = document.getElementById('rocomEditComponentList');
+                    list.innerHTML = '';
+                    const items = [];
+                    if (type === 'pet') {
+                        for (let i = 0; i < 8; i++) {
+                            items.push({ name: '宠物' + (i+1), img: './31.png', type: 'pet' });
+                        }
+                    } else {
+                        for (let i = 0; i < 8; i++) {
+                            items.push({ name: '装扮' + (i+1), img: './36.png', type: 'fashion' });
+                        }
+                    }
+                    items.forEach(function(item) {
+                        const div = document.createElement('div');
+                        div.className = 'rocom-edit-bottom-item';
+                        div.innerHTML = '<div style="width:100%;height:70%;background:url(' + item.img + ') no-repeat center/cover;border-radius:8px 8px 0 0;"></div><div class="rocom-edit-bottom-item-label">' + item.name + '</div>';
+                        div.addEventListener('click', function() {
+                            // 加到克隆名片对应面板的第一个空位
+                            const clone = preview.querySelector('.card-back');
+                            if (!clone) return;
+                            if (item.type === 'pet') {
+                                const slots = clone.querySelectorAll('.badge-wrap, .badge-wrap1, .badge-wrap2, .badge-wrap3, .badge-wrap4, .badge-wrap5');
+                                for (let i = 0; i < slots.length; i++) {
+                                    // 只用has-component类判断是否已添加
+                                    if (!slots[i].classList.contains('has-component')) {
+                                        slots[i].innerHTML = '';
+                                        slots[i].style.background = '';
+                                        // 所有位置都用嵌套结构，保持白色圆形背景+阴影
+                                        // 后面的位置（100x100容器）用flex布局，水平居中，顶部对齐，.badge固定90x90，距顶0px和首位一致
+                                        if (slots[i].classList.contains('badge-wrap')) {
+                                            slots[i].innerHTML = '<div class="badge"><div class="badge-inner"><img src="' + item.img + '" alt="icon"></div></div>';
+                                        } else {
+                                            slots[i].style.display = 'flex';
+                                            slots[i].style.alignItems = 'flex-start';
+                                            slots[i].style.justifyContent = 'center';
+                                            slots[i].style.padding = '0';
+                                            slots[i].innerHTML = '<div class="badge" style="width:90px;height:90px;flex-shrink:0;"><div class="badge-inner"><img src="' + item.img + '" alt="icon"></div></div>';
+                                        }
+                                        slots[i].classList.add('has-component');
+                                        addRemoveBtn(slots[i], 'pet');
+                                        break;
+                                    }
+                                }
+                            } else {
+                                const slots = clone.querySelectorAll('.fashion-grid, .fashion-badge, .fashion-badge1, .fashion-badge2, .fashion-badge3, .fashion-badge4');
+                                for (let i = 0; i < slots.length; i++) {
+                                    // 只用has-component类判断是否已添加，底图占位不算占用
+                                    const isOccupied = slots[i].classList.contains('has-component');
+                                    if (!isOccupied) {
+                                        // 用contain和首图一致，大小高度100x100px一致
+                                        slots[i].style.background = 'url(' + item.img + ') no-repeat center/contain';
+                                        slots[i].style.backgroundSize = 'contain';
+                                        slots[i].classList.add('has-component');
+                                        addRemoveBtn(slots[i], 'fashion');
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                        list.appendChild(div);
+                    });
+                }
+                renderComponentList('pet');
+            }
+            document.getElementById('rocomEditComponentReset').addEventListener('click', function() {
+                initEditComponent();
+            });
+            document.getElementById('rocomEditComponentConfirm').addEventListener('click', function() {
+                // 把克隆名片的宠物/装扮面板应用到真实名片
+                const preview = document.getElementById('rocomEditComponentPreview');
+                const clone = preview.querySelector('.card-back');
+                const realCard = document.querySelector('.card-back');
+                if (clone && realCard) {
+                    // 同步前移除减号按钮
+                    clone.querySelectorAll('.rocom-edit-component-remove').forEach(function(btn) {
+                        btn.remove();
+                    });
+                    // 同步宠物面板
+                    const clonePetPanel = clone.querySelector('#petPanel');
+                    const realPetPanel = realCard.querySelector('#petPanel');
+                    if (clonePetPanel && realPetPanel) {
+                        realPetPanel.innerHTML = clonePetPanel.innerHTML;
+                    }
+                    // 同步装扮面板
+                    const cloneFashionPanel = clone.querySelector('#fashionPanel');
+                    const realFashionPanel = realCard.querySelector('#fashionPanel');
+                    if (cloneFashionPanel && realFashionPanel) {
+                        realFashionPanel.innerHTML = cloneFashionPanel.innerHTML;
+                    }
+                }
+                closeRocomEdit();
+            });
+
+            // ========== 背景更换模块 ==========
+            const bgList = [
+                { name: '背景1', img: './15.png' },
+                { name: '背景2', img: './16.png' },
+                { name: '背景3', img: './17.png' },
+                { name: '背景4', img: './18.png' },
+                { name: '背景5', img: './19.png' },
+                { name: '背景6', img: './20.png' },
+                { name: '背景7', img: './21.png' },
+                { name: '背景8', img: './22.png' }
+            ];
+            let selectedBg = 0;
+            function initEditBg() {
+                const list = document.getElementById('rocomEditBgList');
+                list.innerHTML = '';
+                bgList.forEach(function(bg, idx) {
+                    const div = document.createElement('div');
+                    div.className = 'rocom-edit-bottom-item' + (idx === selectedBg ? ' selected' : '');
+                    div.innerHTML = '<div style="width:100%;height:70%;background:url(' + bg.img + ') no-repeat center/cover;border-radius:8px 8px 0 0;"></div><div class="rocom-edit-bottom-item-label">' + bg.name + '</div>';
+                    div.addEventListener('click', function() {
+                        selectedBg = idx;
+                        document.querySelectorAll('#rocomEditBgList .rocom-edit-bottom-item').forEach(function(el) { el.classList.remove('selected'); });
+                        div.classList.add('selected');
+                        // 同时更新名片预览和人物头顶预览框
+                        const bgStyle = 'url(' + bg.img + ') no-repeat center/cover';
+                        const cardPreview = document.getElementById('rocomEditBgCardPreview');
+                        const headPreview = document.getElementById('rocomEditBgHeadPreview');
+                        if (cardPreview) cardPreview.style.background = bgStyle;
+                        if (headPreview) headPreview.style.background = bgStyle;
+                    });
+                    list.appendChild(div);
+                });
+                // 初始化预览：同时更新名片预览和人物头顶预览框
+                const initBgStyle = 'url(' + bgList[selectedBg].img + ') no-repeat center/cover';
+                const initCardPreview = document.getElementById('rocomEditBgCardPreview');
+                const initHeadPreview = document.getElementById('rocomEditBgHeadPreview');
+                if (initCardPreview) initCardPreview.style.background = initBgStyle;
+                if (initHeadPreview) initHeadPreview.style.background = initBgStyle;
+            }
+            document.getElementById('rocomEditBgRotate').addEventListener('click', function() {
+                // 旋转名片预览和人物头顶预览框
+                const cardPreview = document.getElementById('rocomEditBgCardPreview');
+                const headPreview = document.getElementById('rocomEditBgHeadPreview');
+                [cardPreview, headPreview].forEach(function(preview) {
+                    if (!preview) return;
+                    const current = preview.style.transform || 'rotate(0deg)';
+                    const match = current.match(/rotate\((\d+)deg\)/);
+                    const deg = match ? (parseInt(match[1]) + 90) % 360 : 90;
+                    preview.style.transform = 'rotate(' + deg + 'deg)';
+                });
+            });
+            document.getElementById('rocomEditBgConfirm').addEventListener('click', function() {
+                const selectedBgItem = bgList[selectedBg];
+                if (selectedBgItem) {
+                    // 更新名片背面顶部背景
+                    document.querySelectorAll('.back-groud').forEach(function(el) {
+                        el.style.backgroundImage = 'url(' + selectedBgItem.img + ')';
+                        el.style.backgroundRepeat = 'no-repeat';
+                        el.style.backgroundPosition = '-17px -20px';
+                        el.style.backgroundSize = 'cover';
+                    });
+                    // 更新分享界面顶部背景
+                    document.querySelectorAll('.rocom-share-header-bg').forEach(function(el) {
+                        el.style.backgroundImage = 'url(' + selectedBgItem.img + ')';
+                        el.style.backgroundRepeat = 'no-repeat';
+                        el.style.backgroundPosition = 'center';
+                        el.style.backgroundSize = 'cover';
+                    });
+                }
+                closeRocomEdit();
+            });
+
+            // ESC关闭
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && rocomEditMask.classList.contains('show')) {
+                    closeRocomEdit();
+                }
+            });
+
+            // ESC键关闭
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && rocomShareMask.classList.contains('show')) {
+                    closeRocomShare();
+                }
+            });
+
+            // 保存图片按钮
+            rocomShareSaveBtn.addEventListener('click', function() {
+                const dituEl = document.querySelector('.ditu');
+                if (!dituEl) {
+                    alert('未找到名片内容');
+                    return;
+                }
+                // 显示加载提示
+                const originalText = this.innerHTML;
+                this.style.opacity = '0.5';
+                this.style.pointerEvents = 'none';
+                
+                // 使用html2canvas截取.ditu元素
+                html2canvas(dituEl, {
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false
+                }).then(function(canvas) {
+                    // 转换为图片并下载
+                    const link = document.createElement('a');
+                    const uid = document.getElementById('rocomShareUid').textContent.trim() || 'card';
+                    link.download = '洛克王国世界名片_' + uid + '.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    // 恢复按钮状态
+                    rocomShareSaveBtn.style.opacity = '1';
+                    rocomShareSaveBtn.style.pointerEvents = 'auto';
+                }).catch(function(err) {
+                    console.error('截图失败:', err);
+                    alert('保存图片失败，请重试或使用截图工具');
+                    rocomShareSaveBtn.style.opacity = '1';
+                    rocomShareSaveBtn.style.pointerEvents = 'auto';
+                });
+            });
+
+            // QQ好友分享
+            rocomShareQQBtn.addEventListener('click', function() {
+                const uid = document.getElementById('rocomShareUid').textContent.trim();
+                const name = document.getElementById('rocomShareName').textContent.trim();
+                const pageUrl = window.location.origin + window.location.pathname + '?uid=' + uid;
+                const shareTitle = '【洛克王国世界】' + name + '的名片';
+                const shareSummary = 'UID：' + uid + '，快来看看我的洛克王国世界名片吧！';
+                const qqUrl = 'https://connect.qq.com/widget/shareqq/index.html?url=' + encodeURIComponent(pageUrl) + '&title=' + encodeURIComponent(shareTitle) + '&summary=' + encodeURIComponent(shareSummary) + '&desc=' + encodeURIComponent(shareSummary);
+                window.open(qqUrl, '_blank', 'width=600,height=500');
+            });
+
+            // QQ空间分享
+            rocomShareZoneBtn.addEventListener('click', function() {
+                const uid = document.getElementById('rocomShareUid').textContent.trim();
+                const name = document.getElementById('rocomShareName').textContent.trim();
+                const pageUrl = window.location.origin + window.location.pathname + '?uid=' + uid;
+                const shareTitle = '【洛克王国世界】' + name + '的名片';
+                const shareSummary = 'UID：' + uid + '，快来看看我的洛克王国世界名片吧！';
+                const zoneUrl = 'https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + encodeURIComponent(pageUrl) + '&title=' + encodeURIComponent(shareTitle) + '&summary=' + encodeURIComponent(shareSummary) + '&desc=' + encodeURIComponent(shareSummary);
+                window.open(zoneUrl, '_blank', 'width=600,height=500');
+            });
+
+            // 更多选项
+            rocomShareMoreBtn.addEventListener('click', async function() {
+                const uid = document.getElementById('rocomShareUid').textContent.trim();
+                const pageUrl = window.location.origin + window.location.pathname + '?uid=' + uid;
+                const ok = await copyShareText(pageUrl);
+                alert(ok ? '名片链接已复制，可粘贴到其他平台分享' : '复制失败，请手动复制链接：' + pageUrl);
+            });
+        });
+    </script>
+    <!-- ========== 洛克王国世界 名片分享预览界面 ========== -->
+    <div class="rocom-share-mask" id="rocomShareMask">
+        <!-- 左上角标题 -->
+        <div class="rocom-share-header">
+            <div class="rocom-share-title-wrap">
+                <img src="./54.png" alt="分享" class="rocom-share-title-icon" style="object-fit:contain;">
+                <!-- <div class="rocom-share-title-text">
+                    <div class="rocom-share-title-main">分享</div>
+                    <div class="rocom-share-title-sub">个人名片</div>
+                </div> -->
+            </div>
+        </div>
+        <!-- 右上角关闭按钮 -->
+        <div class="rocom-share-close" id="rocomShareClose">
+            <img src="./51.png" alt="关闭" style="width:100%;height:100%;object-fit:contain;">
+        </div>
+
+        <!-- 中间名片预览区域 -->
+        <div class="rocom-share-preview-area">
+            <div class="ditu">
+                            <!-- 名片主体 -->
+            <div class="rocom-share-card">
+                <!-- 名片头部（带15.png横幅背景） -->
+                <div class="rocom-share-card-header">
+                    <div class="rocom-share-header-bg"></div>
+                    <div class="rocom-share-avatar-box">
+                        <div class="rocom-share-avatar-frame">
+                            <div class="rocom-share-avatar" id="rocomShareAvatar"></div>
+                            <div class="ssder">
+                                <span class="rocom-share-avatar-title">精灵魔法师</span>
+                                <span class="rocom-share-avatar-level" id="rocomShareLevel">66</span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="rocom-share-card-info">
+                        <div class="rocom-share-card-name" id="rocomShareName">蛇瞳</div>
+                        <div class="rocom-share-card-uid" id="rocomShareUid">8833235</div>
+                        <div class="rocom-share-card-sign" id="rocomShareSign">这个人很神秘，什么也没有留下~</div>
+                    </div>
+                </div>
+
+                <!-- 冒险记录 -->
+                <div class="rocom-share-section">
+                    <div class="rocom-share-section-title">
+                        <div class="rocom-share-section-label">冒险记录</div>
+                    </div>
+                    <div class="rocom-share-stats-grid">
+                        <div class="rocom-share-stat-item">
+                            <div class="rocom-share-stat-icon rocom-stat-school">
+                                
+                            </div>
+                            <div class="rocom-share-stat-info">
+                                <div class="rocom-share-stat-label">入学日期</div>
+                                <div class="rocom-share-stat-value" id="rocomShareRegTime">2026.03.26</div>
+                            </div>
+                        </div>
+                        <div class="rocom-share-stat-item" style="position:relative; left:-70px;">
+                            <div class="rocom-share-stat-icon rocom-stat-fashion">
+                                
+                            </div>
+                            <div class="rocom-share-stat-info">
+                                <div class="rocom-share-stat-label">服装收集进度</div>
+                                <div class="rocom-share-stat-value"><span id="rocomShareFashionNum">153</span> <span class="rocom-share-stat-percent" id="rocomShareFashionPercent">11.2%</span></div>
+                            </div>
+                        </div>
+                        <div class="rocom-share-stat-item" style="position: relative;left: -140px;">
+                            <div class="rocom-share-stat-icon rocom-stat-badge">
+                                
+                            </div>
+                            <div class="rocom-share-stat-info">
+                                <div class="rocom-share-stat-label">收集徽章总数</div>
+                                <div class="rocom-share-stat-value" id="rocomShareBadgeNum">1</div>
+                            </div>
+                        </div>
+                        <div class="rocom-share-stat-item">
+                            <div class="rocom-share-stat-icon rocom-stat-book">
+                                
+                            </div>
+                            <div class="rocom-share-stat-info">
+                                <div class="rocom-share-stat-label">图鉴精灵数</div>
+                                <div class="rocom-share-stat-value"><span id="rocomShareHandbookNum">442</span> <span class="rocom-share-stat-percent" id="rocomShareHandbookPercent">100.0%</span></div>
+                            </div>
+                        </div>
+                        <div class="rocom-share-stat-item" style="position: relative;left: -70px;">
+                            <div class="rocom-share-stat-icon rocom-stat-shining">
+                                
+                            </div>
+                            <div class="rocom-share-stat-info">
+                                <div class="rocom-share-stat-label">异色精灵数</div>
+                                <div class="rocom-share-stat-value" id="rocomShareShiningNum">18</div>
+                            </div>
+                        </div>
+                        <div class="rocom-share-stat-item" style="position: relative;left: -140px;">
+                            <div class="rocom-share-stat-icon rocom-stat-glass">
+                               
+                            </div>
+                            <div class="rocom-share-stat-info">
+                                <div class="rocom-share-stat-label">炫彩精灵数</div>
+                                <div class="rocom-share-stat-value" id="rocomShareGlassNum">72</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 我的收藏 -->
+                <div class="rocom-share-section">
+                    <div class="rocom-share-section-title">
+                        <div class="rocom-share-section-label">我的收藏</div>
+                        <div class="rocom-share-pet-filter" id="rocomSharePetFilter">精灵收藏</div>
+                        <div class="rocom-share-filter-dropdown" id="rocomShareFilterDropdown">
+                            <div class="rocom-share-filter-option active" data-type="pet">精灵收藏</div>
+                            <div class="rocom-share-filter-option" data-type="badge">徽章收藏</div>
+                        </div>
+                    </div>
+                    <div class="rocom-share-pets-row" id="rocomSharePetsRow">
+                        <!-- 宠物头像由JS动态生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧倾斜照片 -->
+            <div class="rocom-share-photo">
+                <div class="rocom-share-photo-clip"></div>
+                <div class="rocom-share-photo-inner">
+                    <img id="rocomSharePhotoImg" src="" alt="名片大图">
+                </div>
+                <div class="rocom-share-photo-lines">
+                    <div class="rocom-share-photo-line"></div>
+                    <div class="rocom-share-photo-line short"></div>
+                    <div class="rocom-share-photo-line"></div>
+                </div>
+                <div class="stamp-mark" style="position:absolute;transform: rotate(-15deg);bottom:5px;left:120px;width:60%;height:27%;background-image:url(./2.png);background-size:contain;background-repeat:no-repeat;background-position:center;"></div>
+                <div class="marktext" style="position:absolute;transform: rotate(-7deg);bottom:27px;left:60%;font-size:13px;color:#f8f3e8;white-space:nowrap;">等等鸭大块头</div>
+            </div>
+
+            <!-- 右下角二维码 -->
+            <div class="rocom-share-qrcode">
+                <!-- <img src="./45.png" alt="二维码"> -->
+                <!-- <div class="rocom-share-qrcode-pattern" id="rocomShareQrPattern"></div>
+                <div class="rocom-share-qrcode-label">洛克王国</div> -->
+            </div>
+            </div>
+
+        </div>
+
+        <!-- 底部按钮栏 -->
+        <div class="rocom-share-bottom-bar">
+            <div class="rocom-share-bottom-left">
+                <div class="rocom-share-circle-btn" id="rocomShareSaveBtn" title="保存图片">
+                    <img src="./56.png" alt="下载" style="width:100%;height:100%;object-fit:contain;">
+                </div>
+            </div>
+            <div class="rocom-share-bottom-right">
+                <div class="rocom-share-circle-btn rocom-share-qq-btn" id="rocomShareQQBtn" title="QQ好友">
+                    <img src="./57.png" alt="QQ" style="width:100%;height:100%;object-fit:contain;">
+                </div>
+                <div class="rocom-share-circle-btn rocom-share-zone-btn" id="rocomShareZoneBtn" title="QQ空间">
+                    <img src="./58.png" alt="QQ空间" style="width:100%;height:100%;object-fit:contain;">
+                </div>
+                <div class="rocom-share-circle-btn rocom-share-more-btn" id="rocomShareMoreBtn" title="更多">
+                    <img src="./59.png" alt="更多" style="width:100%;height:100%;object-fit:contain;">
+                </div>
+            </div>
+        </div>
+
+        <!-- 右下角UID -->
+        <div class="rocom-share-uid-corner" id="rocomShareUidCorner">8833235</div>
+    </div>
+    <!-- 编辑弹出菜单 -->
+    <div class="rocom-edit-menu" id="rocomEditMenu">
+        <div class="rocom-edit-menu-item" data-action="info">修改信息</div>
+        <div class="rocom-edit-menu-item" data-action="photo" id="rocomEditPhotoUpload">上传照片</div>
+        <div class="rocom-edit-menu-item" data-action="component">编辑组件</div>
+        <div class="rocom-edit-menu-item" data-action="background">更换背景</div>
+    </div>
+
+    <!-- ========== 编辑功能界面 ========== -->
+    <div class="rocom-edit-mask" id="rocomEditMask">
+        <div class="rocom-edit-container">
+            <!-- 左上角标题 -->
+            <div class="rocom-edit-title" id="rocomEditTitle">
+                <!-- <div class="rocom-edit-title-icon"><img src="./53.png" alt="编辑" style="width:100%;height:100%;object-fit:contain;"></div> -->
+                <div class="rocom-edit-title-text">
+                    修改信息
+                    <small id="rocomEditSubtitle">头像</small>
+                </div>
+            </div>
+            <!-- 右上角关闭 -->
+            <div class="rocom-edit-close" id="rocomEditClose"><img src="./51.png" alt="关闭" style="width:100%;height:100%;object-fit:contain;"></div>
+            <!-- 右下角UID -->
+            <div class="rocom-edit-uid" id="rocomEditUid">8833235</div>
+
+            <!-- ========== 模块1：修改信息 ========== -->
+            <div class="rocom-edit-module" id="editModuleInfo">
+                <!-- 左侧导航 -->
+                <div class="rocom-edit-nav">
+                    <div class="rocom-edit-nav-item active" data-info-tab="avatar" title="头像"><img src="./65.png" style="width:100%;height:100%;object-fit:contain;"></div>
+                    <div class="rocom-edit-nav-item" data-info-tab="title" title="称号"><img src="./64.png" style="width:100%;height:100%;object-fit:contain;"></div>
+                    <div class="rocom-edit-nav-item" data-info-tab="nickname" title="昵称"><img src="./63.png" style="width:100%;height:100%;object-fit:contain;"></div>
+                    <div class="rocom-edit-nav-item" data-info-tab="sign" title="签名"><img src="./62.png" style="width:100%;height:100%;object-fit:contain;"></div>
+                </div>
+                <!-- 中间角色+气泡 -->
+                <div class="rocom-edit-character">
+                    <div class="rocom-edit-bubble" id="rocomEditBubble" style="background:url('./61.png') no-repeat center/contain;width: 320px;height:120px;border:none;color:#333;max-width: 220px;word-wrap: break-word;text-align: center;">蛇瞳</div>
+                    <div id="rocomEditCharacterImg" style="width:200px;height:300px;background:url('./66.png') no-repeat center/cover;border-radius:100px 100px 20px 20px;opacity:0.9;position:relative;">
+                        <!-- 称号界面图章和文字（默认隐藏，复用名片样式） -->
+                        <div id="titleStampWrap" style="position:absolute;left:-195px;bottom:27px;display:flex;align-items:center;gap:4px;">
+                            <div class="stamp-mark" style="width:200px;height:170px;position:relative;flex-shrink:0;">
+                                <svg viewBox="0 0 180 100" style="width:100%;height:100%;">
+                                    <circle cx="90" cy="50" r="42" fill="none" stroke="#665440" stroke-width="3" />
+                                </svg>
+                            </div>
+                            <div class="marktext" id="titleStampText" style="position:relative;top:10px;left:-155px;transform:rotate(8deg);font-size:20px;color:#665440;white-space:nowrap;">等等鸭大块头</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 右侧面板 -->
+                <div class="rocom-edit-info-panel">
+                    <!-- 头像 -->
+                    <div class="rocom-edit-info-content" id="infoContentAvatar">
+                        <div class="rocom-edit-info-panel-title">更换头像</div>
+                        <div class="rocom-edit-avatar-grid" id="rocomEditAvatarGrid">
+                            <!-- 由JS生成 -->
+                        </div>
+                    </div>
+                    <!-- 称号 -->
+                    <div class="rocom-edit-info-content" id="infoContentTitle" style="display:none;">
+                        <div class="rocom-edit-info-panel-title">更换称号</div>
+                        <div class="rocom-edit-title-picker" id="rocomEditTitlePicker" style="position:relative;">
+                            <div class="title-picker-col" id="titlePickerCol1"></div>
+                            <div class="title-picker-col" id="titlePickerCol2"></div>
+                        </div>
+                    </div>
+                    <!-- 昵称 -->
+                    <div class="rocom-edit-info-content" id="infoContentNickname" style="display:none;">
+                        <div class="rocom-edit-info-panel-title">修改昵称</div>
+                        <input type="text" class="rocom-edit-input" id="rocomEditNicknameInput" placeholder="请输入昵称" maxlength="12">
+                    </div>
+                    <!-- 签名 -->
+                    <div class="rocom-edit-info-content" id="infoContentSign" style="display:none;">
+                        <div class="rocom-edit-info-panel-title">修改签名</div>
+                        <textarea class="rocom-edit-input" id="rocomEditSignInput" placeholder="请输入签名。" maxlength="50"></textarea>
+                    </div>
+                    <!-- 保存按钮 -->
+                    <button class="rocom-edit-save-btn" id="rocomEditInfoSave">保存</button>
+                </div>
+            </div>
+
+            <!-- ========== 模块2：上传照片 ========== -->
+            <div class="rocom-edit-module" id="editModulePhoto" style="display:none;">
+                <div class="rocom-edit-card-preview">
+                    <div style="width:100%;height:300px;border-radius:12px;position:relative;overflow:hidden;">
+                        <img id="rocomEditPhotoPreview" src="" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:none;display:none;cursor:move;user-select:none;-webkit-user-drag:none;">
+                        <video id="rocomEditVideoPreview" src="" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:none;display:none;cursor:move;user-select:none;" muted loop playsinline></video>
+                    </div>
+                </div>
+                <!-- 裁剪框 -->
+                <div class="rocom-edit-crop-box">
+                    <div class="rocom-edit-crop-grid">
+                        <div></div><div></div><div></div>
+                        <div></div><div></div><div></div>
+                        <div></div><div></div><div></div>
+                    </div>
+                </div>
+                <!-- 右侧操作按钮 -->
+                <div class="rocom-edit-actions">
+                    <div class="rocom-edit-action-btn rotate" id="rocomEditPhotoRotate" title="旋转"><img src="./49.png" alt="旋转" style="width:100%;height:100%;object-fit:contain;"></div>
+                    <div class="rocom-edit-action-btn confirm" id="rocomEditPhotoConfirm" title="确认"><img src="./50.png" alt="确认" style="width:100%;height:100%;object-fit:contain;"></div>
+                </div>
+                <!-- 上传提示 -->
+                <!-- <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;font-size:18px;z-index:7;text-align:center;"> -->
+                    <!-- <button class="rocom-edit-save-btn" style="position:relative;left:0;right:0;margin-top:20px;width:200px;" id="rocomEditPhotoUpload">选择照片</button> -->
+                    <input type="file" id="rocomEditPhotoInput" accept="image/*,video/*" style="display:none;">
+                <!-- </div> -->
+            </div>
+
+            <!-- ========== 模块3：编辑组件 ========== -->
+            <div class="rocom-edit-module" id="editModuleComponent" style="display:none;">
+                <div class="rocom-edit-card-preview" id="rocomEditComponentPreview">
+                    <!-- 名片预览，由JS克隆 -->
+                </div>
+                <!-- 右侧操作按钮 -->
+                <div class="rocom-edit-actions">
+                    <div class="rocom-edit-action-btn rotate" id="rocomEditComponentReset" title="重置"><img src="./49.png" alt="重置" style="width:100%;height:100%;object-fit:contain;"></div>
+                    <div class="rocom-edit-action-btn confirm" id="rocomEditComponentConfirm" title="确认"><img src="./50.png" alt="确认" style="width:100%;height:100%;object-fit:contain;"></div>
+                </div>
+                <!-- 左侧筛选 -->
+                <div style="position:absolute;left:40px;bottom:160px;width:44px;height:44px;background:rgba(30,30,30,0.7);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:20px;z-index:10;"><img src="./52.png" alt="筛选" style="width:100%;height:100%;object-fit:contain;"></div>
+                <!-- 底部组件列表 -->
+                <div class="rocom-edit-bottom-list" id="rocomEditComponentList">
+                    <!-- 由JS生成 -->
+                </div>
+            </div>
+
+            <!-- ========== 模块4：背景更换 ========== -->
+            <div class="rocom-edit-module" id="editModuleBg" style="display:none;">
+                <!-- 左边名片预览 -->
+                <div style="position:absolute;left:60px;top:-37px;width:400px;height:440px;">
+                    <!-- 名片框架 ./68.png -->
+                    <div style="width:100%;height:100%;background:url('./68.png') no-repeat center/contain;position:relative;">
+                        <!-- 背景覆盖div（长方形，覆盖在名片顶部） -->
+                        <div id="rocomEditBgCardPreview" style="position:absolute;top:110px;left:32px;right:50px;height:50px;background:url('./15.png') no-repeat center/cover;border-radius:3px;"></div>
+                    </div>
+                </div>
+                <!-- 右边白色人物 + 头顶预览框 -->
+                <div style="position:absolute;right:100px;top:30px;width:220px;height:420px;display:flex;flex-direction:column;align-items:center;">
+                    <!-- 头顶背景预览框（长方形） -->
+                    <div id="rocomEditBgHeadPreview" style="width:200px;height:90px;background:url('./15.png') no-repeat center/cover;border-radius:10px;margin-bottom:15px;"></div>
+                    <!-- 白色人物 ./67.png -->
+                    <div style="width:160px;height:300px;background:url('./67.png') no-repeat center/contain;"></div>
+                </div>
+                <!-- 右侧操作按钮 -->
+                <div class="rocom-edit-actions">
+                    <div class="rocom-edit-action-btn rotate" id="rocomEditBgRotate" title="旋转"><img src="./49.png" alt="旋转" style="width:100%;height:100%;object-fit:contain;"></div>
+                    <div class="rocom-edit-action-btn confirm" id="rocomEditBgConfirm" title="确认"><img src="./50.png" alt="确认" style="width:100%;height:100%;object-fit:contain;"></div>
+                </div>
+                <!-- 底部背景列表 -->
+                <div class="rocom-edit-bottom-list" id="rocomEditBgList">
+                    <!-- 由JS生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
