@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0c14" />
+    <title>模型展台 · 3D Model Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#" aria-label="模型展台首页">
+          <span class="brand-mark">模</span>
+          <span>
+            <strong>模型展台</strong>
+            <small>MODEL GALLERY</small>
+          </span>
+        </a>
+
+        <nav class="side-nav" aria-label="主导航">
+          <a class="nav-item active" href="#gallery"><span class="nav-icon">◈</span>展台总览</a>
+          <a class="nav-item" href="#models"><span class="nav-icon">◇</span>我的模型 <em>12</em></a>
+          <a class="nav-item" href="#notes"><span class="nav-icon">⌁</span>灵感笔记</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="location-chip"><span class="pulse"></span><span>ONLINE</span><span class="weather">LIVE</span></div>
+          <button class="mini-action" id="soundButton" type="button" aria-label="切换环境音"><span>◒</span> 环境音 <b>OFF</b></button>
+          <p class="sidebar-foot">PERSONAL COLLECTION<br />2024 — 2026</p>
+        </div>
+      </aside>
+
+      <section class="workspace" id="gallery">
+        <header class="topbar">
+          <div class="crumb">PROJECT / <span>MODEL GALLERY</span></div>
+          <div class="top-actions">
+            <button class="ghost-button" id="uploadButton" type="button"><span>＋</span> 导入模型</button>
+            <input id="fileInput" type="file" accept=".glb,.gltf,.obj" hidden />
+            <button class="avatar" type="button" aria-label="用户菜单">LX</button>
+          </div>
+        </header>
+
+        <div class="content">
+          <section class="intro-row">
+            <div>
+              <p class="eyebrow">NO. 004 / SKY COLLECTION</p>
+              <h1>探索，<i>模型</i>。</h1>
+            </div>
+            <p class="intro-copy">把喜欢的模型，收进一座可漫游的数字展台。<br />旋转、缩放，靠近每一个细节。</p>
+          </section>
+
+          <section class="showcase-grid">
+            <div class="viewer-card" id="viewerCard">
+              <div class="viewer-head">
+                <div><span class="status-dot"></span> LIVE VIEWER</div>
+                <div class="viewer-meta"><span id="modelType">GLB / REALTIME</span><span>•</span><span id="modelCounter">01 — 12</span></div>
+              </div>
+              <div id="canvasHost" class="canvas-host" aria-label="3D 模型查看器"></div>
+              <div class="fps-monitor" aria-label="实时帧率">
+                <strong><span id="fpsValue">--</span> FPS <span id="fpsRange">(-- --)</span></strong>
+                <canvas id="fpsGraph" width="112" height="48" aria-hidden="true"></canvas>
+              </div>
+              <div class="viewer-hint">方向键移动 <span>·</span> 鼠标左键环绕 <span>·</span> 滚轮缩放</div>
+              <div class="viewer-controls">
+                <button id="resetCamera" type="button" aria-label="重置视角">↺</button>
+                <button id="toggleGrid" class="control-active" type="button" aria-label="切换网格">⊞</button>
+                <button id="toggleSpin" class="control-active" type="button" aria-label="切换自动旋转">◌</button>
+                <button id="toggleAnimation" class="control-active" type="button" aria-label="暂停动画">Ⅱ</button>
+              </div>
+              <div class="camera-pad" aria-label="第一视角移动控制">
+                <button type="button" data-camera="forward" aria-label="镜头前进">↑</button>
+                <div><button type="button" data-camera="left" aria-label="镜头向左移动">←</button><button type="button" data-camera="back" aria-label="镜头后退">↓</button><button type="button" data-camera="right" aria-label="镜头向右移动">→</button></div>
+              </div>
+              <div class="viewer-stamp">25°41'N<br />112°58'E</div>
+            </div>
+
+            <aside class="model-panel" id="models">
+              <div class="panel-kicker"><span>FEATURED MODEL</span><span class="index">04 / 12</span></div>
+              <div class="panel-title-row">
+                <h2 id="modelName">Skylark<br /><i>无人机</i></h2>
+                <button class="bookmark" type="button" aria-label="收藏模型">♡</button>
+              </div>
+              <p class="model-description" id="modelDescription">一个轻盈的飞行器模型，适合从不同角度观察它的结构与细节。</p>
+              <div class="spec-list">
+                <div><span>CREATOR</span><strong id="modelCreator">Xiang Studio</strong></div>
+                <div><span>POLYGONS</span><strong id="polyCount">—</strong></div>
+                <div><span>FORMAT</span><strong id="formatValue">GLB / PBR</strong></div>
+              </div>
+              <div class="panel-divider"></div>
+              <div class="collection-label">IN THIS COLLECTION</div>
+              <button class="collection-card selected" data-model="default" type="button">
+                <span class="collection-number">01</span><span class="collection-icon">✦</span><span><strong>Skylark</strong><small>无人机 · 2026</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="fighter0" type="button">
+                <span class="collection-number">02</span><span class="collection-icon">✈</span><span><strong>战斗机 0</strong><small>飞行器 · GLTF</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="fighter1" type="button">
+                <span class="collection-number">03</span><span class="collection-icon">✈</span><span><strong>战斗机 1</strong><small>飞行器 · GLTF</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="fighter2" type="button">
+                <span class="collection-number">04</span><span class="collection-icon">✈</span><span><strong>战斗机 2</strong><small>飞行器 · GLTF</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="platformHeli" type="button">
+                <span class="collection-number">05</span><span class="collection-icon">✈</span><span><strong>直升机和平台</strong><small>飞行器 · GLTF</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="blueHeli" type="button">
+                <span class="collection-number">06</span><span class="collection-icon">✈</span><span><strong>蓝色直升机</strong><small>飞行器 · GLTF</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="yellowHeli" type="button">
+                <span class="collection-number">07</span><span class="collection-icon">✈</span><span><strong>黄色直升机</strong><small>飞行器 · GLTF</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="cwZoom" type="button">
+                <span class="collection-number">08</span><span class="collection-icon">◆</span><span><strong>CW's Zoom</strong><small>角色模型 · GLTF</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="mechanicalDragon" type="button">
+                <span class="collection-number">09</span><span class="collection-icon">◇</span><span><strong>机械龙</strong><small>机械生物 · FBX</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="boneDragon" type="button">
+                <span class="collection-number">10</span><span class="collection-icon">◇</span><span><strong>骨龙</strong><small>生物模型 · STL</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="dragon123" type="button">
+                <span class="collection-number">11</span><span class="collection-icon">◇</span><span><strong>骨龙 · 123</strong><small>机械龙文件夹 · STL</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="gulong" type="button">
+                <span class="collection-number">12</span><span class="collection-icon">◇</span><span><strong>骨龙 · Gulong</strong><small>机械龙文件夹 · STL</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="boneDragon1" type="button">
+                <span class="collection-number">13</span><span class="collection-icon">◇</span><span><strong>骨龙 1</strong><small>机械龙文件夹 · OBJ</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="mechanicalDragonStl" type="button">
+                <span class="collection-number">14</span><span class="collection-icon">◇</span><span><strong>机械龙 STL</strong><small>机械龙文件夹 · STL</small></span><span class="arrow">↗</span>
+              </button>
+              <button class="collection-card" data-model="custom" type="button">
+                <span class="collection-number">15</span><span class="collection-icon">＋</span><span><strong>本地文件</strong><small>从你的桌面导入</small></span><span class="arrow">↗</span>
+              </button>
+            </aside>
+          </section>
+
+          <section class="bottom-row" id="notes">
+            <div class="quote-card">
+              <span class="quote-mark">“</span>
+              <p>每一个模型都有细节，<br /><strong>也都有被看见的方式。</strong></p>
+              <span class="quote-author">— 模型展台</span>
+            </div>
+            <div class="stats-card">
+              <div><span>COLLECTIONS</span><strong>06</strong></div>
+              <div><span>ASSETS</span><strong>128</strong></div>
+              <div><span>LAST UPDATE</span><strong>09.06.26</strong></div>
+            </div>
+            <div class="tip-card"><span>TIP OF THE DAY</span><p>试试按住 <kbd>SHIFT</kbd> 拖拽，查看模型的正交视图。</p><span class="tip-icon">✳</span></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <div class="toast" id="toast" role="status"></div>
+    <script type="importmap">
+      { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+    </script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
