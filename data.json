@@ -1,15 +1,27 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-09-07T08:20:19.381Z",
+  "fetchedAt": "2026-09-07T12:20:19.215Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 3,
-  "startedAtBeijing": "2026-09-07 16:00:00",
-  "nextRefreshBeijing": "2026-09-07 20:00:00",
-  "nextActiveBeijing": "2026-09-07 20:00:00",
+  "round": 4,
+  "startedAtBeijing": "2026-09-07 20:00:00",
+  "nextRefreshBeijing": "2026-09-08 00:00:00",
+  "nextActiveBeijing": "2026-09-08 08:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
+    {
+      "name": "魔力果",
+      "price": "6000",
+      "priceRaw": "6000",
+      "limit": "20",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
+      "category": "精灵喂养材料",
+      "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+      "rounds": [
+        4
+      ]
+    },
     {
       "name": "神奇的蛋",
       "price": "36000",
@@ -19,14 +31,27 @@
       "category": "精灵蛋",
       "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
       "rounds": [
-        3
+        4
       ]
     }
   ],
   "rounds": {
     "1": [],
     "2": [],
-    "3": [
+    "3": [],
+    "4": [
+      {
+        "name": "魔力果",
+        "price": "6000",
+        "priceRaw": "6000",
+        "limit": "20",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
+        "category": "精灵喂养材料",
+        "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
+        "rounds": [
+          4
+        ]
+      },
       {
         "name": "神奇的蛋",
         "price": "36000",
@@ -36,14 +61,13 @@
         "category": "精灵蛋",
         "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
         "rounds": [
-          3
+          4
         ]
       }
-    ],
-    "4": []
+    ]
   },
   "stale": false,
-  "expectedRound": 3,
+  "expectedRound": 4,
   "lastFetchError": "",
   "live": true
 }
