@@ -1,12 +1,12 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-09-13T04:20:17.530Z",
+  "fetchedAt": "2026-09-13T08:20:20.298Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-09-13 12:00:00",
-  "nextRefreshBeijing": "2026-09-13 16:00:00",
-  "nextActiveBeijing": "2026-09-13 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-09-13 16:00:00",
+  "nextRefreshBeijing": "2026-09-13 20:00:00",
+  "nextActiveBeijing": "2026-09-13 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -34,37 +34,26 @@
       "category": "炼金材料",
       "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
       "rounds": [
-        2
+        3
       ]
     },
     {
-      "name": "幽系粉尘",
-      "price": "500",
-      "priceRaw": "500",
+      "name": "紫莲刚玉",
+      "price": "1000",
+      "priceRaw": "1000",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
       "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量幽系魔法，是合成技能石的主要触媒。",
+      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
       "rounds": [
-        2
-      ]
-    },
-    {
-      "name": "虫系粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c0/ihsb7b9pcs210dtaiswlsaxuhe2jfaa.png/100px-100134.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量虫系魔法，是合成技能石的主要触媒。",
-      "rounds": [
-        2
+        3
       ]
     }
   ],
   "rounds": {
     "1": [],
-    "2": [
+    "2": [],
+    "3": [
       {
         "name": "暗星球",
         "price": "3000",
@@ -89,39 +78,26 @@
         "category": "炼金材料",
         "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
         "rounds": [
-          2
+          3
         ]
       },
       {
-        "name": "幽系粉尘",
-        "price": "500",
-        "priceRaw": "500",
+        "name": "紫莲刚玉",
+        "price": "1000",
+        "priceRaw": "1000",
         "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
         "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量幽系魔法，是合成技能石的主要触媒。",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
         "rounds": [
-          2
-        ]
-      },
-      {
-        "name": "虫系粉尘",
-        "price": "500",
-        "priceRaw": "500",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c0/ihsb7b9pcs210dtaiswlsaxuhe2jfaa.png/100px-100134.png",
-        "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量虫系魔法，是合成技能石的主要触媒。",
-        "rounds": [
-          2
+          3
         ]
       }
     ],
-    "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 2,
+  "expectedRound": 3,
   "lastFetchError": "",
   "live": true
 }
