@@ -1,97 +1,49 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-09-14T04:20:19.304Z",
+  "fetchedAt": "2026-09-14T08:20:17.063Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-09-14 12:00:00",
-  "nextRefreshBeijing": "2026-09-14 16:00:00",
-  "nextActiveBeijing": "2026-09-14 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-09-14 16:00:00",
+  "nextRefreshBeijing": "2026-09-14 20:00:00",
+  "nextActiveBeijing": "2026-09-14 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "蓝晶碧玺",
-      "price": "1000",
-      "priceRaw": "1000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
-      "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+      "name": "机械血脉秘药",
+      "price": "160000",
+      "priceRaw": "16w",
+      "limit": "3",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/56/12jc1mzlz7nhgnterqdk6bgm6rofibn.png/100px-Xuemai_gang.png",
+      "category": "血脉修改道具",
+      "description": "能唤醒血脉力量的远古秘药，使精灵获得机械系血脉。 “一段失落的秘密将被重拾。”",
       "rounds": [
-        2
-      ]
-    },
-    {
-      "name": "幽系粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量幽系魔法，是合成技能石的主要触媒。",
-      "rounds": [
-        2
-      ]
-    },
-    {
-      "name": "幻系粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/24/sgt0lc5llwfvlcmjhr1awhwq6st35fj.png/100px-100139.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量幻系魔法，是合成技能石的主要触媒。",
-      "rounds": [
-        2
+        3
       ]
     }
   ],
   "rounds": {
     "1": [],
-    "2": [
+    "2": [],
+    "3": [
       {
-        "name": "蓝晶碧玺",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
+        "name": "机械血脉秘药",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/56/12jc1mzlz7nhgnterqdk6bgm6rofibn.png/100px-Xuemai_gang.png",
+        "category": "血脉修改道具",
+        "description": "能唤醒血脉力量的远古秘药，使精灵获得机械系血脉。 “一段失落的秘密将被重拾。”",
         "rounds": [
-          2
-        ]
-      },
-      {
-        "name": "幽系粉尘",
-        "price": "500",
-        "priceRaw": "500",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png",
-        "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量幽系魔法，是合成技能石的主要触媒。",
-        "rounds": [
-          2
-        ]
-      },
-      {
-        "name": "幻系粉尘",
-        "price": "500",
-        "priceRaw": "500",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/24/sgt0lc5llwfvlcmjhr1awhwq6st35fj.png/100px-100139.png",
-        "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量幻系魔法，是合成技能石的主要触媒。",
-        "rounds": [
-          2
+          3
         ]
       }
     ],
-    "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 2,
+  "expectedRound": 3,
   "lastFetchError": "",
   "live": true
 }
