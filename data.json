@@ -1,12 +1,12 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-09-18T08:20:58.689Z",
+  "fetchedAt": "2026-09-18T12:21:01.819Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 3,
-  "startedAtBeijing": "2026-09-18 16:00:00",
-  "nextRefreshBeijing": "2026-09-18 20:00:00",
-  "nextActiveBeijing": "2026-09-18 20:00:00",
+  "round": 4,
+  "startedAtBeijing": "2026-09-18 20:00:00",
+  "nextRefreshBeijing": "2026-09-19 00:00:00",
+  "nextActiveBeijing": "2026-09-19 08:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -26,34 +26,35 @@
       ]
     },
     {
-      "name": "翼系血脉秘药",
+      "name": "火系血脉秘药",
       "price": "160000",
       "priceRaw": "16w",
       "limit": "3",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/15/t49aceulmmb7q8ohahmkyqvrdl2qdkz.png/100px-Xuemai_yi.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/58/qcen9i07u68symzdrga5qcli2wq6ws3.png/100px-Xuemai_huo.png",
       "category": "血脉修改道具",
-      "description": "能唤醒血脉力量的远古秘药，使精灵获得翼系血脉。 “一段失落的秘密将被重拾。”",
+      "description": "能唤醒血脉力量的远古秘药，使精灵获得火系血脉。 “一段失落的秘密将被重拾。”",
       "rounds": [
-        3
+        4
       ]
     },
     {
-      "name": "武系粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/23/su3uy9wfjwvx3ifjaia3l88j2kjr5mg.png/100px-100135.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量武系魔法，是合成技能石的主要触媒。",
+      "name": "魔力果",
+      "price": "6000",
+      "priceRaw": "6000",
+      "limit": "20",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
+      "category": "精灵喂养材料",
+      "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
       "rounds": [
-        3
+        4
       ]
     }
   ],
   "rounds": {
     "1": [],
     "2": [],
-    "3": [
+    "3": [],
+    "4": [
       {
         "name": "变幻球",
         "price": "3000",
@@ -70,34 +71,33 @@
         ]
       },
       {
-        "name": "翼系血脉秘药",
+        "name": "火系血脉秘药",
         "price": "160000",
         "priceRaw": "16w",
         "limit": "3",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/15/t49aceulmmb7q8ohahmkyqvrdl2qdkz.png/100px-Xuemai_yi.png",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/58/qcen9i07u68symzdrga5qcli2wq6ws3.png/100px-Xuemai_huo.png",
         "category": "血脉修改道具",
-        "description": "能唤醒血脉力量的远古秘药，使精灵获得翼系血脉。 “一段失落的秘密将被重拾。”",
+        "description": "能唤醒血脉力量的远古秘药，使精灵获得火系血脉。 “一段失落的秘密将被重拾。”",
         "rounds": [
-          3
+          4
         ]
       },
       {
-        "name": "武系粉尘",
-        "price": "500",
-        "priceRaw": "500",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/23/su3uy9wfjwvx3ifjaia3l88j2kjr5mg.png/100px-100135.png",
-        "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量武系魔法，是合成技能石的主要触媒。",
+        "name": "魔力果",
+        "price": "6000",
+        "priceRaw": "6000",
+        "limit": "20",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
+        "category": "精灵喂养材料",
+        "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
         "rounds": [
-          3
+          4
         ]
       }
-    ],
-    "4": []
+    ]
   },
   "stale": false,
-  "expectedRound": 3,
+  "expectedRound": 4,
   "lastFetchError": "",
   "live": true
 }
