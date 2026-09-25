@@ -22,13 +22,12 @@
   <img alt="JavaScript" src="https://img.shields.io/badge/-JavaScript-F7DF1E?logo=JavaScript&logoColor=white" />
   <img alt="Nodejs" src="https://img.shields.io/badge/-Nodejs-43853d?logo=Node.js&logoColor=white" />
 
-  <img alt="Bilibili" src="https://img.shields.io/badge/-Bilibili-00A1D6?logo=Bilibili&logoColor=white" />
+
 
   <img alt="Google Chrome" src="https://img.shields.io/badge/-Chrome-4285F4?logo=Google%20Chrome&logoColor=white" />
   <img alt="Visual Studio Code" src="https://img.shields.io/badge/-VS%20Code-007ACC?logo=Visual%20Studio%20Code&logoColor=white" />
   <img alt="MySQL" src="https://img.shields.io/badge/-MySQL-4479A1?logo=MySQL&logoColor=white" />
   <img alt="GitHub" src="https://img.shields.io/badge/-GitHub-181717?logo=GitHub&logoColor=white" />
-  <img alt="Vercel" src="https://img.shields.io/badge/-Vercel-000000?logo=Vercel&logoColor=white" />
   <img alt="Markdown" src="https://img.shields.io/badge/-Markdown-000000?logo=Markdown&logoColor=white" />
 </p>
 
