@@ -8,8 +8,7 @@
 ⚛️ I'm trying to improve my programming skills
 <br>
 <h4>
-<a href="https://github.com/A-Kevin1217">
-<img align="right" src="https://count.kjchmc.cn/get/@orange-example?theme=rule34" alt="小丞儿" />
+<a href="https://github.com/qi-du-shang.github.io">
 </a>
 </h3>
 
