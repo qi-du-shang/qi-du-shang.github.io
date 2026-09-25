@@ -1,11 +1,11 @@
 ## <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25" alt="手势"> 臺内這還啊
 
 🙋‍♂️ 我悉尼樓道
-@Kevin~<img src="https://emojis.slackmojis.com/emojis/images/1588866973/8934/hellokittydance.gif?1588866973" alt="Hi" width="30" />
+@snakeyes<img src="https://emojis.slackmojis.com/emojis/images/1588866973/8934/hellokittydance.gif?1588866973" alt="Hi" width="30" />
 
-👀 Just like the name of my profile.
+👀 Email：7@snakeyes.top
 
-⚛️ I'm trying to improve my programming skills
+⚛️ project：snakeyes.top
 <br>
 <h4>
 <a href="https://github.com/qi-du-shang.github.io">
