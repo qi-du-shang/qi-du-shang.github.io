@@ -1,12 +1,12 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-09-26T08:20:47.976Z",
+  "fetchedAt": "2026-09-26T12:20:47.862Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 3,
-  "startedAtBeijing": "2026-09-26 16:00:00",
-  "nextRefreshBeijing": "2026-09-26 20:00:00",
-  "nextActiveBeijing": "2026-09-26 20:00:00",
+  "round": 4,
+  "startedAtBeijing": "2026-09-26 20:00:00",
+  "nextRefreshBeijing": "2026-09-27 00:00:00",
+  "nextActiveBeijing": "2026-09-27 08:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -26,22 +26,23 @@
       ]
     },
     {
-      "name": "翼系粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量翼系魔法，是合成技能石的主要触媒。",
+      "name": "魔力果",
+      "price": "6000",
+      "priceRaw": "6000",
+      "limit": "20",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
+      "category": "精灵喂养材料",
+      "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
       "rounds": [
-        3
+        4
       ]
     }
   ],
   "rounds": {
     "1": [],
     "2": [],
-    "3": [
+    "3": [],
+    "4": [
       {
         "name": "网兜球",
         "price": "3000",
@@ -58,22 +59,21 @@
         ]
       },
       {
-        "name": "翼系粉尘",
-        "price": "500",
-        "priceRaw": "500",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png",
-        "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量翼系魔法，是合成技能石的主要触媒。",
+        "name": "魔力果",
+        "price": "6000",
+        "priceRaw": "6000",
+        "limit": "20",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
+        "category": "精灵喂养材料",
+        "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
         "rounds": [
-          3
+          4
         ]
       }
-    ],
-    "4": []
+    ]
   },
   "stale": false,
-  "expectedRound": 3,
+  "expectedRound": 4,
   "lastFetchError": "",
   "live": true
 }
