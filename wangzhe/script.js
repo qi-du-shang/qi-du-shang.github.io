@@ -1,5 +1,4 @@
-    const API_URL = "https://api.key5.site/API/king/new/index.php";
-    const API_KEY = "50e7099a396e7cefcba6a5f1170f01a152334cd1bb36610d916c31cc1abb5819";
+    const API_URL = "https://api.xxoo.team/hero/getHeroInfo.php";
 
     const $ = (selector) => document.querySelector(selector);
 
@@ -18,13 +17,15 @@
       4: "苹果微信"
     };
 
-    const areaTypeNames = {
-      1: "省榜",
-      2: "市榜",
-      3: "区榜"
+    const platformCodes = {
+      1: "aqq",
+      2: "awx",
+      3: "iqq",
+      4: "iwx"
     };
 
     function formatScore(value) {
+      if (value === undefined || value === null || value === "") return "—";
       const score = Number(value);
       return Number.isFinite(score) ? score.toLocaleString("zh-CN") : "—";
     }
@@ -68,80 +69,77 @@
       message.className = `message ${type}`.trim();
     }
 
-    function getLowest(list) {
-      if (!Array.isArray(list) || !list.length) return null;
-
-      return list.reduce((lowest, item) => {
-        const currentValue = Number(item?.value);
-        const lowestValue = Number(lowest?.value);
-
-        if (!Number.isFinite(currentValue)) return lowest;
-        if (!Number.isFinite(lowestValue)) return item;
-        return currentValue < lowestValue ? item : lowest;
-      });
-    }
-
-    function getRegionLabel(item) {
-      return item?.regionPath || item?.regionName || "暂无数据";
-    }
-
     function renderRanking(result) {
-      const data = result?.data || {};
-      const list = Array.isArray(data?.list) ? data.list : [];
-      const lowest = getLowest(list);
-
-      const heroName = data?.heroName || heroInput.value.trim();
-      const platform =
-        result?.typeName ||
-        data?.typeName ||
-        platformNames[Number(platformSelect.value)] ||
-        "当前平台";
-
-      const levelName =
-        areaTypeNames[Number(result?.level?.level)] ||
-        areaTypeNames[Number(areaTypeSelect.value)] ||
-        "榜单";
+      const data = result.data;
+      const selectedArea = Number(areaTypeSelect.value);
+      const areaConfig = {
+        1: {
+          name: "省榜",
+          region: data.province,
+          score: data.provincePower,
+          regionLabel: "最低上榜省份"
+        },
+        2: {
+          name: "市榜",
+          region: data.city,
+          score: data.cityPower,
+          regionLabel: "最低上榜城市"
+        },
+        3: {
+          name: "区榜",
+          region: data.area,
+          score: data.areaPower,
+          regionLabel: "最低上榜区县"
+        }
+      };
+      const selected = areaConfig[selectedArea];
+      const levelName = selected.name;
+      const heroName = data.name || heroInput.value.trim();
 
       $("#result-hero").textContent = heroName;
       $("#result-level").textContent = levelName;
       $("#table-level").textContent = levelName;
-      $("#featured-platform").textContent = platform;
-      $("#featured-region").textContent = getRegionLabel(lowest);
-      $("#featured-score").textContent = formatScore(lowest?.value);
+      $("#featured-platform").textContent =
+        data.platform || platformNames[Number(platformSelect.value)] || "当前平台";
+      $("#featured-label").textContent = `全国${levelName}最低战力`;
+      $("#featured-region-label").textContent = selected.regionLabel;
+      $("#featured-foot-label").textContent = `${levelName}最低分数线`;
+      $("#featured-region").textContent = selected.region || "暂无数据";
+      $("#featured-score").textContent = formatScore(selected.score);
+      $("#city-score").textContent = formatScore(data.cityPower);
+      $("#city-region").textContent = data.city || "暂无数据";
+      $("#district-score").textContent = formatScore(data.areaPower);
+      $("#district-region").textContent = data.area || "暂无数据";
+      $("#national-score").textContent = formatScore(data.guobiao);
+      $("#national-region").textContent = "国标战力参考";
+      $("#result-count").textContent = "仅返回最低值";
+      $("#updated-time").textContent = formatTime(data.updatetime || data.stamp);
 
-      if (data?.heroPortraitUrl) {
-        $("#hero-portrait").src = data.heroPortraitUrl;
+      if (data.photo) {
+        $("#hero-portrait").src = data.photo;
       }
 
-      $("#result-count").textContent = `${list.length} 条排名`;
-      $("#updated-time").textContent = formatTime(result?.ut || lowest?.ut);
+      ratingBody.replaceChildren();
+      const row = document.createElement("tr");
+      const cells = [
+        levelName,
+        selected.region || "暂无数据",
+        formatScore(selected.score),
+        formatTime(data.updatetime || data.stamp)
+      ];
 
-      ratingBody.innerHTML = "";
-
-      if (!list.length) {
-        ratingBody.innerHTML =
-          '<tr><td colspan="4" class="empty-row">接口未返回可用榜单数据</td></tr>';
-        return;
-      }
-
-      list.forEach((item, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${item.rank || index + 1}</td>
-          <td>${getRegionLabel(item)}</td>
-          <td>${formatScore(item.value)}</td>
-          <td>${formatTime(result?.ut || item.ut)}</td>
-        `;
-        ratingBody.appendChild(row);
+      cells.forEach((value) => {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        row.appendChild(cell);
       });
+      ratingBody.appendChild(row);
     }
 
-    async function fetchRanking(areaType) {
+    async function fetchRanking() {
       const params = new URLSearchParams({
-        apikey: API_KEY,
-        heroName: heroInput.value.trim(),
-        type: platformSelect.value,
-        areaType: String(areaType)
+        hero: heroInput.value.trim(),
+        type: platformCodes[Number(platformSelect.value)]
       });
 
       const response = await fetch(`${API_URL}?${params.toString()}`);
@@ -151,14 +149,8 @@
 
       const result = await response.json();
 
-      // 这里重点兼容接口返回的 500 错误
-      if (Number(result.code) !== 200 || !result.data) {
-        const msg = result?.msg || "接口没有返回有效数据";
-        const errText = msg.includes("最大页数不能超过200")
-          ? "接口返回：最大页数不能超过200，请稍后重试或联系接口提供方"
-          : msg;
-
-        throw new Error(errText);
+      if (Number(result.code) !== 200 || !result.data || typeof result.data !== "object") {
+        throw new Error(result?.msg || "新接口没有返回有效数据");
       }
 
       return result;
@@ -178,60 +170,9 @@
       setMessage("正在同步最新榜单数据…", "loading");
 
       try {
-        const areaTypes = [1, 2, 3];
-        const areaNames = {
-          1: "省榜",
-          2: "市榜",
-          3: "区榜"
-        };
-
-        const results = await Promise.allSettled(
-          areaTypes.map((areaType) => fetchRanking(areaType))
-        );
-
-        const selectedArea = Number(areaTypeSelect.value);
-        const selectedIndex = areaTypes.indexOf(selectedArea);
-
-        const selectedResult = results[selectedIndex];
-        if (selectedResult && selectedResult.status === "fulfilled") {
-          renderRanking(selectedResult.value);
-        } else {
-          throw selectedResult?.reason || new Error("所选榜单接口没有返回有效数据");
-        }
-
-        // 兼容市榜/区榜失败时，仍显示省榜
-        for (const areaType of [2, 3]) {
-          const idx = areaTypes.indexOf(areaType);
-          const item = results[idx];
-
-          const scoreNode = $(`#${areaType === 2 ? "city" : "district"}-score`);
-          const regionNode = $(`#${areaType === 2 ? "city" : "district"}-region`);
-
-          if (!scoreNode || !regionNode) continue;
-
-          if (item && item.status === "fulfilled") {
-            const low = getLowest(item.value.data?.list);
-            scoreNode.textContent = formatScore(low?.value);
-            regionNode.textContent = getRegionLabel(low);
-          } else {
-            scoreNode.textContent = "—";
-            regionNode.textContent = "接口暂不可用";
-          }
-        }
-
-        const failedAreas = areaTypes
-          .filter((type, idx) => results[idx]?.status === "rejected")
-          .map((type) => areaNames[type]);
-
-        if (failedAreas.length > 0) {
-          const failMsg = failedAreas.join("、");
-          setMessage(
-            `已更新 ${heroName} 的${areaNames[selectedArea]}；${failMsg}接口异常，已自动忽略。`,
-            "loading"
-          );
-        } else {
-          setMessage(`已更新 ${heroName} 的省、市、区榜数据`, "loading");
-        }
+        const result = await fetchRanking();
+        renderRanking(result);
+        setMessage(`已更新 ${heroName} 的省榜、市榜、区榜及国标最低战力`, "loading");
       } catch (error) {
         const msg =
           error instanceof Error ? error.message : "查询失败，请稍后重试";
