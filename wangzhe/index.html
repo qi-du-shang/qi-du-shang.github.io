@@ -24,7 +24,7 @@
       <section class="hero">
         <div class="eyebrow"><span>01</span> RANKING INTELLIGENCE</div>
         <h1>找到你的<br><em>上榜分数线</em></h1>
-        <p class="hero-copy">输入英雄名称，查看全国各省、市、区的最低上榜战力。<br>数据来自公开接口，仅供上分参考。</p>
+        <p class="hero-copy">输入英雄名称，查询各级别最低上榜战力与国标参考。<br>当前接口仅返回最低值，不提供完整地区排名列表。</p>
       </section>
 
       <section class="search-panel" aria-label="查询条件">
@@ -72,7 +72,7 @@
         <div class="result-layout">
           <article class="featured-card">
             <div class="featured-top">
-              <span class="pill">全国省榜最低</span>
+              <span class="pill" id="featured-label">全国省榜最低战力</span>
               <span id="featured-platform">安卓微信</span>
             </div>
             <div class="featured-content">
@@ -80,12 +80,12 @@
                 <img id="hero-portrait" alt="英雄头像" src="https://game.gtimg.cn/images/yxzj/img201606/heroimg/167/167.jpg">
               </div>
               <div>
-                <p class="muted">最低上榜省份</p>
+                <p class="muted" id="featured-region-label">最低上榜省份</p>
                 <h3 id="featured-region">—</h3>
                 <div class="featured-score"><span id="featured-score">—</span><small> 战力</small></div>
               </div>
             </div>
-            <div class="featured-foot"><span>省榜 TOP 1 分数线</span><span>↗</span></div>
+            <div class="featured-foot"><span id="featured-foot-label">省榜最低分数线</span><span>↗</span></div>
           </article>
 
           <div class="stats-grid">
@@ -104,19 +104,19 @@
             <article class="stat-card national-card">
               <div class="card-label"><span class="dot violet"></span> 国标参考</div>
               <div class="stat-value" id="national-score">—</div>
-              <div class="stat-place" id="national-region">接口暂不提供国标榜单</div>
+              <div class="stat-place" id="national-region">国标战力参考</div>
               <div class="card-arrow">↗</div>
             </article>
           </div>
         </div>
 
         <div class="table-heading">
-          <h2><span id="table-level">省榜</span>分数线分布</h2>
-          <span id="result-count">—</span>
+          <h2><span id="table-level">省榜</span>最低战力</h2>
+          <span id="result-count" title="新接口只返回最低战力，不提供完整地区排名列表">—</span>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>排名</th><th>地区</th><th>最低战力</th><th>更新时间</th></tr></thead>
+            <thead><tr><th>榜单级别</th><th>地区</th><th>最低战力</th><th>更新时间</th></tr></thead>
             <tbody id="ranking-body">
               <tr><td colspan="4" class="empty-row">填写英雄并点击查询，查看最新榜单</td></tr>
             </tbody>
