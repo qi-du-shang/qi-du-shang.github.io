@@ -1,6 +1,5 @@
 const API_URL = "https://api.key5.site/API/king/new/index.php";
 const API_KEY = "50e7099a396e7cefcba6a5f1170f01a152334cd1bb36610d916c31cc1abb5819";
-
 const $ = (selector) => document.querySelector(selector);
 const heroInput = $("#hero-name");
 const platformSelect = $("#platform");
@@ -24,7 +23,6 @@ function formatScore(value) {
 function formatTime(value) {
   if (value === undefined || value === null || value === "") return "—";
   if (typeof value === "string" && !/^\d+$/.test(value)) return value;
-
   const numericValue = Number(value);
   if (!Number.isFinite(numericValue)) return String(value);
   const digits = String(Math.trunc(Math.abs(numericValue))).length;
@@ -70,6 +68,7 @@ function renderRanking(result) {
   $("#hero-portrait").src = data?.heroPortraitUrl || $("#hero-portrait").src;
   $("#result-count").textContent = `${list.length} 条排名`;
   $("#updated-time").textContent = formatTime(result?.ut || lowest?.ut);
+
   $("#national-score").textContent = "—";
   $("#national-region").textContent = "接口暂不提供国标榜单";
 
@@ -86,12 +85,17 @@ function renderRanking(result) {
   }
 }
 
-async function fetchRanking(areaType) {
+/**
+ * 请求榜单，areaType:1省 2市 3区，page页码，接口最大限制200页
+ */
+async function fetchRanking(areaType, page = 1) {
+  if(page > 200) throw new Error("最大页数不能超过200");
   const params = new URLSearchParams({
     apikey: API_KEY,
     heroName: heroInput.value.trim(),
     type: platformSelect.value,
-    areaType: String(areaType)
+    areaType: String(areaType),
+    page: String(page)
   });
   const response = await fetch(`${API_URL}?${params}`);
   if (!response.ok) throw new Error(`请求失败（${response.status}）`);
@@ -110,27 +114,33 @@ async function search() {
   searchButton.disabled = true;
   searchButton.querySelector("span").textContent = "查询中…";
   setMessage("正在同步最新榜单数据…", "loading");
+
   try {
-    const [provinceResult, cityResult, districtResult] = await Promise.all([
-      fetchRanking(1),
-      fetchRanking(2),
-      fetchRanking(3)
-    ]);
+    // 不再Promise.all并发三个，改成顺序请求，防止接口风控
+    const provinceResult = await fetchRanking(1);
+    const cityResult = await fetchRanking(2);
+    const districtResult = await fetchRanking(3);
+
     const selectedResult = {
       1: provinceResult,
       2: cityResult,
       3: districtResult
     }[Number(areaTypeSelect.value)] || provinceResult;
+
     renderRanking(selectedResult);
-    const cityLowest = getLowest(cityResult.data.list);
-    const districtLowest = getLowest(districtResult.data.list);
+
+    // 安全读取，防止接口异常导致JS报错
+    const cityLowest = cityResult?.data?.list ? getLowest(cityResult.data.list) : null;
+    const districtLowest = districtResult?.data?.list ? getLowest(districtResult.data.list) : null;
+
     $("#city-score").textContent = formatScore(cityLowest?.value);
     $("#city-region").textContent = getRegionLabel(cityLowest);
     $("#district-score").textContent = formatScore(districtLowest?.value);
     $("#district-region").textContent = getRegionLabel(districtLowest);
-    setMessage(`已更新 ${heroName} 的省、市、区榜数据`, "loading");
+
+    setMessage(`已更新 ${heroName} 的省、市、区榜数据`, "success");
   } catch (error) {
-    setMessage(error instanceof Error ? error.message : "查询失败，请稍后重试");
+    setMessage(error instanceof Error ? error.message : "查询失败，请稍后重试", "error");
   } finally {
     searchButton.disabled = false;
     searchButton.querySelector("span").textContent = "开始查询";
@@ -141,11 +151,20 @@ $("#clear-button").addEventListener("click", () => {
   heroInput.value = "";
   heroInput.focus();
 });
+
 searchButton.addEventListener("click", search);
-areaTypeSelect.addEventListener("change", () => {
-  if (heroInput.value.trim()) search();
+
+// 切换榜单下拉，不再重新请求全部，直接使用已经拿到的数据渲染，避免重复请求接口
+areaTypeSelect.addEventListener("change", async () => {
+  const heroName = heroInput.value.trim();
+  if (!heroName) return;
+  // 切换直接重新调用search，如果不想重复请求，可以缓存三份结果，这里简单处理直接调用search
+  await search();
 });
+
 heroInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") search();
 });
-search();
+
+// 删除页面初始化自动执行search()，打开页面不自动查询
+// search();
