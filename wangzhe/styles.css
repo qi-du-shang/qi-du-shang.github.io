@@ -68,7 +68,7 @@ h2 { margin: 10px 0 0; font-size: 23px; letter-spacing: -.05em; }
 .national-card .stat-value { margin-top: 18px; }
 .table-heading { margin-top: 60px; align-items: center; }
 .table-heading h2 { font-size: 18px; }
-.table-heading span { color: var(--muted); font: 30px "DM Mono", monospace; }
+.table-heading > span { color: var(--muted); font: 12px "DM Mono", monospace; }
 .table-wrap { margin-top: 16px; overflow: auto; background: var(--white); border: 1px solid var(--line); border-radius: 13px; }
 table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
 th { padding: 14px 20px; color: var(--muted); background: #fafbfc; font: 500 10px "DM Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
