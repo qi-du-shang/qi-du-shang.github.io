@@ -1,12 +1,12 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-10-18T04:20:17.139Z",
+  "fetchedAt": "2026-10-18T08:20:16.569Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-10-18 12:00:00",
-  "nextRefreshBeijing": "2026-10-18 16:00:00",
-  "nextActiveBeijing": "2026-10-18 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-10-18 16:00:00",
+  "nextRefreshBeijing": "2026-10-18 20:00:00",
+  "nextActiveBeijing": "2026-10-18 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -26,33 +26,22 @@
       ]
     },
     {
-      "name": "黑晶琉璃",
-      "price": "1000",
-      "priceRaw": "1000",
+      "name": "地系粉尘",
+      "price": "500",
+      "priceRaw": "500",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/7/7a/n6n70lv43avntp8zie9k18a4zw41l8i.png/100px-100129.png",
       "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
+      "description": "常见的炼金材料，蕴含少量地系魔法，是合成技能石的主要触媒。",
       "rounds": [
-        2
-      ]
-    },
-    {
-      "name": "蓝晶碧玺",
-      "price": "1000",
-      "priceRaw": "1000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
-      "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-      "rounds": [
-        2
+        3
       ]
     }
   ],
   "rounds": {
     "1": [],
-    "2": [
+    "2": [],
+    "3": [
       {
         "name": "美妙球",
         "price": "3000",
@@ -69,35 +58,22 @@
         ]
       },
       {
-        "name": "黑晶琉璃",
-        "price": "1000",
-        "priceRaw": "1000",
+        "name": "地系粉尘",
+        "price": "500",
+        "priceRaw": "500",
         "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/b/bc/khe20j8lwkt1bg9g4b0gbnsff48g93c.png/100px-100628.png",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/7/7a/n6n70lv43avntp8zie9k18a4zw41l8i.png/100px-100129.png",
         "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
+        "description": "常见的炼金材料，蕴含少量地系魔法，是合成技能石的主要触媒。",
         "rounds": [
-          2
-        ]
-      },
-      {
-        "name": "蓝晶碧玺",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c5/k8wzdzechd88qs9bxuvcnyg0pv4tzl4.png/100px-100681.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 某些晶石蜗会产出珍贵的粉蓝色碧玺，为此商人翻着花样研究晶石蜗的食谱喜好。",
-        "rounds": [
-          2
+          3
         ]
       }
     ],
-    "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 2,
+  "expectedRound": 3,
   "lastFetchError": "",
   "live": true
 }
