@@ -1,49 +1,49 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-10-19T01:20:16.901Z",
+  "fetchedAt": "2026-10-19T04:20:24.148Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 1,
-  "startedAtBeijing": "2026-10-19 08:00:00",
-  "nextRefreshBeijing": "2026-10-19 12:00:00",
-  "nextActiveBeijing": "2026-10-19 12:00:00",
+  "round": 2,
+  "startedAtBeijing": "2026-10-19 12:00:00",
+  "nextRefreshBeijing": "2026-10-19 16:00:00",
+  "nextActiveBeijing": "2026-10-19 16:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "炫彩蛋",
-      "price": "1600000",
-      "priceRaw": "160w",
-      "limit": "1",
-      "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
-      "category": "精灵蛋",
-      "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
+      "name": "翼系粉尘",
+      "price": "500",
+      "priceRaw": "500",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png",
+      "category": "炼金材料",
+      "description": "常见的炼金材料，蕴含少量翼系魔法，是合成技能石的主要触媒。",
       "rounds": [
-        1
+        2
       ]
     }
   ],
   "rounds": {
-    "1": [
+    "1": [],
+    "2": [
       {
-        "name": "炫彩蛋",
-        "price": "1600000",
-        "priceRaw": "160w",
-        "limit": "1",
-        "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
-        "category": "精灵蛋",
-        "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
+        "name": "翼系粉尘",
+        "price": "500",
+        "priceRaw": "500",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/35/5mp1ohcm72pgsxax5kq3x1aophw3lh0.png/100px-100136.png",
+        "category": "炼金材料",
+        "description": "常见的炼金材料，蕴含少量翼系魔法，是合成技能石的主要触媒。",
         "rounds": [
-          1
+          2
         ]
       }
     ],
-    "2": [],
     "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 1,
+  "expectedRound": 2,
   "lastFetchError": "",
   "live": true
 }
