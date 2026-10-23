@@ -1,12 +1,12 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-10-23T04:11:23.319Z",
+  "fetchedAt": "2026-10-23T08:12:28.039Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-10-23 12:00:00",
-  "nextRefreshBeijing": "2026-10-23 16:00:00",
-  "nextActiveBeijing": "2026-10-23 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-10-23 16:00:00",
+  "nextRefreshBeijing": "2026-10-23 20:00:00",
+  "nextActiveBeijing": "2026-10-23 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -41,21 +41,22 @@
       ]
     },
     {
-      "name": "幽系血脉秘药",
-      "price": "160000",
-      "priceRaw": "16w",
-      "limit": "3",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/31/79r65pjlgs4boduwx17vu94sqn0i2t6.png/100px-Xuemai_youling.png",
-      "category": "血脉修改道具",
-      "description": "能唤醒血脉力量的远古秘药，使精灵获得幽系血脉。 “一段失落的秘密将被重拾。”",
+      "name": "火系粉尘",
+      "price": "500",
+      "priceRaw": "500",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a6/a5v60zfm9ivyri166tias4efjnp5vyt.png/100px-100122.png",
+      "category": "炼金材料",
+      "description": "常见的炼金材料，蕴含少量火系魔法，是合成技能石的主要触媒。",
       "rounds": [
-        2
+        3
       ]
     }
   ],
   "rounds": {
     "1": [],
-    "2": [
+    "2": [],
+    "3": [
       {
         "name": "网兜球",
         "price": "3000",
@@ -87,23 +88,22 @@
         ]
       },
       {
-        "name": "幽系血脉秘药",
-        "price": "160000",
-        "priceRaw": "16w",
-        "limit": "3",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/31/79r65pjlgs4boduwx17vu94sqn0i2t6.png/100px-Xuemai_youling.png",
-        "category": "血脉修改道具",
-        "description": "能唤醒血脉力量的远古秘药，使精灵获得幽系血脉。 “一段失落的秘密将被重拾。”",
+        "name": "火系粉尘",
+        "price": "500",
+        "priceRaw": "500",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a6/a5v60zfm9ivyri166tias4efjnp5vyt.png/100px-100122.png",
+        "category": "炼金材料",
+        "description": "常见的炼金材料，蕴含少量火系魔法，是合成技能石的主要触媒。",
         "rounds": [
-          2
+          3
         ]
       }
     ],
-    "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 2,
+  "expectedRound": 3,
   "lastFetchError": "",
   "live": true
 }
