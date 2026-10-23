@@ -1,27 +1,15 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-10-23T01:21:01.876Z",
+  "fetchedAt": "2026-10-23T04:11:23.319Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 1,
-  "startedAtBeijing": "2026-10-23 08:00:00",
-  "nextRefreshBeijing": "2026-10-23 12:00:00",
-  "nextActiveBeijing": "2026-10-23 12:00:00",
+  "round": 2,
+  "startedAtBeijing": "2026-10-23 12:00:00",
+  "nextRefreshBeijing": "2026-10-23 16:00:00",
+  "nextActiveBeijing": "2026-10-23 16:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
-    {
-      "name": "黄石榴石",
-      "price": "1000",
-      "priceRaw": "1000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
-      "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
-      "rounds": [
-        1
-      ]
-    },
     {
       "name": "网兜球",
       "price": "3000",
@@ -51,22 +39,23 @@
         3,
         4
       ]
+    },
+    {
+      "name": "幽系血脉秘药",
+      "price": "160000",
+      "priceRaw": "16w",
+      "limit": "3",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/31/79r65pjlgs4boduwx17vu94sqn0i2t6.png/100px-Xuemai_youling.png",
+      "category": "血脉修改道具",
+      "description": "能唤醒血脉力量的远古秘药，使精灵获得幽系血脉。 “一段失落的秘密将被重拾。”",
+      "rounds": [
+        2
+      ]
     }
   ],
   "rounds": {
-    "1": [
-      {
-        "name": "黄石榴石",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
-        "rounds": [
-          1
-        ]
-      },
+    "1": [],
+    "2": [
       {
         "name": "网兜球",
         "price": "3000",
@@ -96,14 +85,25 @@
           3,
           4
         ]
+      },
+      {
+        "name": "幽系血脉秘药",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/3/31/79r65pjlgs4boduwx17vu94sqn0i2t6.png/100px-Xuemai_youling.png",
+        "category": "血脉修改道具",
+        "description": "能唤醒血脉力量的远古秘药，使精灵获得幽系血脉。 “一段失落的秘密将被重拾。”",
+        "rounds": [
+          2
+        ]
       }
     ],
-    "2": [],
     "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 1,
+  "expectedRound": 2,
   "lastFetchError": "",
   "live": true
 }
