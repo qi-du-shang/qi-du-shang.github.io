@@ -1,67 +1,25 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-10-25T12:21:47.066Z",
+  "fetchedAt": "2026-10-26T01:21:01.394Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 4,
-  "startedAtBeijing": "2026-10-25 20:00:00",
-  "nextRefreshBeijing": "2026-10-26 00:00:00",
-  "nextActiveBeijing": "2026-10-26 08:00:00",
+  "round": 1,
+  "startedAtBeijing": "2026-10-26 08:00:00",
+  "nextRefreshBeijing": "2026-10-26 12:00:00",
+  "nextActiveBeijing": "2026-10-26 12:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "网兜球",
-      "price": "3000",
-      "priceRaw": "3000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png",
-      "category": "特制咕噜球",
-      "description": "更适合用来捕捉水系、翼系精灵。 轻快的球，能直线飞跃很远的距离。",
-      "rounds": [
-        1,
-        2,
-        3,
-        4
-      ]
-    },
-    {
-      "name": "暗星球",
-      "price": "3000",
-      "priceRaw": "3000",
-      "limit": "200",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png",
-      "category": "特制咕噜球",
-      "description": "更适合用来捕捉幽系、恶系精灵。 爱捉弄的球，喜欢偷袭精灵。",
-      "rounds": [
-        1,
-        2,
-        3,
-        4
-      ]
-    },
-    {
-      "name": "黄石榴石",
+      "name": "紫莲刚玉",
       "price": "1000",
       "priceRaw": "1000",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
       "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
       "rounds": [
-        4
-      ]
-    },
-    {
-      "name": "翼系血脉秘药",
-      "price": "160000",
-      "priceRaw": "16w",
-      "limit": "3",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/15/t49aceulmmb7q8ohahmkyqvrdl2qdkz.png/100px-Xuemai_yi.png",
-      "category": "血脉修改道具",
-      "description": "能唤醒血脉力量的远古秘药，使精灵获得翼系血脉。 “一段失落的秘密将被重拾。”",
-      "rounds": [
-        4
+        1
       ]
     },
     {
@@ -73,67 +31,22 @@
       "category": "精灵喂养材料",
       "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
       "rounds": [
-        4
+        1
       ]
     }
   ],
   "rounds": {
-    "1": [],
-    "2": [],
-    "3": [],
-    "4": [
+    "1": [
       {
-        "name": "网兜球",
-        "price": "3000",
-        "priceRaw": "3000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png",
-        "category": "特制咕噜球",
-        "description": "更适合用来捕捉水系、翼系精灵。 轻快的球，能直线飞跃很远的距离。",
-        "rounds": [
-          1,
-          2,
-          3,
-          4
-        ]
-      },
-      {
-        "name": "暗星球",
-        "price": "3000",
-        "priceRaw": "3000",
-        "limit": "200",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png",
-        "category": "特制咕噜球",
-        "description": "更适合用来捕捉幽系、恶系精灵。 爱捉弄的球，喜欢偷袭精灵。",
-        "rounds": [
-          1,
-          2,
-          3,
-          4
-        ]
-      },
-      {
-        "name": "黄石榴石",
+        "name": "紫莲刚玉",
         "price": "1000",
         "priceRaw": "1000",
         "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9c/s7ej54xr4magmv0h0zag15jah6avwlc.png/100px-100682.png",
         "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 紫雀花王朝的贵族相信这是复活与不朽的象征，常常将紫莲刚玉制作成护身符随身携带。",
         "rounds": [
-          4
-        ]
-      },
-      {
-        "name": "翼系血脉秘药",
-        "price": "160000",
-        "priceRaw": "16w",
-        "limit": "3",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/15/t49aceulmmb7q8ohahmkyqvrdl2qdkz.png/100px-Xuemai_yi.png",
-        "category": "血脉修改道具",
-        "description": "能唤醒血脉力量的远古秘药，使精灵获得翼系血脉。 “一段失落的秘密将被重拾。”",
-        "rounds": [
-          4
+          1
         ]
       },
       {
@@ -145,13 +58,16 @@
         "category": "精灵喂养材料",
         "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
         "rounds": [
-          4
+          1
         ]
       }
-    ]
+    ],
+    "2": [],
+    "3": [],
+    "4": []
   },
   "stale": false,
-  "expectedRound": 4,
+  "expectedRound": 1,
   "lastFetchError": "",
   "live": true
 }
