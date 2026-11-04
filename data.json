@@ -1,25 +1,25 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-11-03T12:21:00.672Z",
+  "fetchedAt": "2026-11-04T01:21:01.521Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 4,
-  "startedAtBeijing": "2026-11-03 20:00:00",
-  "nextRefreshBeijing": "2026-11-04 00:00:00",
-  "nextActiveBeijing": "2026-11-04 08:00:00",
+  "round": 1,
+  "startedAtBeijing": "2026-11-04 08:00:00",
+  "nextRefreshBeijing": "2026-11-04 12:00:00",
+  "nextActiveBeijing": "2026-11-04 12:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "黄石榴石",
-      "price": "1000",
-      "priceRaw": "1000",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
-      "category": "炼金材料",
-      "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+      "name": "炫彩蛋",
+      "price": "1600000",
+      "priceRaw": "160w",
+      "limit": "1",
+      "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
+      "category": "精灵蛋",
+      "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
       "rounds": [
-        4
+        1
       ]
     },
     {
@@ -38,18 +38,6 @@
       ]
     },
     {
-      "name": "恶系血脉秘药",
-      "price": "160000",
-      "priceRaw": "16w",
-      "limit": "3",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/e/ee/sm6n1f4ng52m6fvbr6lf2yekhw3q1a5.png/100px-Xuemai_emo.png",
-      "category": "血脉修改道具",
-      "description": "能唤醒血脉力量的远古秘药，使精灵获得恶系血脉。 “一段失落的秘密将被重拾。”",
-      "rounds": [
-        4
-      ]
-    },
-    {
       "name": "神奇的蛋",
       "price": "36000",
       "priceRaw": "36000",
@@ -58,25 +46,22 @@
       "category": "精灵蛋",
       "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
       "rounds": [
-        4
+        1
       ]
     }
   ],
   "rounds": {
-    "1": [],
-    "2": [],
-    "3": [],
-    "4": [
+    "1": [
       {
-        "name": "黄石榴石",
-        "price": "1000",
-        "priceRaw": "1000",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f3/c5x5f0lgk33ly801m8w1n9aod8ny4sh.png/100px-100683.png",
-        "category": "炼金材料",
-        "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 特殊的晶体排列解构，精灵打喷嚏可能会令这种晶体发生爆炸。",
+        "name": "炫彩蛋",
+        "price": "1600000",
+        "priceRaw": "160w",
+        "limit": "1",
+        "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
+        "category": "精灵蛋",
+        "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
         "rounds": [
-          4
+          1
         ]
       },
       {
@@ -95,18 +80,6 @@
         ]
       },
       {
-        "name": "恶系血脉秘药",
-        "price": "160000",
-        "priceRaw": "16w",
-        "limit": "3",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/e/ee/sm6n1f4ng52m6fvbr6lf2yekhw3q1a5.png/100px-Xuemai_emo.png",
-        "category": "血脉修改道具",
-        "description": "能唤醒血脉力量的远古秘药，使精灵获得恶系血脉。 “一段失落的秘密将被重拾。”",
-        "rounds": [
-          4
-        ]
-      },
-      {
         "name": "神奇的蛋",
         "price": "36000",
         "priceRaw": "36000",
@@ -115,13 +88,16 @@
         "category": "精灵蛋",
         "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
         "rounds": [
-          4
+          1
         ]
       }
-    ]
+    ],
+    "2": [],
+    "3": [],
+    "4": []
   },
   "stale": false,
-  "expectedRound": 4,
+  "expectedRound": 1,
   "lastFetchError": "",
   "live": true
 }
