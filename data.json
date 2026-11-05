@@ -1,12 +1,12 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-11-05T04:21:00.876Z",
+  "fetchedAt": "2026-11-05T08:21:02.360Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-11-05 12:00:00",
-  "nextRefreshBeijing": "2026-11-05 16:00:00",
-  "nextActiveBeijing": "2026-11-05 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-11-05 16:00:00",
+  "nextRefreshBeijing": "2026-11-05 20:00:00",
+  "nextActiveBeijing": "2026-11-05 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -19,7 +19,7 @@
       "category": "炼金材料",
       "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
       "rounds": [
-        2
+        3
       ]
     },
     {
@@ -40,7 +40,8 @@
   ],
   "rounds": {
     "1": [],
-    "2": [
+    "2": [],
+    "3": [
       {
         "name": "黑晶琉璃",
         "price": "1000",
@@ -50,7 +51,7 @@
         "category": "炼金材料",
         "description": "比较常用的炼金材料，可以用来合成咕噜球和技能石。 “我的阿米亚特说这玩意儿太香了，嚼起来有些呛口，像火山灰，有纯正的拉布朗矿山味道。”",
         "rounds": [
-          2
+          3
         ]
       },
       {
@@ -69,11 +70,10 @@
         ]
       }
     ],
-    "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 2,
+  "expectedRound": 3,
   "lastFetchError": "",
   "live": true
 }
