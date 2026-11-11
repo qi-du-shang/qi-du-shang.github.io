@@ -1,12 +1,12 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-11-11T04:21:00.893Z",
+  "fetchedAt": "2026-11-11T08:21:00.650Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-11-11 12:00:00",
-  "nextRefreshBeijing": "2026-11-11 16:00:00",
-  "nextActiveBeijing": "2026-11-11 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-11-11 16:00:00",
+  "nextRefreshBeijing": "2026-11-11 20:00:00",
+  "nextActiveBeijing": "2026-11-11 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -19,13 +19,14 @@
       "category": "精灵喂养材料",
       "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
       "rounds": [
-        2
+        3
       ]
     }
   ],
   "rounds": {
     "1": [],
-    "2": [
+    "2": [],
+    "3": [
       {
         "name": "魔力果",
         "price": "6000",
@@ -35,15 +36,14 @@
         "category": "精灵喂养材料",
         "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
         "rounds": [
-          2
+          3
         ]
       }
     ],
-    "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 2,
+  "expectedRound": 3,
   "lastFetchError": "",
   "live": true
 }
