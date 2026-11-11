@@ -1,49 +1,49 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-11-10T12:21:00.925Z",
+  "fetchedAt": "2026-11-11T01:21:00.573Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 4,
-  "startedAtBeijing": "2026-11-10 20:00:00",
-  "nextRefreshBeijing": "2026-11-11 00:00:00",
-  "nextActiveBeijing": "2026-11-11 08:00:00",
+  "round": 1,
+  "startedAtBeijing": "2026-11-11 08:00:00",
+  "nextRefreshBeijing": "2026-11-11 12:00:00",
+  "nextActiveBeijing": "2026-11-11 12:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "幽系粉尘",
+      "name": "虫系粉尘",
       "price": "500",
       "priceRaw": "500",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c0/ihsb7b9pcs210dtaiswlsaxuhe2jfaa.png/100px-100134.png",
       "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量幽系魔法，是合成技能石的主要触媒。",
+      "description": "常见的炼金材料，蕴含少量虫系魔法，是合成技能石的主要触媒。",
       "rounds": [
-        4
+        1
       ]
     }
   ],
   "rounds": {
-    "1": [],
-    "2": [],
-    "3": [],
-    "4": [
+    "1": [
       {
-        "name": "幽系粉尘",
+        "name": "虫系粉尘",
         "price": "500",
         "priceRaw": "500",
         "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/20/okbnyp4feg52iaxuijvjzv6wodaqjmi.png/100px-100126.png",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c0/ihsb7b9pcs210dtaiswlsaxuhe2jfaa.png/100px-100134.png",
         "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量幽系魔法，是合成技能石的主要触媒。",
+        "description": "常见的炼金材料，蕴含少量虫系魔法，是合成技能石的主要触媒。",
         "rounds": [
-          4
+          1
         ]
       }
-    ]
+    ],
+    "2": [],
+    "3": [],
+    "4": []
   },
   "stale": false,
-  "expectedRound": 4,
+  "expectedRound": 1,
   "lastFetchError": "",
   "live": true
 }
