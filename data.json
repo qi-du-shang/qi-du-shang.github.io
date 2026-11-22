@@ -1,12 +1,12 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-11-22T00:21:01.107Z",
+  "fetchedAt": "2026-11-22T04:21:00.757Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 1,
-  "startedAtBeijing": "2026-11-22 08:00:00",
-  "nextRefreshBeijing": "2026-11-22 12:00:00",
-  "nextActiveBeijing": "2026-11-22 12:00:00",
+  "round": 2,
+  "startedAtBeijing": "2026-11-22 12:00:00",
+  "nextRefreshBeijing": "2026-11-22 16:00:00",
+  "nextActiveBeijing": "2026-11-22 16:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
@@ -26,20 +26,33 @@
       ]
     },
     {
-      "name": "首领血脉秘药",
-      "price": "320000",
-      "priceRaw": "32w",
+      "name": "炫彩蛋",
+      "price": "1600000",
+      "priceRaw": "160w",
       "limit": "1",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/26/fbfwlhncfo0pstpv3ibxn1mj3ayg6di.png/100px-Xuemai_shoulingxuemai.png",
-      "category": "血脉修改道具",
-      "description": "修改血脉的秘药，使特定精灵获得“首领血脉”。",
+      "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
+      "category": "精灵蛋",
+      "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
       "rounds": [
-        1
+        2
+      ]
+    },
+    {
+      "name": "机械粉尘",
+      "price": "500",
+      "priceRaw": "500",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/1c/lcsenwszmlkz002ai6du9f32tbfpi19.png/100px-100138.png",
+      "category": "炼金材料",
+      "description": "常见的炼金材料，蕴含少量机械系魔法，是合成技能石的主要触媒。",
+      "rounds": [
+        2
       ]
     }
   ],
   "rounds": {
-    "1": [
+    "1": [],
+    "2": [
       {
         "name": "网兜球",
         "price": "3000",
@@ -56,24 +69,35 @@
         ]
       },
       {
-        "name": "首领血脉秘药",
-        "price": "320000",
-        "priceRaw": "32w",
+        "name": "炫彩蛋",
+        "price": "1600000",
+        "priceRaw": "160w",
         "limit": "1",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/2/26/fbfwlhncfo0pstpv3ibxn1mj3ayg6di.png/100px-Xuemai_shoulingxuemai.png",
-        "category": "血脉修改道具",
-        "description": "修改血脉的秘药，使特定精灵获得“首领血脉”。",
+        "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
+        "category": "精灵蛋",
+        "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
         "rounds": [
-          1
+          2
+        ]
+      },
+      {
+        "name": "机械粉尘",
+        "price": "500",
+        "priceRaw": "500",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/1/1c/lcsenwszmlkz002ai6du9f32tbfpi19.png/100px-100138.png",
+        "category": "炼金材料",
+        "description": "常见的炼金材料，蕴含少量机械系魔法，是合成技能石的主要触媒。",
+        "rounds": [
+          2
         ]
       }
     ],
-    "2": [],
     "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 1,
+  "expectedRound": 2,
   "lastFetchError": "",
   "live": true
 }
