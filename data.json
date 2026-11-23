@@ -1,25 +1,25 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-11-23T04:21:00.551Z",
+  "fetchedAt": "2026-11-23T08:21:00.548Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 2,
-  "startedAtBeijing": "2026-11-23 12:00:00",
-  "nextRefreshBeijing": "2026-11-23 16:00:00",
-  "nextActiveBeijing": "2026-11-23 16:00:00",
+  "round": 3,
+  "startedAtBeijing": "2026-11-23 16:00:00",
+  "nextRefreshBeijing": "2026-11-23 20:00:00",
+  "nextActiveBeijing": "2026-11-23 20:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "炫彩蛋",
-      "price": "1600000",
-      "priceRaw": "160w",
-      "limit": "1",
-      "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
-      "category": "精灵蛋",
-      "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
+      "name": "奇异血脉秘药",
+      "price": "160000",
+      "priceRaw": "16w",
+      "limit": "3",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ab/eg7zj03u487p1l3f91z499w1nxdzac1.png/100px-Xuemai_qiyixuemai.png",
+      "category": "血脉修改道具",
+      "description": "修改血脉的秘药，使精灵获得“奇异血脉”。",
       "rounds": [
-        2
+        3
       ]
     },
     {
@@ -31,35 +31,36 @@
       "category": "精灵喂养材料",
       "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
       "rounds": [
-        2
+        3
       ]
     },
     {
-      "name": "龙系粉尘",
-      "price": "500",
-      "priceRaw": "500",
-      "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ac/jhbsu0fzhq55ivqu89qz81366owvkki.png/100px-100131.png",
-      "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量龙系魔法，是合成技能石的主要触媒。",
+      "name": "神奇的蛋",
+      "price": "36000",
+      "priceRaw": "36000",
+      "limit": "5",
+      "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png",
+      "category": "精灵蛋",
+      "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
       "rounds": [
-        2
+        3
       ]
     }
   ],
   "rounds": {
     "1": [],
-    "2": [
+    "2": [],
+    "3": [
       {
-        "name": "炫彩蛋",
-        "price": "1600000",
-        "priceRaw": "160w",
-        "limit": "1",
-        "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_d3f07a7c316e2b71dc3e5fc1871bd6da.png",
-        "category": "精灵蛋",
-        "description": "蕴含着难以捉摸的魔力，必定孵化出“炫彩”外观、“了不起”天分的精灵。",
+        "name": "奇异血脉秘药",
+        "price": "160000",
+        "priceRaw": "16w",
+        "limit": "3",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ab/eg7zj03u487p1l3f91z499w1nxdzac1.png/100px-Xuemai_qiyixuemai.png",
+        "category": "血脉修改道具",
+        "description": "修改血脉的秘药，使精灵获得“奇异血脉”。",
         "rounds": [
-          2
+          3
         ]
       },
       {
@@ -71,27 +72,26 @@
         "category": "精灵喂养材料",
         "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
         "rounds": [
-          2
+          3
         ]
       },
       {
-        "name": "龙系粉尘",
-        "price": "500",
-        "priceRaw": "500",
-        "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/ac/jhbsu0fzhq55ivqu89qz81366owvkki.png/100px-100131.png",
-        "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量龙系魔法，是合成技能石的主要触媒。",
+        "name": "神奇的蛋",
+        "price": "36000",
+        "priceRaw": "36000",
+        "limit": "5",
+        "image": "https://img.71acg.net/whd~hykb/comm/hd_admin_upload_2982_5390e1a946446e64d929ad89a3ad3eed.png",
+        "category": "精灵蛋",
+        "description": "蕴含着难以捉摸的魔力，不知道可以孵化出哪种精灵。",
         "rounds": [
-          2
+          3
         ]
       }
     ],
-    "3": [],
     "4": []
   },
   "stale": false,
-  "expectedRound": 2,
+  "expectedRound": 3,
   "lastFetchError": "",
   "live": true
 }
