@@ -1,23 +1,23 @@
 {
   "sourceUrl": "https://www.onebiji.com/hykb_tools/comm/lkwgmerchant/preview.php?id=1&immgj=0",
-  "fetchedAt": "2026-11-26T12:21:00.253Z",
+  "fetchedAt": "2026-11-27T00:21:00.394Z",
   "timezone": "Asia/Shanghai",
   "status": "open",
-  "round": 4,
-  "startedAtBeijing": "2026-11-26 20:00:00",
-  "nextRefreshBeijing": "2026-11-27 00:00:00",
-  "nextActiveBeijing": "2026-11-27 08:00:00",
+  "round": 1,
+  "startedAtBeijing": "2026-11-27 08:00:00",
+  "nextRefreshBeijing": "2026-11-27 12:00:00",
+  "nextActiveBeijing": "2026-11-27 12:00:00",
   "durationHours": 4,
   "merchantPosition": "",
   "items": [
     {
-      "name": "棱镜球",
-      "price": "3200000",
-      "priceRaw": "320w",
-      "limit": "1",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9b/kkwd244su5nzzg5pj99volbt84ohied.png/100px-100795.png",
+      "name": "好战球",
+      "price": "3000",
+      "priceRaw": "3000",
+      "limit": "100",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/7/79/kdfs6bmfy54gk7ak70arjxug91zv1z5.png/100px-Img_lumangqiu.png",
       "category": "特制咕噜球",
-      "description": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵。 蕴含改变精灵外观、提升天分的神秘力量，还能使其个体资质变为极致。 棱镜中反射出无数个世界。",
+      "description": "更适合用来捕捉武系、龙系的精灵。 好斗的球，攻击中的精灵会被吸引。",
       "rounds": [
         1,
         2,
@@ -26,43 +26,28 @@
       ]
     },
     {
-      "name": "魔力果",
-      "price": "6000",
-      "priceRaw": "6000",
-      "limit": "20",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
-      "category": "精灵喂养材料",
-      "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
-      "rounds": [
-        4
-      ]
-    },
-    {
-      "name": "冰系粉尘",
+      "name": "普通粉尘",
       "price": "500",
       "priceRaw": "500",
       "limit": "100",
-      "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a9/no0rhm0wky3e406wni3ef13z6zvfxw1.png/100px-100130.png",
+      "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f6/ls7hsygs9epizddf1xo4q9b2iu1dduu.png/100px-100127.png",
       "category": "炼金材料",
-      "description": "常见的炼金材料，蕴含少量冰系魔法，是合成技能石的主要触媒。",
+      "description": "常见的炼金材料，蕴含少量普通系魔法，是合成技能石的主要触媒。",
       "rounds": [
-        4
+        1
       ]
     }
   ],
   "rounds": {
-    "1": [],
-    "2": [],
-    "3": [],
-    "4": [
+    "1": [
       {
-        "name": "棱镜球",
-        "price": "3200000",
-        "priceRaw": "320w",
-        "limit": "1",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/9/9b/kkwd244su5nzzg5pj99volbt84ohied.png/100px-100795.png",
+        "name": "好战球",
+        "price": "3000",
+        "priceRaw": "3000",
+        "limit": "100",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/7/79/kdfs6bmfy54gk7ak70arjxug91zv1z5.png/100px-Img_lumangqiu.png",
         "category": "特制咕噜球",
-        "description": "昂贵且好用的咕噜球，能十分轻易地捕捉精灵。 蕴含改变精灵外观、提升天分的神秘力量，还能使其个体资质变为极致。 棱镜中反射出无数个世界。",
+        "description": "更适合用来捕捉武系、龙系的精灵。 好斗的球，攻击中的精灵会被吸引。",
         "rounds": [
           1,
           2,
@@ -71,33 +56,24 @@
         ]
       },
       {
-        "name": "魔力果",
-        "price": "6000",
-        "priceRaw": "6000",
-        "limit": "20",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/c/c6/5qe6rcdtfxe1gsrvgj3lrn033athx9p.png/100px-100668.png",
-        "category": "精灵喂养材料",
-        "description": "不太常见的果实，精灵食用后获得能力提升。 “精灵食物营养科的研究总是不见进展，这么多年了精灵还在吃果子。”",
-        "rounds": [
-          4
-        ]
-      },
-      {
-        "name": "冰系粉尘",
+        "name": "普通粉尘",
         "price": "500",
         "priceRaw": "500",
         "limit": "100",
-        "image": "https://patchwiki.biligame.com/images/rocom/thumb/a/a9/no0rhm0wky3e406wni3ef13z6zvfxw1.png/100px-100130.png",
+        "image": "https://patchwiki.biligame.com/images/rocom/thumb/f/f6/ls7hsygs9epizddf1xo4q9b2iu1dduu.png/100px-100127.png",
         "category": "炼金材料",
-        "description": "常见的炼金材料，蕴含少量冰系魔法，是合成技能石的主要触媒。",
+        "description": "常见的炼金材料，蕴含少量普通系魔法，是合成技能石的主要触媒。",
         "rounds": [
-          4
+          1
         ]
       }
-    ]
+    ],
+    "2": [],
+    "3": [],
+    "4": []
   },
   "stale": false,
-  "expectedRound": 4,
+  "expectedRound": 1,
   "lastFetchError": "",
   "live": true
 }
